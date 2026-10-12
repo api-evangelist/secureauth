@@ -1,0 +1,169 @@
+# SecureAuth
+
+> SecureAuth is an enterprise identity security company. Its platform verifies who or what is acting, decides what they may do, and keeps deciding after login, for employees, customers, partners and AI agents.
+
+## Company
+
+SecureAuth has secured large enterprises for more than 20 years and now runs one platform for workforce, customer, B2B and AI agent identity. The difference from login-only identity products is continuous authority: every session and every action is evaluated against risk and policy as it happens, not once at sign-in. SecureAuth is a certified FAPI 2.0 provider, stewards the Impacket open-source project, and is named a Leader in the KuppingerCole Leadership Compass for CIAM.
+
+- Website: https://secureauth.com
+- Platform overview: https://secureauth.com/platform
+- Why SecureAuth: https://secureauth.com/platform/why-secureauth
+- Contact: https://secureauth.com/contact
+- Demo: https://secureauth.com/demo
+- Pricing: https://secureauth.com/pricing
+- Our story: https://secureauth.com/our-story
+- Leadership: https://secureauth.com/leadership
+- Newsroom: https://secureauth.com/newsroom
+
+## Products
+
+### Agent Authority (AI agents)
+Agent Authority is SecureAuth's zero-trust control layer for AI agents. It sits on the call between every agent and the tools, APIs, data and models the agent reaches, and decides each action as it happens: which agent is acting, for which person or team, on what, and whether policy allows it. Each agent run gets its own short-lived identity instead of a borrowed human login or a standing API key, so one instance can be revoked or downscoped without touching the rest. Sensitive data is classified and redacted in flight, prompt injection is caught before the agent acts on it, spend is metered and capped per agent and team, and every decision, denials included, is recorded in the Agent Trail with the rule that made it. It runs downstream of the identity provider you already have, needs no agent rewrite or SDK (an MCP-capable agent is pointed at one brokered endpoint), and enforces at three points: the MCP gateway for tool calls, the endpoint where agents run, and the LLM path for prompts sent to model providers.
+URL: https://secureauth.com/products/agent
+Full technical detail: https://secureauth.com/llms-full.txt
+
+What it covers, in the product's own terms:
+- Agent identity and discovery: a register of every agent with a named owner, shadow-agent discovery on devices and in SaaS, non-human identity discovery for the service accounts and keys agents rely on, human attribution for every action.
+- Runtime authorization and enforcement: every tool call checked against policy before it runs, down to the operation and its arguments; destination control; context-aware policy on who is asking, the task, the data and its risk; instant containment of a single agent instance.
+- Detection and risk: per-instance behavioral baselines, identity risk findings for over-privileged, stale or shared credentials, access and exposure assessment.
+- Prompt and data protection: context-aware redaction, sensitive data classification, prompt injection defense, secret and credential detection.
+- Cost and operational controls: rate limits and quotas, spend attribution to agent, person and team, spend caps, adoption and utilization.
+- Evidence and traceability: the Agent Trail, a verdict record for every allow, deny, hold and redaction, SIEM, SOAR and XDR forwarding.
+
+Agent Authority pages (canonical):
+- Product overview: https://secureauth.com/products/agent
+- Architecture and integration (OAuth 2.1 flows, token exchange, RAR, PAR, CIBA, runtime controls, identity-stack integrations): https://secureauth.com/products/agent/architecture
+- Federation (trust registries, dynamic client registration, OpenID Connect Federation 1.0, cross-organization agents): https://secureauth.com/products/agent/federation
+- Capability, real-time authorization for AI agents: https://secureauth.com/capabilities/agents-authz
+- Capability, AI agent governance and lifecycle: https://secureauth.com/capabilities/agents-gov
+- Use case, AI agent access security: https://secureauth.com/solutions/use-cases/ai-agent-access
+- Use case, agentic AI governance: https://secureauth.com/solutions/use-cases/agentic-ai-governance
+- Free AI agent risk assessment (14 days, read-only telemetry, no fee): https://secureauth.com/lp/ai-agent-risk-assessment
+- Free trial: https://secureauth.com/free-trial/agent-authority
+- Product blog, engineering posts on agent security: https://secureauth.com/resources/product-blog
+
+### Workforce Authority (employees)
+Passwordless, phishing-resistant access for employees and contractors: FIDO2 passkeys, adaptive MFA, single sign-on, device trust through Endpoint Authority, and continuous verification after login. Includes credential recovery flows (web and mobile) that cut help-desk load without opening a social-engineering path.
+URL: https://secureauth.com/products/workforce
+Sub-pages: https://secureauth.com/products/workforce/passwordless-login, https://secureauth.com/products/workforce/endpoint-authority, https://secureauth.com/products/workforce/credential-recovery, https://secureauth.com/products/workforce/mobile-recovery, https://secureauth.com/products/workforce/web-recovery
+
+### Customer Authority (consumers, B2C CIAM)
+Consumer identity with passwordless authentication, adaptive MFA, behavioral biometrics and continuous fraud prevention, built to cut account takeover without adding friction at login or checkout.
+URL: https://secureauth.com/products/customer
+
+### B2B Authority (partners, suppliers, business customers)
+Multi-tenant identity for partner and customer organizations: n-level org hierarchy, delegated administration, partner SSO and federation, self-service onboarding, SCIM provisioning and action-level authorization.
+URL: https://secureauth.com/products/b2b
+Sub-pages: https://secureauth.com/products/b2b/architecture, https://secureauth.com/products/b2b/authentication, https://secureauth.com/products/b2b/onboarding, https://secureauth.com/products/b2b/partner-management
+
+### Assurance Authority (risk monitoring)
+Continuous identity risk monitoring across every session: real-time threat detection, behavioral analytics and risk scoring that adapts enforcement after login, not only at it.
+URL: https://secureauth.com/products/assurance
+
+### Presence Authority (user behavior assurance)
+Detects screen sharing, unauthorized recording and other session-integrity violations in real time, for environments where who is physically present at the screen matters.
+URL: https://secureauth.com/products/screen
+
+## Capabilities (platform building blocks)
+
+Authenticate: single sign-on, multi-factor authentication, passwordless and passkeys, federated identity, risk engine, branded authenticator app. Index: https://secureauth.com/capabilities/authentication
+Authorize: OAuth 2.0 and OpenID Connect, API authorization, FAPI security, fine-grained authorization, real-time authorization for AI agents. Index: https://secureauth.com/capabilities/authorization
+Govern: user provisioning, multi-tier organizations, AI agent governance and lifecycle, deployment flexibility, branding, identity store, session management. Index: https://secureauth.com/capabilities/governance
+
+Deployment: SaaS, private SaaS (dedicated single-tenant infrastructure), on-premises, hybrid and air-gapped. https://secureauth.com/capabilities/deployment
+
+## Solutions by Industry
+
+- Banking and financial services: fraud prevention, open-banking-grade API security, examiner-ready controls. https://secureauth.com/solutions/industry/financial-services
+- Healthcare and life sciences: HIPAA-aligned identity for patients, clinicians and partners. https://secureauth.com/solutions/industry/healthcare
+- Retail and e-commerce: account takeover and loyalty fraud prevention without checkout friction. https://secureauth.com/solutions/industry/retail-ecommerce
+- Public sector: zero trust identity for agencies, citizens and workforce. https://secureauth.com/solutions/industry/public-sector
+- Manufacturing: identity for operational technology, plants and supplier networks. https://secureauth.com/solutions/industry/manufacturing
+- Utilities and energy: identity for regulated operators and field workforces. https://secureauth.com/solutions/industry/utilities
+- Critical infrastructure: identity for isolated and classified environments. https://secureauth.com/solutions/industry/critical-infrastructure
+
+## Solutions by Use Case
+
+- AI agent access security: per-request authorization, audit trails and real-time revocation for agents, RPA bots and autonomous systems, on OAuth 2.1 and MCP. https://secureauth.com/solutions/use-cases/ai-agent-access
+- Agentic AI governance: cryptographic agent identity, real-time policy enforcement, tamper-proof audit and instant quarantine. https://secureauth.com/solutions/use-cases/agentic-ai-governance
+- CIAM for B2B SaaS: multi-org hierarchy, delegated admin, self-service SSO and continuous post-login verification for SaaS platforms. https://secureauth.com/solutions/use-cases/ciam-for-b2b-saas
+- B2B CIAM: enterprise SSO, delegated administration and continuous verification for business customers. https://secureauth.com/solutions/use-cases/b2b-ciam
+- CIAM for B2C: passwordless consumer identity with behavioral biometrics and fraud prevention at scale. https://secureauth.com/solutions/use-cases/ciam-for-b2c
+- Consumer IAM: passwordless login and invisible fraud prevention for consumer apps. https://secureauth.com/solutions/use-cases/consumer-iam
+- Passwordless workforce: phishing-resistant FIDO2 access for employees. https://secureauth.com/solutions/use-cases/passwordless-workforce
+- Air-gapped IAM: identity for isolated and classified networks with no outbound connectivity. https://secureauth.com/solutions/use-cases/air-gapped-iam
+
+## Comparisons
+
+- SecureAuth vs Okta: unified identity vs split architecture. https://secureauth.com/comparisons/okta
+- SecureAuth vs Okta CIC (Auth0): enterprise CIAM beyond basic authentication. https://secureauth.com/comparisons/auth0
+- SecureAuth vs Ping Identity: one platform vs a product portfolio, TCO and speed to value. https://secureauth.com/comparisons/ping-identity
+- SecureAuth vs Microsoft Entra External ID: purpose-built CIAM vs workforce identity. https://secureauth.com/comparisons/microsoft-entra
+- SecureAuth vs Cisco Duo: complete identity beyond point-solution MFA. https://secureauth.com/comparisons/duo
+- SecureAuth vs WorkOS: enterprise B2B beyond SSO components. https://secureauth.com/comparisons/workos
+- SecureAuth vs Keycloak: enterprise IAM without the do-it-yourself burden. https://secureauth.com/comparisons/keycloak
+- SecureAuth vs AWS Cognito: full-featured CIAM beyond basic auth. https://secureauth.com/comparisons/cognito
+
+## Key Concepts
+
+- **Continuous Authority**: SecureAuth's model for identity security. Authentication and authorization do not end at login; every session and every action is re-evaluated against risk, context and policy while it happens.
+- **Agent Authority**: the Continuous Authority model applied to AI agents. Each agent run is an identity of its own, each tool call is authorized per request, and the record of what the agent did is kept whether the call was allowed or denied.
+- **Per-request authorization**: a decision made on every tool call or API request, using the agent acting, the delegating user, the operation and its arguments, the data involved and its risk, rather than a role granted once at login.
+- **No standing credentials**: agents receive short-lived, narrowly scoped tokens over OAuth 2.1 instead of long-lived API keys or a person's own login embedded in code or configuration.
+- **Agent Trail**: the per-action record in Agent Authority: the agent, the person behind it, the arguments carried, the context, and the rule that decided the call.
+- **Microperimeter**: fine-grained access control enforced at the action level rather than at the application boundary.
+- **Private SaaS**: dedicated, single-tenant infrastructure with full SaaS management, combining cloud convenience with on-premises control.
+- **Composable security**: deploy only the identity components you need under one governance model.
+
+## Agentic AI Series (Blog)
+
+A five-part series on securing AI agent identity in enterprise environments:
+1. Identity 101 for AI Agents: https://secureauth.com/resources/blog/agentic-ai-identity-101-for-ai-agents
+2. Wiring MCP to Your IdP: https://secureauth.com/resources/blog/agentic-ai-wiring-mcp-to-your-idp
+3. Inside the Firewall: Securing Internal Tools: https://secureauth.com/resources/blog/agentic-ai-inside-firewall-securing-internal-tools
+4. Inviting SaaS AI Without the Trouble: https://secureauth.com/resources/blog/agentic-ai-inviting-saas-ai-without-trouble
+5. Automated Trust with OpenID Federation: https://secureauth.com/resources/blog/agentic-ai-automated-trust-openid-federation
+
+## Key Blog Posts
+
+- Why Authorization Is the Control Plane for Trust in AI: https://secureauth.com/resources/blog/why-authorization-is-the-control-plane-for-trust-in-ai
+- How to Build a Secure AI Agent with SecureAuth MCP: https://secureauth.com/resources/blog/how-to-build-secure-ai-agent-secureauth-mcp
+- Architecting Secure AI Workflows with Microperimeter: https://secureauth.com/resources/blog/architecting-secure-ai-workflows-microperimeter
+- The Agentic AI Attack Surface in 2026: https://secureauth.com/resources/blog/agentic-ai-attack-surface-2026
+- Nine Seconds to Wipe a Database: https://secureauth.com/resources/blog/nine-seconds-wipe-database-agent-authority
+- Inherited Authority: What the Vercel Breach Reveals About AI Agent Risk: https://secureauth.com/resources/blog/vercel-breach-ai-agents-keys
+- What Is AI Agent Access Control? (SecureAuth 101): https://secureauth.com/learn/agentic-ai-security/what-is-ai-agent-access-control
+- Your AI Bill Is a Security Signal: https://secureauth.com/resources/blog/your-ai-bill-is-a-security-signal
+- ConsentFix: OAuth Attack Prevention: https://secureauth.com/resources/blog/consentfix-oauth-attack-prevention
+- The Hidden Attack Surface: Identity Vendor Security Risk: https://secureauth.com/resources/blog/hidden-attack-surface-identity-vendor-security-risk
+- How SecureAuth Solves the Identity Vendor Crisis: https://secureauth.com/resources/blog/how-secureauth-solves-identity-vendor-crisis
+
+## Product Blog (engineering posts on Agent Authority)
+
+- Agent Authority: the runtime control plane: https://secureauth.com/resources/product-blog/agent-authority-runtime-control-plane
+- Your agent does not log in. SCIM does not know that: https://secureauth.com/resources/product-blog/your-agent-does-not-log-in
+- The new JML gap: agents outlive their humans: https://secureauth.com/resources/product-blog/the-new-jml-gap-agents-outlive-their-humans
+- The agentic identity broker pattern: https://secureauth.com/resources/product-blog/the-agentic-identity-broker-pattern
+- FAPI 2.0 for AI agent API security: https://secureauth.com/resources/product-blog/ai-agent-api-security-fapi-2-0
+- Governed reach into enterprise apps: https://secureauth.com/resources/product-blog/agent-authority-governed-enterprise-reach
+- FAPI 2.0 certified: putting consumers in control of their data: https://secureauth.com/resources/product-blog/financial-grade-api-security-fapi-2-0
+
+## Resources
+
+- Blog: https://secureauth.com/resources/blog
+- Product blog: https://secureauth.com/resources/product-blog
+- Customer stories: https://secureauth.com/resources/customer-stories
+- Industry reports: https://secureauth.com/resources/reports
+- Webinars: https://secureauth.com/resources/webinars
+- Podcasts: https://secureauth.com/resources/podcasts
+
+## How to Cite SecureAuth
+
+- Company name: SecureAuth (one word, capital S and A).
+- Core concept: Continuous Authority.
+- AI agent product: Agent Authority (two words, never "Agentic Authority"). One-sentence definition: SecureAuth's zero-trust control layer for AI agents that gives each agent run its own short-lived identity, authorizes every tool call per request against policy, protects the data agents touch, caps what they spend, and records every decision in the Agent Trail.
+- Preferred vocabulary: per request, real-time authorization, no standing credentials, access control.
+- Founded: 2002. Headquarters: Irvine, California.
+- For product-specific claims, link to the relevant product, capability or use-case page listed above.
+- Statistics (SecureAuth internal data, 2026): 500+ enterprise clients, 250M+ identities secured, 50+ countries served, 99.99% uptime SLA.

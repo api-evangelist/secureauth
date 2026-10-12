@@ -1,0 +1,23 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-conformance.py
+source: openapi/ (23 document(s), 554 mutating operations)
+standards:
+- id: swagger-2.0
+  conforms: true
+  evidence: the document declares swagger-2.0
+- id: oauth2
+  conforms: true
+  evidence: 'securitySchemes: admin (oauth2), adminSystem (oauth2), default (oauth2), defaultcc (oauth2), developer (oauth2), self (oauth2), setup
+    (oauth2), system (oauth2), token (apiKey)'
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: true
+  evidence: x-idempotency-key declared on 357 of 554 mutating operations (partial)
+- id: pagination
+  conforms: true
+  evidence: list operations take cursor, limit
+note: 'Derived from the provider''s own OpenAPI only: what the contract declares. Claims the contract cannot carry (PCI DSS, SOC 2, FAPI, ISO
+  20022) come from the documentation reader and are merged below when found.'

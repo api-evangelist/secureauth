@@ -1,23 +1,483 @@
 aid: secureauth
+
 name: SecureAuth (incl. Cloudentity)
-description: 'SecureAuth (incl. Cloudentity) is a company surfaced via the API Evangelist harvest backlog
-  (source: market-layer-gap) and added to the network as a stub for full-pipeline profiling.'
+
+image: https://secureauth.com/og-image.png
+
+description: SecureAuth is an identity and access management company. It acquired Cloudentity; cloudentity.com
+  now redirects to secureauth.com and the former Cloudentity Authorization Control Plane ships as SecureAuth
+  CIAM, whose 23 OpenAPI definitions (979 operations) are published in the SecureAuthCorp/ciam-client-go
+  repository.
+
 url: https://raw.githubusercontent.com/api-evangelist/secureauth/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:market-layer-gap
+
 x-tier: stub
+
 x-tier-reason: harvest
+
 specificationVersion: '0.20'
+
 created: '2026-10-13'
+
 modified: '2026-10-13'
+
 tags:
 - Company
-apis: []
+- Identity
+- Authentication
+- Authorization
+- OAuth
+- Open Banking
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
 common:
+- type: AgenticAccess
+  url: agentic-access/secureauth-agentic-access.yml
+- type: Spectral
+  url: rules/secureauth-rules.yml
+- type: DataModel
+  url: data-model/secureauth-data-model.yml
+- type: Idempotency
+  url: conventions/secureauth-conventions.yml
+- type: Conventions
+  url: conventions/secureauth-conventions.yml
+- type: ErrorCatalog
+  url: errors/secureauth-problem-types.yml
+- type: Conformance
+  url: conformance/secureauth-conformance.yml
+- type: LLMsTxt
+  url: llms/secureauth-llms.txt
+- type: SecurityTxt
+  url: well-known/secureauth-status-security.txt
+- type: WellKnown
+  url: well-known/secureauth-well-known.yml
+- type: Hosts
+  url: hosts/secureauth-hosts.yml
+- type: Vendors
+  url: vendors/secureauth-vendors.yml
+- type: TermsOfService
+  url: https://secureauth.com/terms-of-use
+- type: PrivacyPolicy
+  url: https://secureauth.com/privacy-policy
+- type: Pricing
+  url: https://secureauth.com/pricing
+- type: Newsroom
+  url: https://secureauth.com/newsroom
+- type: Leadership
+  url: https://secureauth.com/leadership
+- type: OAuthScopes
+  url: scopes/secureauth-scopes.yml
+- type: Authentication
+  url: authentication/secureauth-authentication.yml
+- type: DomainSecurity
+  url: security/secureauth-domain-security.yml
 - type: Website
   url: https://secureauth.com
+- type: Documentation
+  url: https://docs.secureauth.com/home/index.html
+- type: StatusPage
+  url: https://status.secureauth.com
+- type: Support
+  url: https://support.secureauth.com
+- type: Blog
+  url: https://secureauth.com/resources/blog
+- type: GitHubOrganization
+  url: https://github.com/SecureAuthCorp
+- type: SDK
+  url: https://github.com/SecureAuthCorp/ciam-client-go
+
+apis:
+- aid: secureauth:admin
+  name: SecureAuth CIAM Admin API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Admin API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-admin-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/admin.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:analytics
+  name: SecureAuth CIAM Analytics API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Analytics API, from the OpenAPI published in
+    the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-analytics-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/analytics.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:cdr
+  name: SecureAuth CIAM Consumer Data Right API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Consumer Data Right API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-cdr-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/cdr.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:developer
+  name: SecureAuth CIAM Developer API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Developer API, from the OpenAPI published in
+    the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-developer-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/developer.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:fdx
+  name: SecureAuth CIAM Financial Data Exchange API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Financial Data Exchange API, from the OpenAPI
+    published in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-fdx-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/fdx.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:hub
+  name: SecureAuth CIAM Hub API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Hub API, from the OpenAPI published in the SecureAuthCorp/ciam-client-go
+    repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-hub-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/hub.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:identity
+  name: SecureAuth CIAM Identity API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity API, from the OpenAPI published in
+    the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-identity-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identity.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:identityroot
+  name: SecureAuth CIAM Identity Root API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity Root API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-identityroot-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identityroot.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:identityself
+  name: SecureAuth CIAM Identity Self-Service API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity Self-Service API, from the OpenAPI
+    published in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-identityself-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identityself.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:identitysystem
+  name: SecureAuth CIAM Identity System API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity System API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-identitysystem-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identitysystem.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:ksa
+  name: SecureAuth CIAM KSA Open Banking API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) KSA Open Banking API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-ksa-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/ksa.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:licensingadmin
+  name: SecureAuth CIAM Licensing Admin API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Licensing Admin API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-licensingadmin-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/licensingadmin.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:licensingroot
+  name: SecureAuth CIAM Licensing Root API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Licensing Root API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-licensingroot-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/licensingroot.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:oauth2
+  name: SecureAuth CIAM OAuth2 API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) OAuth2 API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-oauth2-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/oauth2.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:obbr
+  name: SecureAuth CIAM Open Banking Brasil API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Banking Brasil API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-obbr-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/obbr.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:obuk
+  name: SecureAuth CIAM Open Banking UK API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Banking UK API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-obuk-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/obuk.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:opin
+  name: SecureAuth CIAM Open Insurance Brasil API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Insurance Brasil API, from the OpenAPI
+    published in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-opin-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/opin.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:permissions
+  name: SecureAuth CIAM Permissions API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Permissions API, from the OpenAPI published
+    in the SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-permissions-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/permissions.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:public
+  name: SecureAuth CIAM Public API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Public API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-public-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/public.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:root
+  name: SecureAuth CIAM Root API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Root API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-root-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/root.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:saml
+  name: SecureAuth CIAM SAML API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) SAML API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-saml-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/saml.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:system
+  name: SecureAuth CIAM System API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) System API, from the OpenAPI published in the
+    SecureAuthCorp/ciam-client-go repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-system-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/system.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:web
+  name: SecureAuth CIAM Web API
+  description: SecureAuth CIAM (formerly Cloudentity ACP) Web API, from the OpenAPI published in the SecureAuthCorp/ciam-client-go
+    repository.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Identity
+  - Authorization
+  - OAuth
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-web-openapi.yml
+    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/web.yaml
+    x-method: searched
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+
+x-aliases:
+- cloudentity
+
+x-coverage:
+  state: none
+  reason: no-developer-program
+  method: derived
+  generated: '2026-10-13'
+  generator: derive-coverage.py (pre-flight evidence)
+  detail: >-
+    the company publishes no developer documentation host and no machine-readable contract on its own domain
+  evidence:
+  - url: https://status.secureauth.com/mcp
+    status: 403
+  - url: https://secureauth.com
+    status: 200

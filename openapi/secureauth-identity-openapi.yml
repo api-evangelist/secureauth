@@ -1,0 +1,5281 @@
+basePath: /api/identity/default
+consumes:
+- application/json
+definitions:
+  ActivationSettings:
+    properties:
+      always_allow_preferred_method_setup:
+        type: boolean
+        x-nullable: false
+    type: object
+  AddUserIdentifier:
+    properties:
+      identifier:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        description: identifier metadata
+        type: object
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        - uid
+        - external
+        - federated
+        example: email
+        type: string
+        x-nullable: false
+    required:
+    - identifier
+    - type
+    type: object
+  AddUserVerifiableAddress:
+    properties:
+      address:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+      allowed_for_2fa:
+        description: is allowed for 2FA
+        type: boolean
+        x-nullable: false
+      message_redaction:
+        $ref: '#/definitions/RedactionPolicy'
+      metadata:
+        additionalProperties:
+          type: object
+        description: general purpose metadata
+        type: object
+        x-nullable: false
+      preferred_contact_method:
+        enum:
+        - sms
+        - voice
+        example: sms
+        type: string
+        x-nullable: false
+      status:
+        enum:
+        - active
+        - inactive
+        example: active
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        example: mobile
+        type: string
+        x-nullable: false
+      verified:
+        type: boolean
+        x-nullable: false
+    required:
+    - address
+    - type
+    - verified
+    type: object
+  Address:
+    properties:
+      address:
+        type: string
+        x-nullable: false
+      verified:
+        type: boolean
+        x-nullable: false
+    type: object
+  AuthenticationMechanisms:
+    items:
+      enum:
+      - totp
+      - password
+      - otp
+      - email_otp
+      - sms_otp
+      - voice_otp
+      - webauthn
+      - usernameless_webauthn
+      - push
+      - symbol
+      - qr_code
+      type: string
+    type: array
+  Authenticator:
+    properties:
+      AAGUID:
+        description: |-
+          The AAGUID of the authenticator. An AAGUID is defined as an array containing the globally unique
+          identifier of the authenticator model being sought.
+        type: string
+        x-nullable: false
+      attachment:
+        $ref: '#/definitions/AuthenticatorAttachment'
+      cloneWarning:
+        description: |-
+          CloneWarning is a signal that the authenticator may be cloned, i.e. at least two copies of the
+          credential private key may exist and are being used in parallel. Relying Parties should incorporate
+          this information into their risk scoring. Whether the Relying Party updates the stored signature
+          counter value in this case, or not, or fails the authentication ceremony or not, is Relying Party-specific.
+        type: boolean
+        x-nullable: false
+      signCount:
+        description: |-
+          SignCount is a representation of the number of times the Authenticator or Credential have been used to login.
+          Upon a new login operation, the Relying Party compares the stored signature counter value with the new SignCount
+          value returned in the assertion’s authenticator data. If this new SignCount value is less than or equal to the
+          stored value, a cloned authenticator may exist, or the authenticator may be malfunctioning.
+        format: uint32
+        type: integer
+        x-nullable: false
+    title: Authenticator represents a specific authenticator in the context of a [Credential].
+    type: object
+  AuthenticatorAttachment:
+    description: |-
+      This enumeration’s values describe authenticators' attachment modalities. Relying Parties use this to express a
+      preferred authenticator attachment modality when calling navigator.credentials.create() to create a credential.
+
+      If this member is present, eligible authenticators are filtered to only authenticators attached with the specified
+      §5.4.5 Authenticator Attachment Enumeration (enum AuthenticatorAttachment). The value SHOULD be a member of
+      AuthenticatorAttachment but client platforms MUST ignore unknown values, treating an unknown value as if the member
+      does not exist.
+
+      Specification: §5.4.4. Authenticator Selection Criteria (https://www.w3.org/TR/webauthn/#dom-authenticatorselectioncriteria-authenticatorattachment)
+
+      Specification: §5.4.5. Authenticator Attachment Enumeration (https://www.w3.org/TR/webauthn/#enum-attachment)
+    title: |-
+      AuthenticatorAttachment represents the IDL enum of the same name, and is used as part of the Authenticator Selection
+      Criteria.
+    type: string
+  AuthenticatorTransport:
+    description: |-
+      Authenticators may implement various transports for communicating with clients. This enumeration defines hints as to
+      how clients might communicate with a particular authenticator in order to obtain an assertion for a specific
+      credential. Note that these hints represent the WebAuthn Relying Party's best belief as to how an authenticator may
+      be reached. A Relying Party will typically learn of the supported transports for a public key credential via
+      getTransports().
+
+      Specification: §5.8.4. Authenticator Transport Enumeration (https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport)
+    title: AuthenticatorTransport represents the IDL enum with the same name.
+    type: string
+  B2BUsers:
+    description: Identity B2BUsers
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/BaseExtendedUser'
+        type: array
+        x-nullable: false
+    type: object
+  BaseExtendedUser:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/Address'
+        type: array
+        x-nullable: false
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      identifiers_with_details:
+        items:
+          $ref: '#/definitions/IdentifierDetails'
+        type: array
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        example: active
+        type: string
+        x-nullable: false
+      status_updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+      user_type:
+        enum:
+        - jit
+        - standard
+        - scim
+        type: string
+        x-nullable: false
+      verified addresses:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - status
+    type: object
+  BaseGroup:
+    properties:
+      description:
+        type: string
+        x-nullable: false
+      id:
+        format: groupID
+        type: string
+        x-nullable: false
+      name:
+        type: string
+        x-nullable: false
+      parent_id:
+        format: groupID
+        type: string
+        x-nullable: false
+      tenant_id:
+        format: tenantID
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+    required:
+    - user_pool_id
+    type: object
+  BaseNewUserPayload:
+    properties:
+      credentials:
+        items:
+          $ref: '#/definitions/NewUserCredential'
+        type: array
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          $ref: '#/definitions/NewUserIdentifier'
+        type: array
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+      verifiable_addresses:
+        items:
+          $ref: '#/definitions/NewUserVerifiableAddress'
+        type: array
+        x-nullable: false
+    required:
+    - status
+    type: object
+  BaseUpdateUser:
+    properties:
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+    type: object
+  BaseUserWithData:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      credentials:
+        items:
+          $ref: '#/definitions/UserCredential'
+        type: array
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          $ref: '#/definitions/UserIdentifier'
+        type: array
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+      status_updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+      user_type:
+        enum:
+        - jit
+        - standard
+        - scim
+        type: string
+        x-nullable: false
+      verifiable_addresses:
+        items:
+          $ref: '#/definitions/UserVerifiableAddress'
+        type: array
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - status
+    type: object
+  Credential:
+    description: |-
+      Provided this data structure is preserved properly, a Credential can be verified against the FIDO Metadata Service
+      at a later date using the [Credential.Verify] method with a [metadata.Provider].
+
+      It is strongly recommended for the best security that a [Credential] is encrypted at rest with the exception of the
+      ID and the value you use to lookup the user. This prevents a person with access to the database being able to
+      compromise privacy by being able to view this data, as well as prevents them being able to compromise security by
+      adding or modifying a Credential without them also having access to the encryption key.
+
+      For consolidated persistence guidance; recommended schema shape, required lookup columns, and which fields
+      must be written back on every successful FinishLogin / ValidateLogin; see the [Storage] section of the
+      [github.com/go-webauthn/webauthn/webauthn] package documentation.
+
+      See: §4. Terminology: Credential Record (https://www.w3.org/TR/webauthn-3/#credential-record)
+
+      [Storage]: https://pkg.go.dev/github.com/go-webauthn/webauthn/webauthn#hdr-Storage
+    properties:
+      attestation:
+        $ref: '#/definitions/CredentialAttestation'
+      attestationFormat:
+        description: |-
+          AttestationFormat is the attestation statement format identifier ("packed", "tpm", "android-key",
+          "android-safetynet", "fido-u2f", "apple", "compound", "none"); see §8 of the WebAuthn specification and
+          the AttestationFormat constants in the protocol package.
+        type: string
+        x-nullable: false
+      attestationType:
+        description: |-
+          AttestationType is the attestation type as conveyed by the authenticator during the registration ceremonyl
+          one of the values defined by [metadata.AuthenticatorAttestationType] ("basic_full", "basic_surrogate",
+          "attca", "anonca", "ecdaa", "none"). Prior releases incorrectly stored the attestation FORMAT here; see the
+          custom [Credential.UnmarshalJSON] for the backward-compatibility migration applied when decoding such
+          records.
+        type: string
+        x-nullable: false
+      authenticator:
+        $ref: '#/definitions/Authenticator'
+      extensions:
+        $ref: '#/definitions/CredentialExtensions'
+      flags:
+        $ref: '#/definitions/CredentialFlags'
+      id:
+        description: The ID is the ID of the public key credential source. Described
+          by the Credential Record 'id' field.
+        type: string
+        x-nullable: false
+      publicKey:
+        description: |-
+          The credential public key of the public key credential source. Described by the Credential Record 'publicKey'
+          field.
+        type: string
+        x-nullable: false
+      transport:
+        description: Transport types the authenticator supports. Described by the
+          Credential Record 'transports' field.
+        items:
+          $ref: '#/definitions/AuthenticatorTransport'
+        type: array
+        x-nullable: false
+    title: |-
+      Credential contains all needed information about a WebAuthn credential for storage. This struct is effectively the
+      Credential Record as described in the specification.
+    type: object
+  CredentialAttestation:
+    description: |-
+      It enables the [Credential] to be verified against the FIDO Metadata Service at a later date using
+      [Credential.Verify], even long after the registration ceremony has completed.
+      The WebAuthn specification evolves over time, introducing new validation procedures. Preserving the raw data
+      ensures that credentials created today can be re-validated against future rules without requiring re-registration.
+      Raw data serves as an auditable record of exactly what the authenticator and client provided during registration,
+      independent of how the library parsed it at that point in time.
+
+      Implementers MUST persist all fields of this struct.
+    properties:
+      authenticatorData:
+        description: |-
+          AuthenticatorData is the raw authenticator data from the registration response as provided in the
+          RegistrationResponseJSON. This is the unparsed byte representation that can be re-parsed for future validation.
+        type: string
+        x-nullable: false
+      clientDataHash:
+        description: |-
+          ClientDataHash is the SHA-256 hash of ClientDataJSON computed during registration verification. If empty,
+          [Credential.Verify] will recompute it from ClientDataJSON.
+        type: string
+        x-nullable: false
+      clientDataJSON:
+        description: |-
+          ClientDataJSON is the raw JSON-encoded client data from the registration response. This is the verbatim value
+          provided by the client and is used to recompute the client data hash during later verification.
+        type: string
+        x-nullable: false
+      object:
+        description: |-
+          Object is the raw CBOR-encoded attestation object from the registration response. This contains the attestation
+          statement, format, and authenticator data needed by [Credential.Verify] to re-perform attestation verification.
+        type: string
+        x-nullable: false
+      publicKeyAlgorithm:
+        description: PublicKeyAlgorithm is the COSE algorithm identifier for the credential's
+          public key.
+        format: int64
+        type: integer
+        x-nullable: false
+    title: |-
+      CredentialAttestation holds the raw attestation data from a registration ceremony. These values are intentionally
+      stored in their original unparsed form rather than as parsed structures. This is critical because:
+    type: object
+  CredentialExtensions:
+    description: |-
+      CredentialExtensions holds the extension results recorded at registration which remain meaningful for the life
+      of the credential.
+    properties:
+      credBlobSet:
+        description: |-
+          CredBlobSet reports whether the blob submitted with [WithExtensionCredBlob] at registration was stored by
+          the authenticator, which is what determines whether requesting [WithExtensionGetCredBlob] at authentication
+          can return anything.
+        type: boolean
+        x-nullable: false
+      credProtect:
+        $ref: '#/definitions/CredentialProtectionPolicy'
+      hmacSecret:
+        description: |-
+          HMACSecret reports whether the authenticator provisioned a CTAP hmac-secret for this credential, which is
+          what determines whether requesting [WithExtensionHMACGetSecret] at authentication can succeed.
+
+          The value is taken from the authenticator extension outputs where present, because those are covered by the
+          attestation signature, and from the client's 'hmacCreateSecret' output otherwise. The two are the signed and
+          client-reported views of one capability rather than two separate properties, so they share a field.
+
+          This is a sibling of PRFEnabled rather than a duplicate of it: the pseudo-random function extension is the
+          WebAuthn level abstraction over the same authenticator capability, and a client may report either, both, or
+          neither depending on which extension the Relying Party requested.
+        type: boolean
+        x-nullable: false
+      largeBlobSupported:
+        description: LargeBlobSupported reports whether the credential supports large
+          blob storage.
+        type: boolean
+        x-nullable: false
+      minPinLength:
+        description: MinPinLength is the authenticator's minimum PIN length at the
+          time of registration.
+        format: uint64
+        type: integer
+        x-nullable: false
+      prfEnabled:
+        description: |-
+          PRFEnabled reports whether the pseudo-random function is available for this credential. It is populated when
+          the registration requested the extension, typically with [WithExtensionPRFSupport].
+        type: boolean
+        x-nullable: false
+      rk:
+        description: |-
+          RK reports whether the credential is client-side discoverable, from the credProps extension. A false value
+          is meaningful and distinct from the client not reporting the property.
+        type: boolean
+        x-nullable: false
+    type: object
+  CredentialFlags:
+    description: |-
+      These flags indicate the state of user presence, user verification, and backup eligibility/state at the time
+      the credential was used.
+    properties:
+      backupEligible:
+        description: Flag BE indicates the credential is able to be backed up and/or
+          sync'd between devices. This should NEVER change.
+        type: boolean
+        x-nullable: false
+      backupState:
+        description: |-
+          Flag BS indicates the credential has been backed up and/or sync'd. This value can change but it's recommended
+          that RP's keep track of this value.
+        type: boolean
+        x-nullable: false
+      userPresent:
+        description: Flag UP indicates the users presence.
+        type: boolean
+        x-nullable: false
+      userVerified:
+        description: |-
+          Flag UV indicates the user performed verification. On a credential record this is the uvInitialized value
+          of the specification, which is latched: once an assertion has verified the user it stays true, because
+          [CredentialFlags.Update] only advances it. Read the UV flag of a ceremony's own authenticator data to
+          determine whether that ceremony verified the user.
+        type: boolean
+        x-nullable: false
+    title: CredentialFlags contains the boolean flags derived from the authenticator
+      data during registration or login.
+    type: object
+  CredentialProtectionPolicy:
+    description: 'Registry: https://www.iana.org/assignments/webauthn/webauthn.xhtml'
+    title: CredentialProtectionPolicy represents the credential protection policy
+      values of the CTAP credProtect extension.
+    type: string
+  Cursor:
+    type: string
+  DeleteUserIdentifier:
+    properties:
+      identifier:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+    required:
+    - identifier
+    type: object
+  DeleteUserVerifiableAddress:
+    properties:
+      address:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+    required:
+    - address
+    type: object
+  Error:
+    description: HTTP error response
+    properties:
+      details:
+        type: object
+        x-nullable: false
+      error:
+        type: string
+        x-nullable: false
+      error_code:
+        type: string
+        x-nullable: false
+      status_code:
+        format: int64
+        type: integer
+        x-nullable: false
+    type: object
+  ExtendedUser:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/Address'
+        type: array
+        x-nullable: false
+      business_metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      identifiers_with_details:
+        items:
+          $ref: '#/definitions/IdentifierDetails'
+        type: array
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        example: active
+        type: string
+        x-nullable: false
+      status_updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+      user_type:
+        enum:
+        - jit
+        - standard
+        - scim
+        type: string
+        x-nullable: false
+      verified addresses:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - status
+    type: object
+  FieldMapping:
+    properties:
+      internal:
+        type: string
+        x-nullable: false
+      scim:
+        type: string
+        x-nullable: false
+    type: object
+  Group:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      description:
+        type: string
+        x-nullable: false
+      id:
+        format: groupID
+        type: string
+        x-nullable: false
+      name:
+        type: string
+        x-nullable: false
+      parent_id:
+        format: groupID
+        type: string
+        x-nullable: false
+      tenant_id:
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+    required:
+    - user_pool_id
+    type: object
+  Groups:
+    items:
+      $ref: '#/definitions/Group'
+    type: array
+  IdentifierDetails:
+    properties:
+      type:
+        enum:
+        - email
+        - mobile
+        - uid
+        - external
+        - federated
+        type: string
+        x-nullable: false
+      value:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+    type: object
+  InspectOTP:
+    properties:
+      code:
+        type: string
+        x-nullable: false
+    required:
+    - code
+    type: object
+  MFAPreferences:
+    properties:
+      preferred_2fa:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        type: string
+        x-nullable: false
+    type: object
+  NewUserCredential:
+    properties:
+      must_be_changed:
+        default: false
+        description: Indicates if user is required to alter their credentials during
+          their initial authentication. Currently, it is enforced only for password
+          credentials, but it may change any time.
+        type: boolean
+        x-nullable: false
+      must_be_reset:
+        default: false
+        description: |-
+          Indicates if user is required to reset their credentials before first authentication.
+          This flag takes precedence over MustBeChanged.
+        type: boolean
+        x-nullable: false
+      password:
+        example: secret
+        type: string
+        x-nullable: false
+      totp_secret:
+        example: BLEXAM6OPBBZTCFUOPVHDQ2HVG7PTMK3
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - password
+        - webauthn
+        - totp
+        - device
+        example: password
+        type: string
+        x-nullable: false
+      webauthn_credentials:
+        example: public_key
+        items:
+          $ref: '#/definitions/WebAuthnCredential'
+        type: array
+        x-nullable: false
+      webauthn_type:
+        enum:
+        - regular
+        - discoverable
+        type: string
+        x-nullable: false
+    required:
+    - type
+    type: object
+  NewUserIdentifier:
+    properties:
+      identifier:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        description: identifier metadata
+        type: object
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        - uid
+        - external
+        - federated
+        example: email
+        type: string
+        x-nullable: false
+    required:
+    - identifier
+    - type
+    type: object
+  NewUserPayload:
+    properties:
+      business_metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      credentials:
+        items:
+          $ref: '#/definitions/NewUserCredential'
+        type: array
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          $ref: '#/definitions/NewUserIdentifier'
+        type: array
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+      verifiable_addresses:
+        items:
+          $ref: '#/definitions/NewUserVerifiableAddress'
+        type: array
+        x-nullable: false
+    required:
+    - status
+    type: object
+  NewUserVerifiableAddress:
+    properties:
+      address:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+      allowed_for_2fa:
+        description: is allowed for 2FA
+        type: boolean
+        x-nullable: false
+      message_redaction:
+        $ref: '#/definitions/RedactionPolicy'
+      metadata:
+        additionalProperties:
+          type: object
+        description: general purpose metadata
+        type: object
+        x-nullable: false
+      preferred_contact_method:
+        enum:
+        - sms
+        - voice
+        example: sms
+        type: string
+        x-nullable: false
+      status:
+        enum:
+        - active
+        - inactive
+        example: active
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        example: mobile
+        type: string
+        x-nullable: false
+      verified:
+        type: boolean
+        x-nullable: false
+    required:
+    - address
+    - type
+    - status
+    - verified
+    type: object
+  OtpConfig:
+    properties:
+      length:
+        format: int64
+        type: integer
+        x-nullable: false
+      ttl:
+        format: duration
+        type: string
+        x-nullable: false
+    type: object
+  OtpSettings:
+    properties:
+      activation:
+        $ref: '#/definitions/OtpConfig'
+      authentication:
+        $ref: '#/definitions/OtpConfig'
+      challenge:
+        $ref: '#/definitions/OtpConfig'
+      enroll_webauthn:
+        $ref: '#/definitions/OtpConfig'
+      pair_device:
+        $ref: '#/definitions/OtpConfig'
+      require_user_confirmation_before_send:
+        description: |-
+          RequireUserConfirmationBeforeSend is a flow-level toggle (it does not
+          correspond to any of the per-purpose OtpConfig fields above) that affects
+          only the hosted web login UI. When true, the OTP is not auto-sent: the user
+          lands on the OTP send view and must click Continue to trigger delivery.
+          Applies to primary login (LoginFlow) and forced re-authentication / MFA
+          challenge (ForcedAuthnFlow). API-driven OTP triggers (the OTP send
+          endpoints) are unaffected.
+        type: boolean
+        x-nullable: false
+      reset_password:
+        $ref: '#/definitions/OtpConfig'
+      reset_totp:
+        $ref: '#/definitions/OtpConfig'
+      verify_address:
+        $ref: '#/definitions/OtpConfig'
+    type: object
+  PasswordPolicy:
+    properties:
+      capital_letters:
+        format: uint64
+        type: integer
+        x-nullable: false
+      digits:
+        format: uint64
+        type: integer
+        x-nullable: false
+      lowercase_letters:
+        format: uint64
+        type: integer
+        x-nullable: false
+      min_length:
+        format: uint64
+        type: integer
+        x-nullable: false
+      not_used_since:
+        format: uint64
+        type: integer
+        x-nullable: false
+      special_characters:
+        format: uint64
+        type: integer
+        x-nullable: false
+      strength:
+        enum:
+        - any
+        - weak
+        - fair
+        - strong
+        - very_strong
+        type: string
+        x-nullable: false
+    type: object
+  PasswordSettings:
+    properties:
+      expires_after:
+        format: duration
+        type: string
+        x-nullable: false
+      hashing_method:
+        enum:
+        - bcrypt
+        - pbkdf2
+        - argon2
+        - sha
+        type: string
+        x-nullable: false
+    type: object
+  Pool:
+    properties:
+      activation_settings:
+        $ref: '#/definitions/ActivationSettings'
+      allow_skip_2fa:
+        type: boolean
+        x-nullable: false
+      authentication_mechanisms:
+        $ref: '#/definitions/AuthenticationMechanisms'
+      badge_color:
+        type: string
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      deleted:
+        type: boolean
+        x-nullable: false
+      description:
+        type: string
+        x-nullable: false
+      id:
+        format: poolID
+        type: string
+        x-nullable: false
+      identifier_case_insensitive:
+        type: boolean
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      mfa_session_ttl:
+        format: duration
+        type: string
+        x-nullable: false
+      name:
+        type: string
+        x-nullable: false
+      otp_settings:
+        $ref: '#/definitions/OtpSettings'
+      password_policy:
+        $ref: '#/definitions/PasswordPolicy'
+      password_settings:
+        $ref: '#/definitions/PasswordSettings'
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      pool_limits:
+        $ref: '#/definitions/PoolLimits'
+      preferred_authentication_mechanism:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        example: password
+        type: string
+        x-nullable: false
+      public_registration_allowed:
+        type: boolean
+        x-nullable: false
+      reset_credentials_settings:
+        $ref: '#/definitions/ResetCredentialsSettings'
+      scim_settings:
+        $ref: '#/definitions/SCIMSettings'
+      second_factor_authentication_mechanisms:
+        $ref: '#/definitions/AuthenticationMechanisms'
+      second_factor_preferred_authentication_mechanism:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        example: password
+        type: string
+        x-nullable: false
+      second_factor_threshold:
+        description: The minimal risk engine loa score value to skip the 2FA
+        format: double
+        type: number
+        x-nullable: false
+      system:
+        type: boolean
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      totp_settings:
+        $ref: '#/definitions/TotpSettings'
+      webauthn_settings:
+        $ref: '#/definitions/WebAuthnSettings'
+      workspace_id:
+        format: serverID
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - name
+    type: object
+  PoolLimits:
+    description: All values are clamped to the range [1, 100] with sensible defaults.
+    properties:
+      max_addresses:
+        format: int64
+        type: integer
+        x-nullable: false
+      max_codes:
+        format: int64
+        type: integer
+        x-nullable: false
+      max_credentials:
+        format: int64
+        type: integer
+        x-nullable: false
+      max_identifiers:
+        format: int64
+        type: integer
+        x-nullable: false
+      webauthn_credentials_capacity:
+        format: int64
+        type: integer
+        x-nullable: false
+    title: PoolLimits defines limits for user sub-entries within a pool.
+    type: object
+  PoolPermissionsResponse:
+    properties:
+      b2b_manage_admin_metadata:
+        type: boolean
+        x-nullable: false
+      b2b_manage_business_metadata:
+        type: boolean
+        x-nullable: false
+      b2b_manage_users:
+        type: boolean
+        x-nullable: false
+      b2b_read_admin_metadata:
+        type: boolean
+        x-nullable: false
+      b2b_read_business_metadata:
+        type: boolean
+        x-nullable: false
+      b2b_read_users:
+        type: boolean
+        x-nullable: false
+      delete_identity_pool:
+        type: boolean
+        x-nullable: false
+      get_identity_pool:
+        type: boolean
+        x-nullable: false
+      manage_identity_pool_groups:
+        type: boolean
+        x-nullable: false
+      manage_identity_pool_users:
+        type: boolean
+        x-nullable: false
+      manage_user_addresses:
+        type: boolean
+        x-nullable: false
+      manage_user_identifiers:
+        type: boolean
+        x-nullable: false
+      manage_user_manager_role:
+        type: boolean
+        x-nullable: false
+      manage_user_otps:
+        type: boolean
+        x-nullable: false
+      manage_user_passwords:
+        type: boolean
+        x-nullable: false
+      read_identity_pool_groups:
+        type: boolean
+        x-nullable: false
+      read_identity_pool_users:
+        type: boolean
+        x-nullable: false
+      read_roles:
+        type: boolean
+        x-nullable: false
+      send_user_activation:
+        type: boolean
+        x-nullable: false
+      send_user_verification:
+        type: boolean
+        x-nullable: false
+      update_identity_pool:
+        type: boolean
+        x-nullable: false
+    type: object
+  PoolResponse:
+    properties:
+      activation_settings:
+        $ref: '#/definitions/ActivationSettings'
+      allow_skip_2fa:
+        type: boolean
+        x-nullable: false
+      authentication_mechanisms:
+        $ref: '#/definitions/AuthenticationMechanisms'
+      badge_color:
+        type: string
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      deleted:
+        type: boolean
+        x-nullable: false
+      description:
+        type: string
+        x-nullable: false
+      id:
+        format: poolID
+        type: string
+        x-nullable: false
+      identifier_case_insensitive:
+        type: boolean
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      mfa_session_ttl:
+        format: duration
+        type: string
+        x-nullable: false
+      name:
+        type: string
+        x-nullable: false
+      number_of_jit_users:
+        format: int64
+        type: integer
+        x-nullable: false
+      number_of_standard_users:
+        format: int64
+        type: integer
+        x-nullable: false
+      number_of_users:
+        format: int64
+        type: integer
+        x-nullable: false
+      otp_settings:
+        $ref: '#/definitions/OtpSettings'
+      password_policy:
+        $ref: '#/definitions/PasswordPolicy'
+      password_settings:
+        $ref: '#/definitions/PasswordSettings'
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      pool_limits:
+        $ref: '#/definitions/PoolLimits'
+      preferred_authentication_mechanism:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        example: password
+        type: string
+        x-nullable: false
+      public_registration_allowed:
+        type: boolean
+        x-nullable: false
+      reset_credentials_settings:
+        $ref: '#/definitions/ResetCredentialsSettings'
+      scim_settings:
+        $ref: '#/definitions/SCIMSettings'
+      second_factor_authentication_mechanisms:
+        $ref: '#/definitions/AuthenticationMechanisms'
+      second_factor_preferred_authentication_mechanism:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        example: password
+        type: string
+        x-nullable: false
+      second_factor_threshold:
+        description: The minimal risk engine loa score value to skip the 2FA
+        format: double
+        type: number
+        x-nullable: false
+      system:
+        type: boolean
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      totp_settings:
+        $ref: '#/definitions/TotpSettings'
+      webauthn_settings:
+        $ref: '#/definitions/WebAuthnSettings'
+      workspace_id:
+        format: serverID
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - name
+    type: object
+  Pools:
+    properties:
+      pools:
+        items:
+          $ref: '#/definitions/PoolResponse'
+        type: array
+        x-nullable: false
+    type: object
+  RedactionPolicy:
+    properties:
+      address:
+        description: Controls whether phone numbers are retained or obfuscated by
+          the provider.
+        example: retain
+        type: string
+        x-nullable: false
+      content:
+        description: Controls whether message body content is retained by the provider.
+        example: retain
+        type: string
+        x-nullable: false
+    title: RedactionPolicy controls message redaction at the SMS provider level.
+    type: object
+  RequestActivation:
+    properties:
+      address:
+        type: string
+        x-nullable: false
+      identifier:
+        type: string
+        x-nullable: false
+    type: object
+  RequestOTPChallenge:
+    properties:
+      address:
+        type: string
+        x-nullable: false
+    required:
+    - address
+    type: object
+  RequestOTPForAddress:
+    properties:
+      address:
+        type: string
+        x-nullable: false
+    required:
+    - address
+    type: object
+  RequestResetPassword:
+    properties:
+      address:
+        type: string
+        x-nullable: false
+    required:
+    - address
+    type: object
+  ResetCredentialsSettings:
+    properties:
+      do_not_allow_users_to_self_reset_credentials:
+        type: boolean
+        x-nullable: false
+      reset_password_older_than:
+        format: date-time
+        type: string
+        x-nullable: false
+      reset_totp_older_than:
+        format: date-time
+        type: string
+        x-nullable: false
+      reset_webauthn_older_than:
+        format: date-time
+        type: string
+        x-nullable: false
+    type: object
+  SCIMSettings:
+    properties:
+      inboundInputMapping:
+        items:
+          $ref: '#/definitions/FieldMapping'
+        type: array
+        x-nullable: false
+    type: object
+  Schema:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      description:
+        type: string
+        x-nullable: false
+      id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      name:
+        type: string
+        x-nullable: false
+      schema:
+        $ref: '#/definitions/SupportedJSONSchema'
+      system:
+        type: boolean
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - name
+    - schema
+    type: object
+  Schemas:
+    properties:
+      schemas:
+        items:
+          $ref: '#/definitions/Schema'
+        type: array
+        x-nullable: false
+    type: object
+  SetPasswordStateRequest:
+    properties:
+      state:
+        enum:
+        - valid
+        - must_be_reset
+        - must_be_changed
+        type: string
+        x-nullable: false
+    type: object
+  SupportedJSONSchema:
+    properties:
+      additionalProperties:
+        type: boolean
+        x-nullable: false
+      allOf:
+        items:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: array
+        x-nullable: false
+      anyOf:
+        items:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: array
+        x-nullable: false
+      const:
+        type: string
+        x-nullable: false
+      contains:
+        $ref: '#/definitions/SupportedJSONSchema'
+      dependentRequired:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+        x-nullable: false
+      dependentSchemas:
+        additionalProperties:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: object
+        x-nullable: false
+      description:
+        type: string
+        x-nullable: false
+      else:
+        $ref: '#/definitions/SupportedJSONSchema'
+      enum:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      exclusiveMaximum:
+        format: int64
+        type: integer
+        x-nullable: false
+      exclusiveMinimum:
+        format: int64
+        type: integer
+        x-nullable: false
+      hidden:
+        type: boolean
+        x-nullable: false
+      if:
+        $ref: '#/definitions/SupportedJSONSchema'
+      items:
+        $ref: '#/definitions/SupportedJSONSchema'
+      maxContains:
+        format: int64
+        type: integer
+        x-nullable: false
+      maxItems:
+        description: arrays
+        format: int64
+        type: integer
+        x-nullable: false
+      maxLength:
+        description: strings
+        format: int64
+        type: integer
+        x-nullable: false
+      maxProperties:
+        description: objects
+        format: int64
+        type: integer
+        x-nullable: false
+      maximum:
+        format: int64
+        type: integer
+        x-nullable: false
+      minContains:
+        format: int64
+        type: integer
+        x-nullable: false
+      minItems:
+        format: int64
+        type: integer
+        x-nullable: false
+      minLength:
+        format: int64
+        type: integer
+        x-nullable: false
+      minProperties:
+        format: int64
+        type: integer
+        x-nullable: false
+      minimum:
+        format: int64
+        type: integer
+        x-nullable: false
+      multipleOf:
+        description: numeric
+        format: int64
+        type: integer
+        x-nullable: false
+      not:
+        $ref: '#/definitions/SupportedJSONSchema'
+      oneOf:
+        items:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: array
+        x-nullable: false
+      pattern:
+        type: string
+        x-nullable: false
+      patternProperties:
+        additionalProperties:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: object
+        x-nullable: false
+      properties:
+        additionalProperties:
+          $ref: '#/definitions/SupportedJSONSchema'
+        type: object
+        x-nullable: false
+      propertyNames:
+        $ref: '#/definitions/SupportedJSONSchema'
+      required:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      then:
+        $ref: '#/definitions/SupportedJSONSchema'
+      title:
+        type: string
+        x-nullable: false
+      type:
+        description: any
+        type: string
+        x-nullable: false
+      uniqueItems:
+        type: boolean
+        x-nullable: false
+    type: object
+  TotpSettings:
+    properties:
+      issuer:
+        type: string
+        x-nullable: false
+    type: object
+  UpdateUser:
+    properties:
+      business_metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+    type: object
+  UpdateUserVerifiableAddress:
+    properties:
+      address:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+      allowed_for_2fa:
+        description: is allowed for 2FA
+        type: boolean
+        x-nullable: false
+      message_redaction:
+        $ref: '#/definitions/RedactionPolicy'
+      metadata:
+        additionalProperties:
+          type: object
+        description: general purpose metadata
+        type: object
+        x-nullable: false
+      preferred_contact_method:
+        enum:
+        - sms
+        - voice
+        example: sms
+        type: string
+        x-nullable: false
+      status:
+        enum:
+        - active
+        - inactive
+        example: active
+        type: string
+        x-nullable: false
+      verified:
+        example: false
+        type: boolean
+        x-nullable: false
+    required:
+    - address
+    - status
+    - verified
+    type: object
+  UserCredential:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      discoverable_id:
+        type: string
+        x-nullable: false
+      expires_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      id:
+        format: userCredentialID
+        type: string
+        x-nullable: false
+      payload:
+        example:
+          hashed_password: '###'
+        type: object
+        x-nullable: false
+      state:
+        enum:
+        - valid
+        - must_be_reset
+        - must_be_changed
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - password
+        - webauthn
+        - totp
+        - device
+        example: password
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_id:
+        format: userID
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - user_id
+    - type
+    - payload
+    - created_at
+    - updated_at
+    type: object
+  UserID:
+    properties:
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+    required:
+    - id
+    type: object
+  UserIdentifier:
+    properties:
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      id:
+        format: userIdentifierID
+        type: string
+        x-nullable: false
+      identifier:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+      identifier_lc:
+        format: userIdentifierValue
+        type: string
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        description: general purpose metadata
+        type: object
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        - uid
+        - external
+        - federated
+        example: email
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_id:
+        format: userID
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - identifier
+    - identifier_lc
+    - user_id
+    - type
+    - created_at
+    - updated_at
+    type: object
+  UserMetadata:
+    properties:
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+    type: object
+  UserMetadataWithSchema:
+    properties:
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      schema_id:
+        format: SchemaID
+        type: string
+        x-nullable: false
+    type: object
+  UserPools:
+    properties:
+      cursor:
+        $ref: '#/definitions/Cursor'
+      pools:
+        items:
+          $ref: '#/definitions/PoolResponse'
+        type: array
+        x-nullable: false
+    type: object
+  UserPreferences:
+    properties:
+      locales:
+        description: Locale is the list of user's preferred languages/locales for
+          UI and communications
+        example: en-US, es-ES
+        items:
+          format: locale
+          type: string
+        type: array
+        x-nullable: false
+      mfa:
+        $ref: '#/definitions/MFAPreferences'
+    type: object
+  UserVerifiableAddress:
+    properties:
+      address:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+      address_lc:
+        format: verifiableAddress
+        type: string
+        x-nullable: false
+      allowed_for_2fa:
+        description: is allowed for 2FA
+        type: boolean
+        x-nullable: false
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      id:
+        format: verifiableAddressID
+        type: string
+        x-nullable: false
+      message_redaction:
+        $ref: '#/definitions/RedactionPolicy'
+      metadata:
+        additionalProperties:
+          type: object
+        description: general purpose metadata
+        type: object
+        x-nullable: false
+      preferred_contact_method:
+        enum:
+        - sms
+        - voice
+        example: sms
+        type: string
+        x-nullable: false
+      status:
+        enum:
+        - active
+        - inactive
+        example: active
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      type:
+        enum:
+        - email
+        - mobile
+        example: mobile
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_id:
+        format: userID
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+      verified:
+        type: boolean
+        x-nullable: false
+      verified_at:
+        format: date-time
+        type: string
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - user_id
+    - address
+    - address_lc
+    - type
+    - status
+    - verified
+    - created_at
+    - updated_at
+    type: object
+  UserWithData:
+    properties:
+      business_metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      business_metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      created_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      credentials:
+        items:
+          $ref: '#/definitions/UserCredential'
+        type: array
+        x-nullable: false
+      id:
+        format: userID
+        type: string
+        x-nullable: false
+      identifiers:
+        items:
+          $ref: '#/definitions/UserIdentifier'
+        type: array
+        x-nullable: false
+      metadata:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      metadata_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      payload:
+        additionalProperties:
+          type: object
+        type: object
+        x-nullable: false
+      payload_schema_id:
+        format: schemaID
+        type: string
+        x-nullable: false
+      preferences:
+        $ref: '#/definitions/UserPreferences'
+      status:
+        enum:
+        - active
+        - inactive
+        - deleted
+        - new
+        type: string
+        x-nullable: false
+      status_updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      tenant_id:
+        example: default
+        format: tenantID
+        type: string
+        x-nullable: false
+      updated_at:
+        format: date-time
+        type: string
+        x-nullable: false
+      user_pool_id:
+        example: default
+        format: poolID
+        type: string
+        x-nullable: false
+      user_type:
+        enum:
+        - jit
+        - standard
+        - scim
+        type: string
+        x-nullable: false
+      verifiable_addresses:
+        items:
+          $ref: '#/definitions/UserVerifiableAddress'
+        type: array
+        x-nullable: false
+    required:
+    - tenant_id
+    - user_pool_id
+    - status
+    type: object
+  Users:
+    description: Identity Users
+    properties:
+      users:
+        items:
+          $ref: '#/definitions/ExtendedUser'
+        type: array
+        x-nullable: false
+    type: object
+  WebAuthnCredential:
+    $ref: '#/definitions/Credential'
+  WebAuthnSettings:
+    properties:
+      require_user_interaction_before_prompt:
+        description: |-
+          RequireUserInteractionBeforePrompt, when true, stops the hosted web login,
+          activation, and self-registration UIs from auto-initiating the browser passkey
+          prompt on page load; the user must click Continue. Default false preserves
+          auto-prompt behavior. API-driven WebAuthn flows are unaffected.
+        type: boolean
+        x-nullable: false
+      rp_id:
+        type: string
+        x-nullable: false
+      rp_origins:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+    type: object
+host: localhost:8443
+info:
+  description: |-
+    SecureAuth Identity Admin API
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+    To use idempotent requests:
+
+    1. Generate a unique idempotency key (32-255 characters long).
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+    3. Retry failed requests with the same key within 1 minute.
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.
+  title: SecureAuth API
+  version: latest
+paths:
+  /admin/b2b/pools/{ipID}/users:
+    get:
+      description: |-
+        Retrieve the list of business users from the specified identity pool.
+
+        Results are sorted by user ID. No other sorting is supported.
+      operationId: listUsersB2B
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - description: |-
+          optional list users after given id
+          AfterUserID
+        in: query
+        name: after_user_id
+        type: string
+      - description: |-
+          optional list users before given id
+          BeforeUserID
+        in: query
+        name: before_user_id
+        type: string
+      - description: |-
+          optional sort clients by given field
+          Sort
+        in: query
+        name: sort
+        type: string
+      - description: |-
+          optional order clients by given direction
+          Order
+        in: query
+        name: order
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: |-
+          optional query filter
+          query is in json format like {"user_key":"john"} - parameter must be url-encoded
+          supported parameters
+          `user_key` - limits user set to users that has identifier starting or ending with provided user_key or has verified address starting or ending with provided user_key or their ID is equal to provided user_key
+          `payload` - limits user set to users with payload matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+          `metadata` - limits user set to users with metadata matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+          if multiple parameters provided it does logical AND between the results so users must match ALL parameters
+        in: query
+        name: query
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/B2BUsersResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List B2B Users
+      tags:
+      - B2BUsers
+    post:
+      description: |-
+        Create a business user with extended data.
+
+        Any status and set of identifiers, addresses, and credentials are allowed.
+        If credential of type password is provided it can be marked as must_be_changed which forces user to change its password upon first login.
+
+        When no `payload_schema_id` are provided, the default values are taken from the
+        specified Identity Pool.
+
+        Payload and metadata must match the specified schema.
+
+        The response contains an extended view on user entry.
+
+        To retrieve a user entry without user creation, call the **Get B2B User Details** endpoint.
+      operationId: createB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: body
+        name: NewUser
+        schema:
+          $ref: '#/definitions/BaseNewUserPayload'
+      responses:
+        "201":
+          $ref: '#/responses/AdminB2BUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create B2B User Account
+      tags:
+      - B2BUsers
+  /admin/b2b/pools/{ipID}/users/{userID}:
+    delete:
+      description: Remove a record about a business user account in the specified
+        identity pool.
+      operationId: deleteB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' User has been deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete B2B User Account
+      tags:
+      - B2BUsers
+    get:
+      description: |-
+        Retrieve extended information about a business user record.
+
+        The response contains business user's basic details, payload as well as all their identifiers,
+        addresses, and blurred credentials.
+      operationId: getB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/AdminB2BUserResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get B2B User Details
+      tags:
+      - B2BUsers
+    patch:
+      description: |-
+        Patch operates on the same fields as the **Update B2B User Record** endpoint.
+
+        example for RFC6902:
+        [{"op": "replace", "path": "/payload/first_name", "value": "John"}]
+
+        example for RFC7396:
+        {"payload": {"first_name": "John"}}
+      operationId: patchB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - default: "7396"
+        description: RFC version
+        enum:
+        - "6902"
+        - "7396"
+        in: query
+        name: rfc_version
+        type: string
+      - description: Patch spec in format matching RFC Version
+        in: body
+        name: patch
+        schema:
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/AdminB2BUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Patches existing B2B User (supports both RFC6902 and RFC7396 JSON Patch)
+      tags:
+      - B2BUsers
+    put:
+      description: |-
+        Update the basic set of business user data: payload, schemas, and status. Provide the required values for the fields
+        you need to update. Fields with no values are skipped for the update (not removed nor cleared).
+
+        The fields to be updated are overridden.
+
+        Any `payload` and `payload_schema_id` values passed must be mutually relevant.
+
+        To retrieve a business user entry without updating their record, call the **Get B2B User Details** endpoint.
+      operationId: updateB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: UpdateUser
+        schema:
+          $ref: '#/definitions/BaseUpdateUser'
+      responses:
+        "200":
+          $ref: '#/responses/AdminB2BUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update B2B User Record
+      tags:
+      - B2BUsers
+  /admin/pools:
+    get:
+      description: |-
+        Retrieve the list of identity pools available under the current administrator.
+
+        You can filter the response with the query parameters to narrow the pool list down.
+      operationId: listPools
+      parameters:
+      - description: |-
+          A search substring. Use the identity pool identifier or name as its value.
+
+          SearchPhrase
+        in: query
+        name: search_phrase
+        type: string
+      - description: |-
+          An identity pool identifier.
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+          `limit` set for results in the response.
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+          AfterPoolID
+        in: query
+        name: after_pool_id
+        type: string
+      - description: |-
+          An identity pool identifier.
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+          `limit` set for the results in the response.
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+          identity pool isn't included. Also, the response depends on the `sort` and `order` parameters, if any are
+          passed.
+
+          BeforePoolID
+        in: query
+        name: before_pool_id
+        type: string
+      - description: |-
+          Sort results returned in the response by `name` or `id`.
+
+          Sort
+        in: query
+        name: sort
+        type: string
+      - description: |-
+          Set the order of results returned in the response. Input: `acs`, `desc`.
+
+          Order
+        in: query
+        name: order
+        type: string
+      - default: 20
+        description: |-
+          Limit the number of results returned in the response.
+
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      responses:
+        "200":
+          description: Pools
+          schema:
+            $ref: '#/definitions/Pools'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Identity Pools
+      tags:
+      - Pools
+    post:
+      description: |-
+        Create an identity pool.
+
+        When no `metadata_schema_id` and/or `payload_schema_id` are provided in the request body, the identity pool
+        is created with the following defaults accordingly:
+
+        `default_metadata=metadata_v0`
+
+        `default_payload=user_v0`
+      operationId: createPool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: body
+        name: Pool
+        schema:
+          $ref: '#/definitions/Pool'
+      responses:
+        "201":
+          $ref: '#/responses/PoolResponseParams'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Identity Pool
+      tags:
+      - Pools
+  /admin/pools/{ipID}:
+    delete:
+      description: |-
+        Delete an identity pool. For this, provide the required identity pool identifier in the path.
+
+        To retrieve the identity pool ID, log in to the Admin workspace. Then go to Identity Providers >
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.
+      operationId: deletePool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - description: With idp
+        in: query
+        name: with_idp
+        type: boolean
+      responses:
+        "204":
+          description: ' Identity Pool Deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Identity Pool
+      tags:
+      - Pools
+    get:
+      description: |-
+        Retrieve detailed information about an identity pool. Pass the identifier of the required identity pool with the
+        `ipID` path parameter.
+
+        To retrieve the pool identifier, log in to the Admin workspace. Then go to Identity Providers >
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.
+      operationId: getPool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/PoolResponseParams'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Identity Pool
+      tags:
+      - Pools
+    put:
+      description: |-
+        Update the identity pool details. Pass the identifier of the required identity pool with the `ipID` path parameter.
+
+        To retrieve the identity pool ID, log in to the Admin workspace. Then go to Identity Providers >
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.
+      operationId: updatePool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: body
+        name: Pool
+        schema:
+          $ref: '#/definitions/Pool'
+      responses:
+        "200":
+          $ref: '#/responses/PoolResponseParams'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update Identity Pool
+      tags:
+      - Pools
+  /admin/pools/{ipID}/groups:
+    get:
+      description: |-
+        Retrieve the top level list of groups from the specified identity pool.
+
+        If query param parent_id is set, the response will contain top level list of groups that are children of the specified group.
+
+        If query param with_nested_groups is set to true, the response will contain a list of groups with all nested groups (also nested groups of nested groups etc.)
+
+        Results are sorted by group `name`. No other sorting is supported.
+      operationId: listGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: query
+        name: parent_id
+        type: string
+      - description: |-
+          optional list groups after given id
+          AfterGroupID
+        in: query
+        name: after_group_id
+        type: string
+      - description: |-
+          optional list groups before given id
+          BeforeGroupID
+        in: query
+        name: before_group_id
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: |-
+          optional query filter
+          query is in json format - parameter must be url-encoded
+          supported parameters:
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)
+        in: query
+        name: query
+        type: string
+      - in: query
+        name: with_nested_groups
+        type: boolean
+      responses:
+        "200":
+          $ref: '#/responses/GroupsResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List groups
+      tags:
+      - Groups
+    post:
+      operationId: createGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: body
+        name: NewGroup
+        schema:
+          $ref: '#/definitions/BaseGroup'
+      responses:
+        "201":
+          $ref: '#/responses/GroupResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create group
+      tags:
+      - Groups
+  /admin/pools/{ipID}/groups/{groupID}:
+    delete:
+      description: Delete a group.
+      operationId: deleteGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' Group has been deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete group
+      tags:
+      - Groups
+    get:
+      description: Retrieve a group details.
+      operationId: getGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/GroupResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get group details
+      tags:
+      - Groups
+    put:
+      operationId: updateGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      - in: body
+        name: UpdateGroup
+        schema:
+          $ref: '#/definitions/BaseGroup'
+      responses:
+        "200":
+          $ref: '#/responses/GroupResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update group
+      tags:
+      - Groups
+  /admin/pools/{ipID}/groups/{groupID}/users:
+    get:
+      description: |-
+        Retrieve the list of users under specific group.
+
+        If query param with_nested_groups is set to true, the response will contain a list of users in that group and all nested groups
+
+        Results are sorted by user ID. No other sorting is supported.
+
+        This endpoint follows eventual consistency and may temporarily omit newly created users under high load.
+      operationId: listUsersInGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      - description: |-
+          optional list users after given id
+          AfterUserID
+        in: query
+        name: after_user_id
+        type: string
+      - description: |-
+          optional list users before given id
+          BeforeUserID
+        in: query
+        name: before_user_id
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        name: with_nested_groups
+        type: boolean
+      responses:
+        "200":
+          $ref: '#/responses/UsersResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List users in group
+      tags:
+      - Groups
+  /admin/pools/{ipID}/groups/{groupID}/users/{userID}:
+    delete:
+      operationId: removeUserFromGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' OK'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Removes user from group
+      tags:
+      - Groups
+    put:
+      operationId: addUserToGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' OK'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Add user to a specific group
+      tags:
+      - Groups
+  /admin/pools/{ipID}/permissions:
+    get:
+      description: |-
+        Check permissions granted to the current administrator relating to the identity pool specified.
+
+        Pass the required identity pool identifier as the value of the `ipID` path parameter.
+
+        For authorization, include the `if-match` header with the ETag value.
+      operationId: checkPoolPermissions
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/PoolPermissionsResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check Identity Pool Permissions
+      tags:
+      - permissions
+  /admin/pools/{ipID}/users:
+    get:
+      description: |-
+        Retrieve the list of users from the specified identity pool.
+
+        Results are sorted by user ID. No other sorting is supported.
+      operationId: listUsers
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - description: |-
+          optional list users after given id
+          AfterUserID
+        in: query
+        name: after_user_id
+        type: string
+      - description: |-
+          optional list users before given id
+          BeforeUserID
+        in: query
+        name: before_user_id
+        type: string
+      - description: |-
+          optional sort clients by given field
+          Sort
+        in: query
+        name: sort
+        type: string
+      - description: |-
+          optional order clients by given direction
+          Order
+        in: query
+        name: order
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: |-
+          optional query filter
+          query is in json format like {"user_key":"john"} - parameter must be url-encoded
+          supported parameters
+          `user_key` - limits user set to users that has identifier starting or ending with provided user_key or has verified address starting or ending with provided user_key or their ID is equal to provided user_key
+          `payload` - limits user set to users with payload matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+          `metadata` - limits user set to users with metadata matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+          if multiple parameters provided it does logical AND between the results so users must match ALL parameters
+        in: query
+        name: query
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/UsersResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Users
+      tags:
+      - Users
+    post:
+      description: |-
+        Create a user with extended data.
+
+        Any status and set of identifiers, addresses, and credentials are allowed.
+        If credential of type password is provided it can be marked as must_be_changed which forces user to change its password upon first login.
+
+        When no `payload_schema_id` or `metadata_schema_id` are provided, the default values are taken from the
+        specified Identity Pool.
+
+        Payload and metadata must match the specified schema.
+
+        The response contains an extended view on user entry.
+
+        To retrieve a user entry without user creation, call the **Get User Details** endpoint.
+      operationId: createUser
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: body
+        name: NewUser
+        schema:
+          $ref: '#/definitions/NewUserPayload'
+      responses:
+        "201":
+          $ref: '#/responses/AdminUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create User Account
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}:
+    delete:
+      description: Remove a record about a user account in the specified identity
+        pool.
+      operationId: deleteUser
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' User has been deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete User Account
+      tags:
+      - Users
+    get:
+      description: |-
+        Retrieve an extended information about a user record.
+
+        The response contains user's basic details, payload, and metadata, as well as all their identifiers,
+        addresses, and blurred credentials.
+      operationId: getUser
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/AdminUserResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get User Details
+      tags:
+      - Users
+    patch:
+      description: |-
+        Patch operates on the same fields as the **Update User Record** endpoint.
+
+        example for RFC6902:
+        [{"op": "replace", "path": "/payload/first_name", "value": "John"}]
+
+        example for RFC7396:
+        {"payload": {"first_name": "John"}}
+      operationId: patchUser
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - default: "7396"
+        description: RFC version
+        enum:
+        - "6902"
+        - "7396"
+        in: query
+        name: rfc_version
+        type: string
+      - description: Patch spec in format matching RFC Version
+        in: body
+        name: patch
+        schema:
+          type: object
+      responses:
+        "200":
+          $ref: '#/responses/AdminUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Patches existing User (supports both RFC6902 and RFC7396 JSON Patch)
+      tags:
+      - Users
+    put:
+      description: |-
+        Update the basic set of user data: payload, metadata, schemas, and status. Provide the required values for the fields
+        you need to update. Fields (top level elements like `status`, `payload` etc.) with no values are skipped for the update (not removed nor cleared).
+
+        The fields to be updated are overridden.
+
+        Any `payload` / `metadata` and `payload_schema_id` / `metadata_schema_id` values passed must be mutually relevant.
+
+        To retrieve a user entry without updating their record, call the **Get User Details** endpoint.
+
+        Please notice that `deleted` status may be used as soft-delete but does not have any special meaning in the
+        system besides it does not allow such user to authenticate.
+      operationId: updateUser
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: UpdateUser
+        schema:
+          $ref: '#/definitions/UpdateUser'
+      responses:
+        "200":
+          $ref: '#/responses/AdminUserResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update User Record
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/activation/send:
+    post:
+      description: |-
+        Send an activation message to the user's provided address.
+
+        When no `address` is provided in the request body, the message is sent to the address saved for this user (if there
+        is only one address).
+
+        The request fails upon the following:
+
+        • `address` is not provided and user has no addresses or more than one.
+
+        • `address` is someone else's verified address or identifier.
+
+        • The user's `status` is not `new`.
+
+        This request invalidates any previously generated OTPs for user account activation.
+
+        When `code_type_in_message=link` or no value is provided for it, an activation link is generated.
+
+        Activation message validity period is configured in the identity pool settings.
+
+        ❕ REFACTORED: `identifier` is renamed to `address` in the request body. For backward compatibility, the both
+        fields are available. If `identifier` is not empty, it overrides the `address` value.
+      operationId: sendActivationMessage
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: SendActivationMessage
+        schema:
+          $ref: '#/definitions/RequestActivation'
+      - default: link
+        description: Code type in message
+        enum:
+        - link
+        - code
+        in: query
+        name: code_type_in_message
+        type: string
+      - description: |-
+          optional server's identifier (used for themes etc.)
+          ServerID
+        in: query
+        name: server_id
+        type: string
+      - description: |-
+          optional URL where user will be asked to sign in after successful activation
+          PostActivationURL
+        in: query
+        name: post_activation_url
+        type: string
+      - default: registration
+        description: |-
+          optional mode
+          Mode
+        enum:
+        - registration
+        - invitation
+        in: query
+        name: mode
+        type: string
+      responses:
+        "204":
+          description: ' Activation message sent'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Send Activation Message
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/address/verification/request:
+    post:
+      description: |-
+        Generate and send a verification link to the provided address.
+        The `address` value must be a valid email or mobile number marked as the user's `unverified address` and
+        must not be a verified address of any other user.
+
+        Error `404` is returned when either `userID` or `address` are incorrect.
+
+        The requested link validity period is configured in the identity pool settings.
+      operationId: requestAddressVerification
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: RequestAddressVerification
+        schema:
+          $ref: '#/definitions/RequestOTPForAddress'
+      - description: |-
+          optional server's identifier (used for themes etc.)
+          ServerID
+        in: query
+        name: server_id
+        type: string
+      responses:
+        "204":
+          description: ' Request accepted'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "412":
+          $ref: '#/responses/preconditionFailedHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Request Address Verification
+      tags:
+      - OTP
+  /admin/pools/{ipID}/users/{userID}/addresses/add:
+    post:
+      description: Add a verifiable address to the user account in the specified identity
+        pool.
+      operationId: addUserVerifiableAddress
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: NewAddress
+        schema:
+          $ref: '#/definitions/AddUserVerifiableAddress'
+      responses:
+        "200":
+          $ref: '#/responses/AdminAddressResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Add Verifiable Address
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/addresses/remove:
+    post:
+      description: Remove a verifiable address from a user account so it is no longer
+        associated with the specified user.
+      operationId: deleteUserVerifiableAddress
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: Address
+        schema:
+          $ref: '#/definitions/DeleteUserVerifiableAddress'
+      responses:
+        "204":
+          description: ' Address Deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Verifiable Address
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/addresses/update:
+    post:
+      description: Updates a verifiable address for the user account.
+      operationId: updateUserVerifiableAddress
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: UpdateAddress
+        schema:
+          $ref: '#/definitions/UpdateUserVerifiableAddress'
+      responses:
+        "200":
+          $ref: '#/responses/AdminAddressResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Update Verifiable Address
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/groups:
+    get:
+      description: |-
+        Retrieve the list of groups that user belongs to.
+        If query param with_parent_groups is set to true, the response will contain a list of groups and all parent groups
+
+        Results are sorted by group `name`. No other sorting is supported.
+      operationId: listUserGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - description: |-
+          optional list groups after given id
+          AfterUserID
+        in: query
+        name: after_group_id
+        type: string
+      - description: |-
+          optional list groups before given id
+          BeforeUserID
+        in: query
+        name: before_group_id
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: |-
+          optional query filter
+          query is in json format like {"name":"admin"} - parameter must be url-encoded
+          supported parameters:
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)
+        in: query
+        name: query
+        type: string
+      - in: query
+        name: with_parent_groups
+        type: boolean
+      responses:
+        "200":
+          $ref: '#/responses/GroupsResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List user groups
+      tags:
+      - Groups
+  /admin/pools/{ipID}/users/{userID}/groups/{groupID}:
+    get:
+      description: |-
+        Checks if user is in the group.
+        Fails with 404 if user is not in the group.
+        If query param with_nested_groups is set to true, it will check if user is in requested group or any nested group.
+      operationId: isUserInGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: groupID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: query
+        name: with_nested_groups
+        type: boolean
+      responses:
+        "204":
+          description: ' User is in group'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check if user is in group
+      tags:
+      - Groups
+  /admin/pools/{ipID}/users/{userID}/identifiers/add:
+    post:
+      description: Add a new identifier to a user's profile in the specified identity
+        pool.
+      operationId: addUserIdentifier
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: NewIdentifier
+        schema:
+          $ref: '#/definitions/AddUserIdentifier'
+      responses:
+        "200":
+          $ref: '#/responses/AdminIdentifierResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Add Identifier
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/identifiers/remove:
+    post:
+      description: Remove an identifier from the specified user account.
+      operationId: deleteUserIdentifier
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: Identifier
+        schema:
+          $ref: '#/definitions/DeleteUserIdentifier'
+      responses:
+        "204":
+          description: ' Identifier has been deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Remove Identifier
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/metadata/{metadataType}:
+    get:
+      description: Retrieve user metadata by metadata type.
+      operationId: getUserMetadata
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - enum:
+        - admin
+        - business
+        in: path
+        name: metadataType
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/UserMetadataResponse'
+        "400":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get User Metadata
+      tags:
+      - Users
+    put:
+      description: Set user metadata for given metadata type.
+      operationId: setUserMetadata
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - enum:
+        - admin
+        - business
+        in: path
+        name: metadataType
+        required: true
+        type: string
+      - in: body
+        name: UserMetadata
+        schema:
+          $ref: '#/definitions/UserMetadata'
+      responses:
+        "200":
+          $ref: '#/responses/UserMetadataResponse'
+        "400":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set User Metadata
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/otp/request:
+    post:
+      description: |-
+        Generate and send an OTP to the provided address.
+
+        The `address` value must be a valid email or mobile number marked as the user's `unverified address` and
+        must not be a verified address of any other user.
+
+        The requested OTP validity period is configured in the identity pool settings.
+
+        Generating new challenge invalidates a previous challenge.
+      operationId: requestOTPChallenge
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: RequestOTPChallenge
+        schema:
+          $ref: '#/definitions/RequestOTPChallenge'
+      - description: |-
+          optional server's identifier (used for themes etc.)
+          ServerID
+        in: query
+        name: server_id
+        type: string
+      responses:
+        "204":
+          description: ' Request accepted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "412":
+          $ref: '#/responses/preconditionFailedHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Request OTP Challenge
+      tags:
+      - OTP
+  /admin/pools/{ipID}/users/{userID}/otp/verify:
+    post:
+      description: |-
+        Verify the OTP generates as part of a challenge-response mechanism.
+
+        A valid OTP is removed, and the endpoint returns the **Request accepted** response.
+
+        For password change or activation, call **Request Reset Password** and **Send Activation Message**. Find these
+        endpoints documented under the **Users** section of this specification.
+      operationId: verifyOTP
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: InspectOTP
+        schema:
+          $ref: '#/definitions/InspectOTP'
+      responses:
+        "200":
+          $ref: '#/responses/UserIDResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "412":
+          $ref: '#/responses/preconditionFailedHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Verify OTP Challenge
+      tags:
+      - OTP
+  /admin/pools/{ipID}/users/{userID}/password/reset/request:
+    post:
+      description: |-
+        Send an OTP to reset a password.
+
+        The first step of the reset password flow. The `address` body parameter can be either `verified` or `unverified`.
+
+        A new OTP invalidates any previous OTPs sent for password reset.
+
+        Reset password OTP validity period is configured in the identity pool settings.
+      operationId: requestResetPassword
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: RequestResetPassword
+        schema:
+          $ref: '#/definitions/RequestResetPassword'
+      - description: |-
+          optional server's identifier (used for themes etc.)
+          ServerID
+        in: query
+        name: server_id
+        type: string
+      responses:
+        "204":
+          description: ' Request Accepted'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Request Password Reset
+      tags:
+      - Users
+  /admin/pools/{ipID}/users/{userID}/password/state:
+    put:
+      description: |-
+        There is a set of well-defined states password can be in:
+        `valid` - password is valid and can be used for authentication etc.
+        `must_be_reset` - password is not valid for authentication and must be reset
+        `must_be_changed` - password is valid for one authentication and then must be changed or will be moved to `must_be_reset` state
+      operationId: setPasswordState
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - in: path
+        name: userID
+        required: true
+        type: string
+      - in: body
+        name: State
+        schema:
+          $ref: '#/definitions/SetPasswordStateRequest'
+      responses:
+        "204":
+          description: ' State set'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Set Password State
+      tags:
+      - Users
+  /admin/schemas:
+    get:
+      description: List schemas available for the current administrator.
+      operationId: listSchemas
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      responses:
+        "200":
+          description: Schemas
+          schema:
+            $ref: '#/definitions/Schemas'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Schemas
+      tags:
+      - Schemas
+    post:
+      description: Create a schema. Set the `system` flag to prevent the schema from
+        deletion or modifications.
+      operationId: createSchema
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: body
+        name: Schema
+        schema:
+          $ref: '#/definitions/Schema'
+      responses:
+        "201":
+          description: Schema
+          schema:
+            $ref: '#/definitions/Schema'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Schema
+      tags:
+      - Schemas
+  /admin/schemas/{schID}:
+    delete:
+      description: Delete a schema. Schemas marked with the `system` flag aren't available
+        for deletion.
+      operationId: deleteSchema
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: schID
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' Schema has been deleted'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Schema
+      tags:
+      - Schemas
+    get:
+      description: Retrieve information about a specified identity schema.
+      operationId: getSchema
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: schID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/SchemaResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Schema
+      tags:
+      - Schemas
+    put:
+      description: Update a schema. Schemas marked with the `system` flag aren't available
+        for update.
+      operationId: updateSchema
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: path
+        name: schID
+        required: true
+        type: string
+      - in: body
+        name: Schema
+        schema:
+          $ref: '#/definitions/Schema'
+      responses:
+        "200":
+          description: Schema
+          schema:
+            $ref: '#/definitions/Schema'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update Schema
+      tags:
+      - Schemas
+  /admin/workspace/{wid}/pools:
+    get:
+      description: |-
+        Retrieve the list of identity pools available for a workspace. Pass the required workspace identifier with the
+        `wid` path parameter.
+
+        You can filter the response with the query parameters to narrow the pool list down.
+      operationId: listWorkspacePools
+      parameters:
+      - description: |-
+          A search substring. Use the identity pool identifier or name as its value.
+
+          SearchPhrase
+        in: query
+        name: search_phrase
+        type: string
+      - description: |-
+          An identity pool identifier.
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+          `limit` set for results in the response.
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+          AfterPoolID
+        in: query
+        name: after_pool_id
+        type: string
+      - description: |-
+          An identity pool identifier.
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+          `limit` set for the results in the response.
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+          identity pool isn't included. Also, the response depends on the `sort` and `order` parameters, if any are
+          passed.
+
+          BeforePoolID
+        in: query
+        name: before_pool_id
+        type: string
+      - description: |-
+          Sort results returned in the response by `name` or `id`.
+
+          Sort
+        in: query
+        name: sort
+        type: string
+      - description: |-
+          Set the order of results returned in the response. Input: `acs`, `desc`.
+
+          Order
+        in: query
+        name: order
+        type: string
+      - default: 20
+        description: |-
+          Limit the number of results returned in the response.
+
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Pools
+          schema:
+            $ref: '#/definitions/Pools'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Identity Pools Per Workspace
+      tags:
+      - Pools
+    post:
+      description: |-
+        Create an identity pool under the required workspace.
+
+        When no `metadata_schema_id` and/or `payload_schema_id` are provided in the request body, the identity pool
+        is created with the following defaults accordingly:
+
+        `default_metadata=metadata_v0`
+
+        `default_payload=user_v0`
+      operationId: createWorkspacePool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      - in: body
+        name: Pool
+        schema:
+          $ref: '#/definitions/Pool'
+      - description: With idp
+        in: query
+        name: with_idp
+        type: boolean
+      responses:
+        "201":
+          $ref: '#/responses/PoolResponseParams'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "409":
+          $ref: '#/responses/conflictHTTPError'
+        "422":
+          $ref: '#/responses/unprocessableEntityHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Identity Pool For Workspace
+      tags:
+      - Pools
+  /admin/workspace/{wid}/pools/{ipID}:
+    delete:
+      description: Delete a workspace identity pool.
+      operationId: deleteWorkspacePool
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      - in: path
+        name: ipID
+        required: true
+        type: string
+      - description: With idp
+        in: query
+        name: with_idp
+        type: boolean
+      responses:
+        "204":
+          description: ' Identity Pool Deleted'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Workspace Identity Pool
+      tags:
+      - Pools
+  /admin/workspace/{wid}/schemas:
+    get:
+      description: List schemas available for the workspace.
+      operationId: listWorkspaceSchemas
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Schemas
+          schema:
+            $ref: '#/definitions/Schemas'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Workspace Schemas
+      tags:
+      - Schemas
+  /admin/workspace/{wid}/schemas/{schID}:
+    get:
+      description: Retrieve information about a specified identity schema.
+      operationId: getWorkspaceSchema
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      - in: path
+        name: schID
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/SchemaResponse'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "404":
+          $ref: '#/responses/notFoundHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Workspace Schema
+      tags:
+      - Schemas
+  /admin/workspace/{wid}/user/pools:
+    get:
+      description: |-
+        Retrieve the detailed information about identity pools connected to the workspace and available for the current
+        administrator.
+
+        Pass the required workspace identifier with the `wid` path parameter.
+
+        For administrator identification, pass the `if-match` header with the ETag as its value.
+      operationId: listUserWorkspacePools
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - default: default
+        description: Workspace id
+        in: path
+        name: wid
+        required: true
+        type: string
+      - description: Cursor
+        in: query
+        name: cursor
+        type: string
+      - default: 20
+        description: |-
+          optional limit results
+          Limit
+        format: int64
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: UserPools
+          schema:
+            $ref: '#/definitions/UserPools'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "403":
+          $ref: '#/responses/forbiddenHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List User Workspace Pools
+      tags:
+      - Pools
+produces:
+- application/json
+responses:
+  AdminAddressResponse:
+    description: Address
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/UserVerifiableAddress'
+  AdminB2BUserResponse:
+    description: User
+    schema:
+      $ref: '#/definitions/BaseUserWithData'
+  AdminIdentifierResponse:
+    description: Identifier
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/UserIdentifier'
+  AdminUserResponse:
+    description: User
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/UserWithData'
+  B2BUsersResponse:
+    description: Identity B2B Users
+    schema:
+      $ref: '#/definitions/B2BUsers'
+  GroupIDResponse:
+    description: Group ID
+  GroupResponse:
+    description: Group
+    schema:
+      $ref: '#/definitions/Group'
+  GroupsResponse:
+    description: Groups
+    schema:
+      $ref: '#/definitions/Groups'
+  PoolPermissionsResponse:
+    description: PoolPermissions
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/PoolPermissionsResponse'
+  PoolResponseParams:
+    description: Identity Pool
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/PoolResponse'
+  PoolsResponse:
+    description: Identity Pools
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/Pools'
+  SchemaResponse:
+    description: Identity Schema
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/Schema'
+  SchemasResponse:
+    description: Identity Schemas
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/Schemas'
+  UserIDResponse:
+    description: User
+    schema:
+      $ref: '#/definitions/UserID'
+  UserMetadataResponse:
+    description: UserMetadata
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/UserMetadataWithSchema'
+  UserPoolsResponse:
+    description: Identity User Pools
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/UserPools'
+  UsersResponse:
+    description: Identity Users
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/Users'
+  badRequestHTTPError:
+    description: Bad request
+    schema:
+      $ref: '#/definitions/Error'
+  conflictHTTPError:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/Error'
+  forbiddenHTTPError:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/Error'
+  internalServerErrorHTTPError:
+    description: Internal server error
+    schema:
+      $ref: '#/definitions/Error'
+  methodNotAllowedHTTPError:
+    description: Method not allowed
+    schema:
+      $ref: '#/definitions/Error'
+  notFoundHTTPError:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+  payloadTooLargeHTTPError:
+    description: Payload too large
+    schema:
+      $ref: '#/definitions/Error'
+  preconditionFailedHTTPError:
+    description: Precondition failed
+    schema:
+      $ref: '#/definitions/Error'
+  tooManyRequestsHTTPError:
+    description: Too many requests
+    schema:
+      $ref: '#/definitions/Error'
+  unauthorizedHTTPError:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/Error'
+  unprocessableEntityHTTPError:
+    description: Unprocessable entity
+    schema:
+      $ref: '#/definitions/Error'
+schemes:
+- https
+securityDefinitions:
+  admin:
+    authorizationUrl: /default/admin/oauth2/authorize
+    flow: accessCode
+    tokenUrl: /default/admin/oauth2/token
+    type: oauth2
+swagger: "2.0"

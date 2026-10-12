@@ -1,0 +1,101 @@
+generated: '2026-10-13'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 7
+  own: 6
+  other_domain: 0
+  platform: 1
+  roles:
+  - api
+  - docs
+  - other
+  - source
+  - status
+  - support
+  - website
+hosts:
+- host: api.secureauth.com
+  found_by:
+  - contract-discovery
+  types: []
+  serves: []
+  registrable_domain: secureauth.com
+  role: api
+  relation: own
+- host: connect.secureauth.com
+  found_by:
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types: []
+  serves: []
+  registrable_domain: secureauth.com
+  role: other
+  relation: own
+- host: docs.secureauth.com
+  found_by:
+  - pointer
+  - apis[]
+  - probed
+  - site-links
+  - docs-index
+  - contract-discovery
+  - well-known
+  types:
+  - Documentation
+  serves:
+  - docs
+  registrable_domain: secureauth.com
+  role: docs
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  - SDK
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: secureauth.com
+  found_by:
+  - pointer
+  - probed
+  - contract-discovery
+  - well-known
+  types:
+  - Website
+  - Blog
+  serves: []
+  registrable_domain: secureauth.com
+  role: website
+  relation: own
+- host: status.secureauth.com
+  found_by:
+  - pointer
+  - probed
+  - site-links
+  - contract-discovery
+  - well-known
+  types:
+  - StatusPage
+  serves: []
+  registrable_domain: secureauth.com
+  role: status
+  relation: own
+- host: support.secureauth.com
+  found_by:
+  - pointer
+  - probed
+  - site-links
+  - well-known
+  types:
+  - Support
+  serves: []
+  registrable_domain: secureauth.com
+  role: support
+  relation: own

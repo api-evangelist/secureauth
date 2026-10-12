@@ -1,0 +1,3470 @@
+basePath: /default/default
+consumes:
+- application/json
+definitions:
+  AgentCapability:
+    type: string
+  AuthorizationDetailType:
+    type: string
+  BackchannelAuthenticationError:
+    description: |-
+      CIBA error response
+      https://openid.net/specs/openidclientinitiatedbackchannelauthenticationcore1_0.html#rfc.section.13
+    properties:
+      error:
+        description: REQUIRED. A single ASCII error code from one present in the list
+          below.
+        type: string
+        x-nullable: false
+      error_description:
+        description: |-
+          OPTIONAL. Humanreadable ASCII [USASCII] text providing additional information, used to assist the client developer in understanding
+          the error that occurred. Values for the "error_description" parameter MUST NOT include characters outside the set %x2021 / %x235B / %x5D7E.
+        type: string
+        x-nullable: false
+      error_uri:
+        description: |-
+          OPTIONAL. A URI identifying a humanreadable web page with information about the error to provide the client developer with additional information.
+          Values for the "error_uri" parameter MUST conform to the URIreference syntax and thus MUST NOT include characters outside the set %x21 / %x235B / %x5D7E.
+        type: string
+        x-nullable: false
+    type: object
+  BackchannelAuthenticationResponse:
+    properties:
+      auth_req_id:
+        description: Unique identifier to identify the authentication request made
+          by the Client
+        type: string
+        x-nullable: false
+      expires_in:
+        description: A JSON number with a positive integer value indicating the expiration
+          time of the "auth_req_id" in seconds since the authentication request was
+          received
+        format: int64
+        type: integer
+        x-nullable: false
+      interval:
+        description: |-
+          OPTIONAL. A JSON number with a positive integer value indicating the minimum amount of time in seconds
+          that the Client MUST wait between polling requests to the token endpoint.
+          This parameter will only be present if the Client is registered to use the Poll or Ping modes.
+          If no value is provided, clients MUST use 5 as the default value.
+        format: int64
+        type: integer
+        x-nullable: false
+    type: object
+  ClientIDJAGTarget:
+    properties:
+      aud_tenant:
+        description: Sets the ID-JAG aud_tenant claim for this audience. Multi-tenant
+          resource servers require it.
+        type: string
+        x-nullable: false
+      audience:
+        description: Target authorization server issuer URL.
+        type: string
+        x-nullable: false
+      client_id:
+        description: Overrides the ID-JAG client_id claim for this audience. Empty
+          uses the requesting client's ID.
+        type: string
+        x-nullable: false
+    required:
+    - audience
+    type: object
+  ClientJWK:
+    properties:
+      alg:
+        description: |-
+          The "alg" (algorithm) parameter identifies the algorithm intended for
+          use with the key.  The values used should either be registered in the
+          IANA "JSON Web Signature and Encryption Algorithms" registry
+          established by [JWA] or be a value that contains a Collision-
+          Resistant Name.
+        example: RS256
+        type: string
+        x-nullable: false
+      crv:
+        example: P-256
+        type: string
+        x-nullable: false
+      d:
+        example: T_N8I-6He3M8a7X1vWt6TGIx4xB_GP3Mb4SsZSA4v-orvJzzRiQhLlRR81naWYxfQAYt5isDI6_C2L9bdWo4FFPjGQFvNoRX-_sBJyBI_rl-TBgsZYoUlAj3J92WmY2inbA-PwyJfsaIIDceYBC-eX-xiCu6qMqkZi3MwQAFL6bMdPEM0z4JBcwFT3VdiWAIRUuACWQwrXMq672x7fMuaIaHi7XDGgt1ith23CLfaREmJku9PQcchbt_uEY-hqrFY6ntTtS4paWWQj86xLL94S-Tf6v6xkL918PfLSOTq6XCzxvlFwzBJqApnAhbwqLjpPhgUG04EDRrqrSBc5Y1BLevn6Ip5h1AhessBp3wLkQgz_roeckt-ybvzKTjESMuagnpqLvOT7Y9veIug2MwPJZI2VjczRc1vzMs25XrFQ8DpUy-bNdp89TmvAXwctUMiJdgHloJw23Cv03gIUAkDnsTqZmkpbIf-crpgNKFmQP_EDKoe8p_PXZZgfbRri3NoEVGP7Mk6yEu8LjJhClhZaBNjuWw2-KlBfOA3g79mhfBnkInee5KO9mGR50qPk1V-MorUYNTFMZIm0kFE6eYVWFBwJHLKYhHU34DoiK1VP-svZpC2uAMFNA_UJEwM9CQ2b8qe4-5e9aywMvwcuArRkAB5mBIfOaOJao3mfukKAE
+        type: string
+        x-nullable: false
+      dp:
+        example: G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oimYwxIi2emTAue0UOa5dpgFGyBJ4c8tQ2VF402XRugKDTP8akYhFo5tAA77Qe_NmtuYZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0
+        type: string
+        x-nullable: false
+      dq:
+        example: s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUUvMfBcMpn8lqeW6vzznYY5SSQF7pMdC_agI3nG8Ibp1BUb0JUiraRNqUfLhcQb_d9GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk
+        type: string
+        x-nullable: false
+      e:
+        example: AQAB
+        type: string
+        x-nullable: false
+      k:
+        example: GawgguFyGrWKav7AX4VKUg
+        type: string
+        x-nullable: false
+      kid:
+        description: |-
+          The "kid" (key ID) parameter is used to match a specific key.  This
+          is used, for instance, to choose among a set of keys within a JWK Set
+          during key rollover.  The structure of the "kid" value is
+          unspecified.  When "kid" values are used within a JWK Set, different
+          keys within the JWK Set SHOULD use distinct "kid" values.  (One
+          example in which different keys might use the same "kid" value is if
+          they have different "kty" (key type) values but are considered to be
+          equivalent alternatives by the application using them.)  The "kid"
+          value is a case-sensitive string.
+        example: 1603dfe0af8f4596
+        type: string
+        x-nullable: false
+      kty:
+        description: |-
+          The "kty" (key type) parameter identifies the cryptographic algorithm
+          family used with the key, such as "RSA" or "EC". "kty" values should
+          either be registered in the IANA "JSON Web Key Types" registry
+          established by [JWA] or be a value that contains a Collision-
+          Resistant Name.  The "kty" value is a case-sensitive string.
+        example: RSA
+        type: string
+        x-nullable: false
+      "n":
+        example: vTqrxUyQPl_20aqf5kXHwDZrel-KovIp8s7ewJod2EXHl8tWlRB3_Rem34KwBfqlKQGp1nqah-51H4Jzruqe0cFP58hPEIt6WqrvnmJCXxnNuIB53iX_uUUXXHDHBeaPCSRoNJzNysjoJ30TIUsKBiirhBa7f235PXbKiHducLevV6PcKxJ5cY8zO286qJLBWSPm-OIevwqsIsSIH44Qtm9sioFikhkbLwoqwWORGAY0nl6XvVOlhADdLjBSqSAeT1FPuCDCnXwzCDR8N9IFB_IjdStFkC-rVt2K5BYfPd0c3yFp_vHR15eRd0zJ8XQ7woBC8Vnsac6Et1pKS59pX6256DPWu8UDdEOolKAPgcd_g2NpA76cAaF_jcT80j9KrEzw8Tv0nJBGesuCjPNjGs_KzdkWTUXt23Hn9QJsdc1MZuaW0iqXBepHYfYoqNelzVte117t4BwVp0kUM6we0IqyXClaZgOI8S-WDBw2_Ovdm8e5NmhYAblEVoygcX8Y46oH6bKiaCQfKCFDMcRgChme7AoE1yZZYsPbaG_3IjPrC4LBMHQw8rM9dWjJ8ImjicvZ1pAm0dx-KHCP3y5PVKrxBDf1zSOsBRkOSjB8TPODnJMz6-jd5hTtZxpZPwPoIdCanTZ3ZD6uRBpTmDwtpRGm63UQs1m5FWPwb0T2IF0
+        type: string
+        x-nullable: false
+      p:
+        example: 6NbkXwDWUhi-eR55Cgbf27FkQDDWIamOaDr0rj1q0f1fFEz1W5A_09YvG09Fiv1AO2-D8Rl8gS1Vkz2i0zCSqnyy8A025XOcRviOMK7nIxE4OH_PEsko8dtIrb3TmE2hUXvCkmzw9EsTF1LQBOGC6iusLTXepIC1x9ukCKFZQvdgtEObQ5kzd9Nhq-cdqmSeMVLoxPLd1blviVT9Vm8-y12CtYpeJHOaIDtVPLlBhJiBoPKWg3vxSm4XxIliNOefqegIlsmTIa3MpS6WWlCK3yHhat0Q-rRxDxdyiVdG_wzJvp0Iw_2wms7pe-PgNPYvUWH9JphWP5K38YqEBiJFXQ
+        type: string
+        x-nullable: false
+      q:
+        example: 0A1FmpOWR91_RAWpqreWSavNaZb9nXeKiBo0DQGBz32DbqKqQ8S4aBJmbRhJcctjCLjain-ivut477tAUMmzJwVJDDq2MZFwC9Q-4VYZmFU4HJityQuSzHYe64RjN-E_NQ02TWhG3QGW6roq6c57c99rrUsETwJJiwS8M5p15Miuz53DaOjv-uqqFAFfywN5WkxHbraBcjHtMiQuyQbQqkCFh-oanHkwYNeytsNhTu2mQmwR5DR2roZ2nPiFjC6nsdk-A7E3S3wMzYYFw7jvbWWoYWo9vB40_MY2Y0FYQSqcDzcBIcq_0tnnasf3VW4Fdx6m80RzOb2Fsnln7vKXAQ
+        type: string
+        x-nullable: false
+      qi:
+        example: GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzgUIZEVFEcOqwemRN81zoDAaa-Bk0KWNGDjJHZDdDmFhW3AN7lI-puxk_mHZGJ11rxyR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU
+        type: string
+        x-nullable: false
+      use:
+        description: |-
+          Use ("public key use") identifies the intended use of
+          the public key. The "use" parameter is employed to indicate whether
+          a public key is used for encrypting data or verifying the signature
+          on data. Values are commonly "sig" (signature) or "enc" (encryption).
+        example: sig
+        type: string
+        x-nullable: false
+      x:
+        example: f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU
+        type: string
+        x-nullable: false
+      x5c:
+        description: |-
+          The "x5c" (X.509 certificate chain) parameter contains a chain of one
+          or more PKIX certificates [RFC5280].  The certificate chain is
+          represented as a JSON array of certificate value strings.  Each
+          string in the array is a base64-encoded (Section 4 of [RFC4648] --
+          not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
+          The PKIX certificate containing the key value MUST be the first
+          certificate.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      x5t:
+        example: GawgguFyGrWKav7AX4VKUg
+        type: string
+        x-nullable: false
+      x5t#S256:
+        example: GawgguFyGrWKav7AX4VKUg
+        type: string
+        x-nullable: false
+      "y":
+        example: x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0
+        type: string
+        x-nullable: false
+    required:
+    - kty
+    type: object
+  ClientJWKs:
+    properties:
+      keys:
+        example: []
+        items:
+          $ref: '#/definitions/ClientJWK'
+        type: array
+        x-nullable: false
+    type: object
+  ClientPrivacy:
+    properties:
+      scopes:
+        additionalProperties:
+          $ref: '#/definitions/ScopePrivacyInformation'
+        description: optional privacy information mapping for scopes
+        type: object
+        x-nullable: false
+    type: object
+  ClientTokenExchangeConfiguration:
+    properties:
+      actor_claims:
+        description: |-
+          Additional actor token claims
+
+          Claims from the actor token that will be injected into the exchanged token under the `act` claim.
+
+          Applies for the token exchange delegation flow only.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      id_jag_targets:
+        description: ID-JAG targets with optional client ID and audience tenant overrides.
+          Audiences must be unique.
+        items:
+          $ref: '#/definitions/ClientIDJAGTarget'
+        type: array
+        x-nullable: false
+    type: object
+  Confirmation:
+    properties:
+      jkt:
+        type: string
+        x-nullable: false
+      x5t#S256:
+        type: string
+        x-nullable: false
+    type: object
+  DeviceResponse:
+    description: Device Response
+    properties:
+      device_code:
+        description: The device verification code.
+        type: string
+        x-nullable: false
+      expires_in:
+        description: The lifetime in seconds of the "device_code" and "user_code".
+        format: int64
+        type: integer
+        x-nullable: false
+      interval:
+        description: |-
+          The minimum amount of time in seconds that the client
+          SHOULD wait between polling requests to the token endpoint.  If no
+          value is provided, clients MUST use 5 as the default.
+        format: int64
+        type: integer
+        x-nullable: false
+      user_code:
+        description: The end-user verification code.
+        type: string
+        x-nullable: false
+      verification_uri:
+        description: |-
+          The end-user verification URI on the authorization server.
+          The URI should be short and easy to remember as end users will be asked to manually type it into their user agent.
+        type: string
+        x-nullable: false
+      verification_uri_complete:
+        description: |-
+          A verification URI that includes the "user_code" (or other information with the same function as the "user_code"),
+          which is designed for non-textual transmission.
+        type: string
+        x-nullable: false
+    type: object
+  DynamicClientRegistrationRequest:
+    properties:
+      agent_capability:
+        $ref: '#/definitions/AgentCapability'
+      app_url:
+        description: Application URL
+        type: string
+        x-nullable: false
+      application_purpose:
+        description: Application purpose
+        enum:
+        - single_page
+        - server_web
+        - mobile_desktop
+        - service
+        - legacy
+        - custom
+        - saml
+        - ai_agent
+        example: signle_page
+        type: string
+        x-nullable: false
+      application_type:
+        default: web
+        description: |-
+          The client application type.
+
+          Client applications can be either of a `web` or `native` types.
+
+          Web applications include clients like server web applications or service apps.
+
+          Native applications include single-page applications (SPAs) and mobile or desktop
+          applications.
+
+          Apply security measures according to the type of your application.
+        example: web
+        type: string
+        x-nullable: false
+      application_types:
+        default:
+        - server_web
+        description: An array of dynamically calculated application types that can
+          be used for filtering
+        example:
+        - single_page
+        - server_web
+        - mobile_desktop
+        - service
+        - legacy
+        - dcr
+        items:
+          enum:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - dcr
+          type: string
+        readOnly: true
+        type: array
+        x-nullable: false
+      audience:
+        default:
+        - client_id
+        description: |-
+          Identity of the intended recipients (the audience).
+
+          Typically, the audience is a single resource server or a list of resource servers.
+
+          It is considered a good practice to limit the audience of the token for security purposes.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_details_types:
+        description: |-
+          Authorization details types
+
+          Indicates what authorization details types the client can use.
+        items:
+          $ref: '#/definitions/AuthorizationDetailType'
+        type: array
+        x-nullable: false
+      authorization_encrypted_response_alg:
+        description: |-
+          Algorithm used for encrypting authorization responses.
+
+          If both signing and encryption are requested, the response is first signed, and then encrypted.
+          As a result, a Nested JWT is obtained, as defined in JWT [RFC7519].
+
+          If omitted, no encryption is applied by default.
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        example: RSA-OAEP-256
+        type: string
+        x-nullable: false
+      authorization_encrypted_response_enc:
+        description: |-
+          Algorithm used for encrypting authorization responses.
+
+          With `authorization_encrypted_response_alg` specified, the default value is `A128CBC-HS256`.
+          When `authorization_encrypted_response_enc` is included, `authorization_encrypted_response_alg`
+          MUST also be provided in a request.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        example: A128CBC-HS256
+        type: string
+        x-nullable: false
+      authorization_signed_response_alg:
+        description: |-
+          Algorithm used for signing authorization responses.
+
+          With this parameter specified, the response is signed using JWS and according to the configured algorithm.
+
+          `none` isn't allowed.
+        example: RS256
+        type: string
+        x-nullable: false
+      backchannel_authentication_request_signing_alg:
+        description: |-
+          OPTIONAL. The JWS alg algorithm value used by the client application to sign authentication requests.
+
+          When omitted, the client application doesn't send signed authentication requests.
+        type: string
+        x-nullable: false
+      backchannel_client_notification_endpoint:
+        description: |-
+          REQUIRED for requests when the client application uses CIBA as an authorization grant type, and the token
+          delivery mode is set to `ping` or `push`.
+
+          This parameter is the endpoint where an OP (OpenID Provider) posts a notification after end-user authentication.
+
+          Input: an HTTPS URL.
+        type: string
+        x-nullable: false
+      backchannel_logout_session_required:
+        description: Boolean value specifying whether the RP requires that a sid (session
+          ID) claim be included in the Logout Token to identify the RP session with
+          the OP when the backchannel_logout_uri is used.
+        type: boolean
+        x-nullable: false
+      backchannel_logout_uri:
+        description: RP URL that will cause the RP to log itself out when sent a Logout
+          Token by the OP.
+        type: string
+        x-nullable: false
+      backchannel_token_delivery_mode:
+        description: |-
+          REQUIRED for requests when the client application uses CIBA as an authorization grant type.
+
+          Input: `poll`, `ping`, or `push`.
+        type: string
+        x-nullable: false
+      backchannel_user_code_parameter:
+        description: |-
+          OPTIONAL. A boolean value indicating the `user_code` parameter support by the client application.
+
+          If omitted, the default value is `false`.
+
+          This applies only when the `backchannel_user_code_parameter_supported` OP parameter is `true`.
+        type: boolean
+        x-nullable: false
+      certificate:
+        description: |-
+          Base64 encoded certicate in PEM format that will be automatically converted and stored in jwks
+
+          It is used only as an input parameter for the Create / Import Client.
+        type: string
+        x-nullable: false
+      client_id_issued_at:
+        description: |-
+          The client identifier time of issue.
+
+          The value is the number of seconds between 1970-01-01T00:00:00Z (UTC) and the date/time of issue.
+        format: int64
+        type: integer
+        x-nullable: false
+      client_name:
+        description: Human-readable name of a client application.
+        example: My app
+        type: string
+        x-nullable: false
+      client_secret_expires_at:
+        description: |-
+          The client secret expiration time.
+
+          If the client secret does not expire, `client_secret_expires_at` = `0`.
+        format: int64
+        type: integer
+        x-nullable: false
+      client_uri:
+        description: URI of a client application.
+        type: string
+        x-nullable: false
+      created_at:
+        description: Date when the client application was created.
+        example: "2022-04-07T19:17:31.323187Z"
+        format: date-time
+        type: string
+        x-nullable: false
+      default_acr_values:
+        description: |-
+          default ACR values
+          list of ACR values that will be implicitly requested for the client if not explicitly specified
+        items:
+          format: acrValue
+          type: string
+        type: array
+        x-nullable: false
+      description:
+        description: Description of the client application.
+        type: string
+        x-nullable: false
+      dpop_bound_access_tokens:
+        description: |-
+          Boolean value specifying whether the client always uses DPoP for token requests
+          If true, the authorization server will reject token requests from this client that do not contain the DPoP header.
+        type: boolean
+        x-nullable: false
+      enforce_application_membership:
+        description: |-
+          Enforce application membership for this application. When true, a user token is issued only if the
+          user has membership/access to this application in the resolved organization. Defaults to false and,
+          on creation, to the workspace-level default. Only meaningful while the applications_membership feature is enabled.
+        type: boolean
+        x-nullable: false
+      grant_types:
+        default:
+        - authorization_code
+        description: |-
+          An array of allowed OAuth client grant types.
+
+          The `grantTypes` array stores OAuth flows that are allowed for a given client application.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-grant-types/grant-types-overview/) about grant types.
+        example:
+        - password
+        - refresh_token
+        - client_credentials
+        - implicit
+        - authorization_code
+        items:
+          enum:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          - password
+          - urn:ietf:params:oauth:grant-type:jwt-bearer
+          - urn:openid:params:grant-type:ciba
+          - urn:ietf:params:oauth:grant-type:token-exchange
+          - urn:ietf:params:oauth:grant-type:device_code
+          type: string
+        type: array
+        x-nullable: false
+      id_token_encrypted_response_alg:
+        description: JWE alg algorithm for encrypting the ID token issued to this
+          client application.
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        type: string
+        x-nullable: false
+      id_token_encrypted_response_enc:
+        description: JWE enc algorithm for encrypting the ID token issued to this
+          client application.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        type: string
+        x-nullable: false
+      id_token_signed_response_alg:
+        description: |-
+          Algorithm for signing ID tokens issued for a client application.
+
+          The default value depends on authorization server configuration.
+        enum:
+        - RS256
+        - ES256
+        - PS256
+        example: ES256
+        type: string
+        x-nullable: false
+      introspection_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          An introspection endpoint authentication method configured for the client application (read-only).
+
+          If empty, the `token_endpoint_auth_method` is used.
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      jwks:
+        $ref: '#/definitions/ClientJWKs'
+      jwks_uri:
+        description: A URL of JSON Web Key Set with the public keys used by a client
+          application to authenticate to SecureAuth.
+        type: string
+        x-nullable: false
+      logo_uri:
+        description: Logo URI.
+        type: string
+        x-nullable: false
+      organisation_id:
+        description: |-
+          External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+          Data Recipient Brand.
+
+          The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+          required for authorization, and represents the audience(s) the JWT is intended for.
+        example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+        type: string
+        x-nullable: false
+      policy_uri:
+        description: Policy URL to read about how the profile data is used.
+        type: string
+        x-nullable: false
+      post_logout_redirect_uris:
+        description: Array of URLs to which a relying party may request that the user
+          be redirected after a logout has been performed.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      privacy:
+        $ref: '#/definitions/ClientPrivacy'
+      redirect_uris:
+        $ref: '#/definitions/RedirectURIs'
+      request_object_encryption_alg:
+        description: Optional JWE alg algorithm the client is declaring that it may
+          use for encrypting Request Objects
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        example: RSA-OAEP
+        type: string
+        x-nullable: false
+      request_object_encryption_enc:
+        description: |-
+          Optional JWE enc algorithm the client is declaring that it may use for encrypting Request Objects
+          When `request_object_encryption_enc` is included, `request_object_encryption_alg` MUST also be provided.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        example: A256GCM
+        type: string
+        x-nullable: false
+      request_object_signing_alg:
+        default: any
+        description: |-
+          Request object signing algorithm for the token endpoint
+
+          SecureAuth supports signing tokens with the RS256, ES256, and PS256 algorithms. If you do not want
+          to use a signing algorithm, set the value of this parameter to `none`.
+        enum:
+        - any
+        - none
+        - RS256
+        - ES256
+        - PS256
+        example: none
+        type: string
+        x-nullable: false
+      request_uris:
+        description: Array of absolute URIs that points to the Request Object that
+          holds authorization request parameters.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      require_pushed_authorization_requests:
+        description: Boolean parameter indicating whether the only means of initiating
+          an authorization request the client is allowed to use is PAR.
+        type: boolean
+        x-nullable: false
+      response_types:
+        $ref: '#/definitions/ResponseTypes'
+      revocation_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          A revocation endpoint authentication method configured for the client application (read-only).
+          If empty, the `token_endpoint_auth_method` is used.
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      scope:
+        description: Space-separated list of scopes for compatibility with the OAuth
+          specification.
+        example: email offline_access openid
+        type: string
+        x-nullable: false
+      scopes:
+        description: An array of string represented scopes assigned to a client application
+        example:
+        - email
+        - offline_access
+        - openid
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      sector_identifier_uri:
+        description: |-
+          OPTIONAL. [A URL using the HTTPS scheme](https://openid.net/specs/openid-connect-registration-1_0.html#SectorIdentifierValidation).
+          It must reference a JSON file with the array of `redirect_uri` values.
+
+          Pass this parameter when you use multiple domains in your `redirect_uris` or need a mechanism to allow changes in
+          domain without affecting consumer consent.
+
+          [Read more](https://openid.net/specs/openid-connect-core-1_0.html)
+        type: string
+        x-nullable: false
+      skip_dbfp:
+        description: |-
+          Skip device-based fingerprint (DBFP) collection for this client.
+          If true, the interactive DBFP collection step is skipped during login, which lets
+          non-interactive clients (e.g. backend HTTP clients that cannot execute the collection
+          JavaScript) complete the authorization flow. Risk inference is unaffected.
+        type: boolean
+        x-nullable: false
+      software_id:
+        description: |-
+          A unique identifier string (e.g., a Universally Unique Identifier
+          (UUID)) assigned by the client developer or software publisher.
+
+          The `software_id` MUST remain the same across
+          multiple updates or versions of the same software package. The
+          value of this field is not intended to be human-readable and is
+          usually opaque to the client and authorization server.
+        type: string
+        x-nullable: false
+      software_statement:
+        description: |-
+          A digitally signed or MACed JSON Web Token (JWT) [RFC7519] that
+          asserts metadata values about the client software.  In some cases,
+          a software statement is issued directly by the client
+          developer.  In other cases, a software statement is issued by
+          a third-party organization for use by the client developer.
+
+          In both cases, the trust relationship the authorization server has
+          with the issuer of the software statement is intended to be used
+          as an input to the evaluation of whether the registration request
+          is accepted.
+
+          A software statement can be presented to an
+          authorization server as part of the client registration request.
+        type: string
+        x-nullable: false
+      software_version:
+        description: |-
+          A version identifier string for the client software identified by
+          `software_id`. The value of the `software_version` MUST be changed
+          with any update of the client software identified by the same
+          `software_id`.
+        type: string
+        x-nullable: false
+      subject_type:
+        default: public
+        description: |-
+          Subject identifier type
+
+          Stores information if the subject identifier is of the `public` or the `pairwise` type.
+
+          Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+          and are intended to be consumed by client applications. There are two types
+          of subject identifiers: `public` and `pairwise`.
+
+          For the `public` type, the value of the `sub` (subject) token claim is the same for all clients.
+
+          For the `pairwise` type, a different `sub` (subject) token claim is provided for each client.
+          Using the `pairwise` subject identifier makes it impossible for client applications to correlate the end-user's
+          activity without their permission.
+        enum:
+        - public
+        - pairwise
+        example: public
+        type: string
+        x-nullable: false
+      tls_client_auth_san_dns:
+        description: A string containing the value of an expected dNSName SAN entry
+          in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_email:
+        description: A string containing the value of an expected rfc822Name SAN entry
+          in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_ip:
+        description: A string representation of an IP address in either dotted decimal
+          notation (for IPv4) or colon-delimited hexadecimal (for IPv6, as defined
+          in [RFC5952]) that is expected to be present as an iPAddress SAN entry in
+          the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_uri:
+        description: A string containing the value of an expected uniformResourceIdentifier
+          SAN entry in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_subject_dn:
+        description: An [RFC4514] string representation of the expected subject distinguished
+          name of the certificate.
+        type: string
+        x-nullable: false
+      tls_client_certificate_bound_access_tokens:
+        description: Boolean value indicating server support for mutual TLS client
+          certificate-bound access tokens. If omitted, the default value is "false".
+        type: boolean
+        x-nullable: false
+      token_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          Token endpoint authentication method configured for a client application
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          To learn more, go to the Authorization Basics > Client Authentication section of this guide.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        - unspecified
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      token_endpoint_auth_signing_alg:
+        default: ES256
+        description: |-
+          Signing algorithm for the token endpoint
+
+          This field is optional. If empty, a client can use any algorithm supported by the server (see `token_endpoint_auth_signing_alg_values_supported` in the well-known endpoing).
+
+          If provided, depending on the server configuration, client can use of one: HS256, RS256, ES256, PS256 algorithms.
+
+          If your token endpoint authentication is set to the `private_key_jwt` method, the
+          `token_endpoint_auth_signing_alg` parameter must be either RS256, ES256, or PS256.
+
+          If your token endpoint authentication is set to the `client_secret_jwt` method,
+          the `token_endpoint_auth_signing_alg` parameter must be HS256.
+        enum:
+        - RS256
+        - ES256
+        - PS256
+        - HS256
+        - ""
+        example: ES256
+        type: string
+        x-nullable: false
+      token_exchange:
+        $ref: '#/definitions/ClientTokenExchangeConfiguration'
+      tos_uri:
+        description: Terms of Service URL.
+        type: string
+        x-nullable: false
+      updated_at:
+        description: Date when the client application was updated.
+        example: "2022-05-08T01:11:51.1262916Z"
+        format: date-time
+        type: string
+        x-nullable: false
+      userinfo_signed_response_alg:
+        default: none
+        description: |-
+          JWS alg algorithm REQUIRED for signing UserInfo Responses.
+
+          If specified, the response is a JWT serialized and signed with JWS.
+
+          If omitted, then by default, UserInfo Response returns the Claims
+          as an UTF-8 encoded JSON object using the application/json content-type.
+        enum:
+        - none
+        - RS256
+        - ES256
+        example: none
+        type: string
+        x-nullable: false
+    type: object
+  DynamicClientRegistrationResponse:
+    properties:
+      agent_capability:
+        $ref: '#/definitions/AgentCapability'
+      app_url:
+        description: Application URL
+        type: string
+        x-nullable: false
+      application_purpose:
+        description: Application purpose
+        enum:
+        - single_page
+        - server_web
+        - mobile_desktop
+        - service
+        - legacy
+        - custom
+        - saml
+        - ai_agent
+        example: signle_page
+        type: string
+        x-nullable: false
+      application_type:
+        default: web
+        description: |-
+          The client application type.
+
+          Client applications can be either of a `web` or `native` types.
+
+          Web applications include clients like server web applications or service apps.
+
+          Native applications include single-page applications (SPAs) and mobile or desktop
+          applications.
+
+          Apply security measures according to the type of your application.
+        example: web
+        type: string
+        x-nullable: false
+      application_types:
+        default:
+        - server_web
+        description: An array of dynamically calculated application types that can
+          be used for filtering
+        example:
+        - single_page
+        - server_web
+        - mobile_desktop
+        - service
+        - legacy
+        - dcr
+        items:
+          enum:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - dcr
+          type: string
+        readOnly: true
+        type: array
+        x-nullable: false
+      audience:
+        default:
+        - client_id
+        description: |-
+          Identity of the intended recipients (the audience).
+
+          Typically, the audience is a single resource server or a list of resource servers.
+
+          It is considered a good practice to limit the audience of the token for security purposes.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_details_types:
+        description: |-
+          Authorization details types
+
+          Indicates what authorization details types the client can use.
+        items:
+          $ref: '#/definitions/AuthorizationDetailType'
+        type: array
+        x-nullable: false
+      authorization_encrypted_response_alg:
+        description: |-
+          Algorithm used for encrypting authorization responses.
+
+          If both signing and encryption are requested, the response is first signed, and then encrypted.
+          As a result, a Nested JWT is obtained, as defined in JWT [RFC7519].
+
+          If omitted, no encryption is applied by default.
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        example: RSA-OAEP-256
+        type: string
+        x-nullable: false
+      authorization_encrypted_response_enc:
+        description: |-
+          Algorithm used for encrypting authorization responses.
+
+          With `authorization_encrypted_response_alg` specified, the default value is `A128CBC-HS256`.
+          When `authorization_encrypted_response_enc` is included, `authorization_encrypted_response_alg`
+          MUST also be provided in a request.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        example: A128CBC-HS256
+        type: string
+        x-nullable: false
+      authorization_signed_response_alg:
+        description: |-
+          Algorithm used for signing authorization responses.
+
+          With this parameter specified, the response is signed using JWS and according to the configured algorithm.
+
+          `none` isn't allowed.
+        example: RS256
+        type: string
+        x-nullable: false
+      backchannel_authentication_request_signing_alg:
+        description: |-
+          OPTIONAL. The JWS alg algorithm value used by the client application to sign authentication requests.
+
+          When omitted, the client application doesn't send signed authentication requests.
+        type: string
+        x-nullable: false
+      backchannel_client_notification_endpoint:
+        description: |-
+          REQUIRED for requests when the client application uses CIBA as an authorization grant type, and the token
+          delivery mode is set to `ping` or `push`.
+
+          This parameter is the endpoint where an OP (OpenID Provider) posts a notification after end-user authentication.
+
+          Input: an HTTPS URL.
+        type: string
+        x-nullable: false
+      backchannel_logout_session_required:
+        description: Boolean value specifying whether the RP requires that a sid (session
+          ID) claim be included in the Logout Token to identify the RP session with
+          the OP when the backchannel_logout_uri is used.
+        type: boolean
+        x-nullable: false
+      backchannel_logout_uri:
+        description: RP URL that will cause the RP to log itself out when sent a Logout
+          Token by the OP.
+        type: string
+        x-nullable: false
+      backchannel_token_delivery_mode:
+        description: |-
+          REQUIRED for requests when the client application uses CIBA as an authorization grant type.
+
+          Input: `poll`, `ping`, or `push`.
+        type: string
+        x-nullable: false
+      backchannel_user_code_parameter:
+        description: |-
+          OPTIONAL. A boolean value indicating the `user_code` parameter support by the client application.
+
+          If omitted, the default value is `false`.
+
+          This applies only when the `backchannel_user_code_parameter_supported` OP parameter is `true`.
+        type: boolean
+        x-nullable: false
+      certificate:
+        description: |-
+          Base64 encoded certicate in PEM format that will be automatically converted and stored in jwks
+
+          It is used only as an input parameter for the Create / Import Client.
+        type: string
+        x-nullable: false
+      client_id:
+        description: |-
+          OAuth client application identifier
+
+          If not provided, a random client ID is generated.
+        format: clientID
+        type: string
+        x-nullable: false
+      client_id_issued_at:
+        description: |-
+          The client identifier time of issue.
+
+          The value is the number of seconds between 1970-01-01T00:00:00Z (UTC) and the date/time of issue.
+        format: int64
+        type: integer
+        x-nullable: false
+      client_name:
+        description: Human-readable name of a client application.
+        example: My app
+        type: string
+        x-nullable: false
+      client_secret:
+        description: |-
+          OAuth client secret
+
+          If not provided, a random client secret is generated.
+        minLength: 32
+        type: string
+        x-nullable: false
+      client_secret_expires_at:
+        description: |-
+          The client secret expiration time.
+
+          If the client secret does not expire, `client_secret_expires_at` = `0`.
+        format: int64
+        type: integer
+        x-nullable: false
+      client_uri:
+        description: URI of a client application.
+        type: string
+        x-nullable: false
+      created_at:
+        description: Date when the client application was created.
+        example: "2022-04-07T19:17:31.323187Z"
+        format: date-time
+        type: string
+        x-nullable: false
+      default_acr_values:
+        description: |-
+          default ACR values
+          list of ACR values that will be implicitly requested for the client if not explicitly specified
+        items:
+          format: acrValue
+          type: string
+        type: array
+        x-nullable: false
+      description:
+        description: Description of the client application.
+        type: string
+        x-nullable: false
+      dpop_bound_access_tokens:
+        description: |-
+          Boolean value specifying whether the client always uses DPoP for token requests
+          If true, the authorization server will reject token requests from this client that do not contain the DPoP header.
+        type: boolean
+        x-nullable: false
+      dynamically_registered:
+        type: boolean
+        x-nullable: false
+      enforce_application_membership:
+        description: |-
+          Enforce application membership for this application. When true, a user token is issued only if the
+          user has membership/access to this application in the resolved organization. Defaults to false and,
+          on creation, to the workspace-level default. Only meaningful while the applications_membership feature is enabled.
+        type: boolean
+        x-nullable: false
+      grant_types:
+        default:
+        - authorization_code
+        description: |-
+          An array of allowed OAuth client grant types.
+
+          The `grantTypes` array stores OAuth flows that are allowed for a given client application.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-grant-types/grant-types-overview/) about grant types.
+        example:
+        - password
+        - refresh_token
+        - client_credentials
+        - implicit
+        - authorization_code
+        items:
+          enum:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          - password
+          - urn:ietf:params:oauth:grant-type:jwt-bearer
+          - urn:openid:params:grant-type:ciba
+          - urn:ietf:params:oauth:grant-type:token-exchange
+          - urn:ietf:params:oauth:grant-type:device_code
+          type: string
+        type: array
+        x-nullable: false
+      hashed_rotated_secrets:
+        description: An array of hashed rotated client secrets
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      hashed_secret:
+        description: |-
+          Hashed client secret
+
+          Hashing client secrets provides additional security for your secrets storage as it hides
+          plaintext secrets from being viewed both in the UI and the database.
+        type: string
+        x-nullable: false
+      id_token_encrypted_response_alg:
+        description: JWE alg algorithm for encrypting the ID token issued to this
+          client application.
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        type: string
+        x-nullable: false
+      id_token_encrypted_response_enc:
+        description: JWE enc algorithm for encrypting the ID token issued to this
+          client application.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        type: string
+        x-nullable: false
+      id_token_signed_response_alg:
+        description: |-
+          Algorithm for signing ID tokens issued for a client application.
+
+          The default value depends on authorization server configuration.
+        enum:
+        - RS256
+        - ES256
+        - PS256
+        example: ES256
+        type: string
+        x-nullable: false
+      introspection_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          An introspection endpoint authentication method configured for the client application (read-only).
+
+          If empty, the `token_endpoint_auth_method` is used.
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      jwks:
+        $ref: '#/definitions/ClientJWKs'
+      jwks_uri:
+        description: A URL of JSON Web Key Set with the public keys used by a client
+          application to authenticate to SecureAuth.
+        type: string
+        x-nullable: false
+      logo_uri:
+        description: Logo URI.
+        type: string
+        x-nullable: false
+      organisation_id:
+        description: |-
+          External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+          Data Recipient Brand.
+
+          The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+          required for authorization, and represents the audience(s) the JWT is intended for.
+        example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+        type: string
+        x-nullable: false
+      policy_uri:
+        description: Policy URL to read about how the profile data is used.
+        type: string
+        x-nullable: false
+      post_logout_redirect_uris:
+        description: Array of URLs to which a relying party may request that the user
+          be redirected after a logout has been performed.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      privacy:
+        $ref: '#/definitions/ClientPrivacy'
+      redirect_uris:
+        $ref: '#/definitions/RedirectURIs'
+      registration_access_token:
+        description: Registration token that can be used for client management
+        type: string
+        x-nullable: false
+      registration_access_token_expires_in:
+        description: Registration token expiration time in seconds. If 0 value is
+          returned, token never expires.
+        format: int64
+        type: integer
+        x-nullable: false
+      registration_client_uri:
+        description: URL for client management
+        type: string
+        x-nullable: false
+      request_object_encryption_alg:
+        description: Optional JWE alg algorithm the client is declaring that it may
+          use for encrypting Request Objects
+        enum:
+        - RSA-OAEP
+        - RSA-OAEP-256
+        example: RSA-OAEP
+        type: string
+        x-nullable: false
+      request_object_encryption_enc:
+        description: |-
+          Optional JWE enc algorithm the client is declaring that it may use for encrypting Request Objects
+          When `request_object_encryption_enc` is included, `request_object_encryption_alg` MUST also be provided.
+        enum:
+        - A256GCM
+        - A128CBC-HS256
+        example: A256GCM
+        type: string
+        x-nullable: false
+      request_object_signing_alg:
+        default: any
+        description: |-
+          Request object signing algorithm for the token endpoint
+
+          SecureAuth supports signing tokens with the RS256, ES256, and PS256 algorithms. If you do not want
+          to use a signing algorithm, set the value of this parameter to `none`.
+        enum:
+        - any
+        - none
+        - RS256
+        - ES256
+        - PS256
+        example: none
+        type: string
+        x-nullable: false
+      request_uris:
+        description: Array of absolute URIs that points to the Request Object that
+          holds authorization request parameters.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      require_pushed_authorization_requests:
+        description: Boolean parameter indicating whether the only means of initiating
+          an authorization request the client is allowed to use is PAR.
+        type: boolean
+        x-nullable: false
+      response_types:
+        $ref: '#/definitions/ResponseTypes'
+      revocation_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          A revocation endpoint authentication method configured for the client application (read-only).
+          If empty, the `token_endpoint_auth_method` is used.
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      rotated_secrets:
+        description: An array of rotated OAuth client secrets
+        items:
+          type: string
+        minLength: 32
+        type: array
+        x-nullable: false
+      scope:
+        description: Space-separated list of scopes for compatibility with the OAuth
+          specification.
+        example: email offline_access openid
+        type: string
+        x-nullable: false
+      scopes:
+        description: An array of string represented scopes assigned to a client application
+        example:
+        - email
+        - offline_access
+        - openid
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      sector_identifier_uri:
+        description: |-
+          OPTIONAL. [A URL using the HTTPS scheme](https://openid.net/specs/openid-connect-registration-1_0.html#SectorIdentifierValidation).
+          It must reference a JSON file with the array of `redirect_uri` values.
+
+          Pass this parameter when you use multiple domains in your `redirect_uris` or need a mechanism to allow changes in
+          domain without affecting consumer consent.
+
+          [Read more](https://openid.net/specs/openid-connect-core-1_0.html)
+        type: string
+        x-nullable: false
+      skip_dbfp:
+        description: |-
+          Skip device-based fingerprint (DBFP) collection for this client.
+          If true, the interactive DBFP collection step is skipped during login, which lets
+          non-interactive clients (e.g. backend HTTP clients that cannot execute the collection
+          JavaScript) complete the authorization flow. Risk inference is unaffected.
+        type: boolean
+        x-nullable: false
+      software_id:
+        description: |-
+          A unique identifier string (e.g., a Universally Unique Identifier
+          (UUID)) assigned by the client developer or software publisher.
+
+          The `software_id` MUST remain the same across
+          multiple updates or versions of the same software package. The
+          value of this field is not intended to be human-readable and is
+          usually opaque to the client and authorization server.
+        type: string
+        x-nullable: false
+      software_statement:
+        type: string
+        x-nullable: false
+      software_version:
+        description: |-
+          A version identifier string for the client software identified by
+          `software_id`. The value of the `software_version` MUST be changed
+          with any update of the client software identified by the same
+          `software_id`.
+        type: string
+        x-nullable: false
+      subject_type:
+        default: public
+        description: |-
+          Subject identifier type
+
+          Stores information if the subject identifier is of the `public` or the `pairwise` type.
+
+          Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+          and are intended to be consumed by client applications. There are two types
+          of subject identifiers: `public` and `pairwise`.
+
+          For the `public` type, the value of the `sub` (subject) token claim is the same for all clients.
+
+          For the `pairwise` type, a different `sub` (subject) token claim is provided for each client.
+          Using the `pairwise` subject identifier makes it impossible for client applications to correlate the end-user's
+          activity without their permission.
+        enum:
+        - public
+        - pairwise
+        example: public
+        type: string
+        x-nullable: false
+      tls_client_auth_san_dns:
+        description: A string containing the value of an expected dNSName SAN entry
+          in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_email:
+        description: A string containing the value of an expected rfc822Name SAN entry
+          in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_ip:
+        description: A string representation of an IP address in either dotted decimal
+          notation (for IPv4) or colon-delimited hexadecimal (for IPv6, as defined
+          in [RFC5952]) that is expected to be present as an iPAddress SAN entry in
+          the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_san_uri:
+        description: A string containing the value of an expected uniformResourceIdentifier
+          SAN entry in the certificate.
+        type: string
+        x-nullable: false
+      tls_client_auth_subject_dn:
+        description: An [RFC4514] string representation of the expected subject distinguished
+          name of the certificate.
+        type: string
+        x-nullable: false
+      tls_client_certificate_bound_access_tokens:
+        description: Boolean value indicating server support for mutual TLS client
+          certificate-bound access tokens. If omitted, the default value is "false".
+        type: boolean
+        x-nullable: false
+      token_endpoint_auth_method:
+        default: client_secret_basic
+        description: |-
+          Token endpoint authentication method configured for a client application
+
+          SecureAuth supports the following client authentication methods:
+          `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+          `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+          To learn more, go to the Authorization Basics > Client Authentication section of this guide.
+        enum:
+        - client_secret_basic
+        - client_secret_post
+        - client_secret_jwt
+        - private_key_jwt
+        - self_signed_tls_client_auth
+        - tls_client_auth
+        - none
+        - unspecified
+        example: client_secret_basic
+        type: string
+        x-nullable: false
+      token_endpoint_auth_signing_alg:
+        default: ES256
+        description: |-
+          Signing algorithm for the token endpoint
+
+          This field is optional. If empty, a client can use any algorithm supported by the server (see `token_endpoint_auth_signing_alg_values_supported` in the well-known endpoing).
+
+          If provided, depending on the server configuration, client can use of one: HS256, RS256, ES256, PS256 algorithms.
+
+          If your token endpoint authentication is set to the `private_key_jwt` method, the
+          `token_endpoint_auth_signing_alg` parameter must be either RS256, ES256, or PS256.
+
+          If your token endpoint authentication is set to the `client_secret_jwt` method,
+          the `token_endpoint_auth_signing_alg` parameter must be HS256.
+        enum:
+        - RS256
+        - ES256
+        - PS256
+        - HS256
+        - ""
+        example: ES256
+        type: string
+        x-nullable: false
+      token_exchange:
+        $ref: '#/definitions/ClientTokenExchangeConfiguration'
+      tos_uri:
+        description: Terms of Service URL.
+        type: string
+        x-nullable: false
+      updated_at:
+        description: Date when the client application was updated.
+        example: "2022-05-08T01:11:51.1262916Z"
+        format: date-time
+        type: string
+        x-nullable: false
+      userinfo_signed_response_alg:
+        default: none
+        description: |-
+          JWS alg algorithm REQUIRED for signing UserInfo Responses.
+
+          If specified, the response is a JWT serialized and signed with JWS.
+
+          If omitted, then by default, UserInfo Response returns the Claims
+          as an UTF-8 encoded JSON object using the application/json content-type.
+        enum:
+        - none
+        - RS256
+        - ES256
+        example: none
+        type: string
+        x-nullable: false
+    type: object
+  Error:
+    description: HTTP error response
+    properties:
+      details:
+        type: object
+        x-nullable: false
+      error:
+        type: string
+        x-nullable: false
+      error_code:
+        type: string
+        x-nullable: false
+      status_code:
+        format: int64
+        type: integer
+        x-nullable: false
+    type: object
+  IntrospectResponse:
+    properties:
+      acr:
+        description: Authentication context class reference
+        type: string
+        x-nullable: false
+      act:
+        additionalProperties:
+          type: object
+        description: Actor claims used in the Token Exchange flow.
+        type: object
+        x-nullable: false
+      active:
+        description: |-
+          Active is a boolean indicator of whether or not the presented token
+          is currently active. The specifics of a token's `active` state
+          varies depending on the implementation of an authorization
+          server and the information it keeps about its token. Still, the `true`
+          value returned for the `active` property generally indicates
+          that a given token has been issued by this authorization server,
+          has not been revoked by the resource owner, and is within its
+          given time window of validity (e.g., between its issuance and
+          expiration time).
+        type: boolean
+        x-nullable: false
+      amr:
+        description: Authentication method references
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      aud:
+        description: Audience contains the list of the audiences the token is intended
+          for.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_details:
+        description: Granted authorization details
+        items:
+          additionalProperties:
+            type: object
+          type: object
+        type: array
+        x-nullable: false
+      client_id:
+        description: |-
+          A client application identifier for the OAuth 2.0 client that
+          requested this token.
+        type: string
+        x-nullable: false
+      cnf:
+        $ref: '#/definitions/Confirmation'
+      exp:
+        description: |-
+          ExpiredAt is the integer timestamp measured in the number of seconds
+          since January 1 1970 UTC (1970-01-01T00:00:00Z). It indicates when this token will expire.
+        format: int64
+        type: integer
+        x-nullable: false
+      ext:
+        additionalProperties:
+          type: object
+        description: Extra is arbitrary data set by the session.
+        type: object
+        x-nullable: false
+      iat:
+        description: |-
+          IssuedAt is the integer timestamp measured in the number of seconds
+          since January 1 1970 UTC. It indicates when this token was
+          originally issued.
+        format: int64
+        type: integer
+        x-nullable: false
+      idp:
+        description: The identifier of an identity provider that user authenticated
+          with.
+        type: string
+        x-nullable: false
+      idp_sub:
+        description: IDP subject
+        type: string
+        x-nullable: false
+      iss:
+        description: Issuer URL is a string representing the issuer of this token.
+        type: string
+        x-nullable: false
+      may_act:
+        additionalProperties:
+          type: object
+        description: May act claims used in the Token Exchange flow.s
+        type: object
+        x-nullable: false
+      nbf:
+        description: |-
+          NotBefore is an integer timestamp measured in the number of seconds
+          since January 1 1970 UTC. It indicates this token was not
+          used before the specified time.
+        format: int64
+        type: integer
+        x-nullable: false
+      scope:
+        description: |-
+          Scope is a JSON string containing a space-separated list of
+          scopes associated with this token.
+        type: string
+        x-nullable: false
+      server_id:
+        description: |-
+          The OAuth 2.0 authorization server identifier that
+          issued this token.
+        type: string
+        x-nullable: false
+      sub:
+        description: |-
+          Subject of the token, as defined in JWT [RFC7519].
+          Usually a machine-readable identifier of the resource owner who
+          authorized this token.
+        type: string
+        x-nullable: false
+      tenant_id:
+        description: |-
+          TenantID identifies a tenant holding the authorization server that
+          issued this token.
+        type: string
+        x-nullable: false
+      token_type:
+        description: TokenType is the type of the introspected token. For example,
+          `access_token` or `refresh_token`.
+        type: string
+        x-nullable: false
+      username:
+        description: |-
+          Username is a human-readable identifier for the resource owner who
+          authorized this token.
+        type: string
+        x-nullable: false
+    type: object
+  MTLSEndpointAliases:
+    properties:
+      backchannel_authentication_endpoint:
+        type: string
+        x-nullable: false
+      device_authorization_endpoint:
+        type: string
+        x-nullable: false
+      introspection_endpoint:
+        type: string
+        x-nullable: false
+      pushed_authorization_request_endpoint:
+        type: string
+        x-nullable: false
+      registration_endpoint:
+        type: string
+        x-nullable: false
+      revocation_endpoint:
+        type: string
+        x-nullable: false
+      token_endpoint:
+        type: string
+        x-nullable: false
+      userinfo_endpoint:
+        type: string
+        x-nullable: false
+    type: object
+  PARResponse:
+    description: Pushed Authorization Response
+    properties:
+      expires_in:
+        description: |-
+          A JSON number that represents the lifetime of the request URI in seconds as a positive integer.
+          The request URI lifetime is at the discretion of the authorization server but will typically be
+          relatively short (e.g., between 5 and 600 seconds).
+        format: int64
+        type: integer
+        x-nullable: false
+      request_uri:
+        description: |-
+          The request URI corresponding to the authorization request posted.
+          This URI is a single-use reference to the respective request data in the subsequent authorization request.
+          The way the authorization process obtains the authorization request data is at the discretion of the
+          authorization server and is out of scope of this specification.
+          There is no need to make the authorization request data available to other parties via this URI.
+        type: string
+        x-nullable: false
+    type: object
+  PIICategory:
+    properties:
+      name:
+        description: name
+        example: HIPAA
+        type: string
+        x-nullable: false
+    type: object
+  RFC6749Error:
+    properties:
+      cause:
+        type: string
+        x-nullable: false
+      details:
+        type: object
+        x-nullable: false
+      error:
+        type: string
+        x-nullable: false
+      error_description:
+        type: string
+        x-nullable: false
+      error_hint:
+        type: string
+        x-nullable: false
+      error_uri:
+        type: string
+        x-nullable: false
+      status_code:
+        format: int64
+        type: integer
+        x-nullable: false
+    type: object
+  RedirectURIs:
+    description: |-
+      SecureAuth uses redirect URIs to redirect users back to the application after they authorized the application. Along
+      with the redirection, an authorization code or access token is added to the URL.
+
+      For backward compatibility reasons, it's also acceptable to pass `redirect_uris` as a string, for example:
+      https://example.com/callback.
+
+      example: ["https://example.com/callback"]
+    items:
+      type: string
+    title: OAuth-allowed redirect URIs
+    type: array
+  ResponseTypes:
+    description: |-
+      The array may consist of the following arguments:
+
+      `code` - when supplied as the value for the `response_type` parameter, a successful
+      response includes an authorization code
+
+      `code token` - when supplied as the value for the `response_type` parameter, a successful
+      response includes an access token, an access token type, and an authorization code
+
+      `id_token token` - when supplied as the value for the `response_type` parameter, a successful
+      response includes an access token, an access token type, and an ID token
+
+      `code id_token token` - when supplied as the value for the `response_type` parameter, a successful
+      response includes an authorization code, an ID token, an access token, and an access token
+      type.
+
+      `token` - when supplied as the value for the `response_type` parameter, a successful
+      response includes an access token and its type. This argument is used for the implicit grant
+      flow, but is not recommended. Instead, you should use either the authorization code grant
+      flow with PKCE or client authentication set to `none` and with the use of PKCE.
+
+      example: ["token", "id_token", "code"]
+      default: ["code"]
+    items:
+      enum:
+      - token
+      - id_token
+      - code
+      - code id_token
+      - token id_token
+      - token code
+      - token id_token code
+      - none
+      type: string
+    title: An array of allowed response types
+    type: array
+  ScopePrivacyInformation:
+    properties:
+      pii_categories:
+        items:
+          $ref: '#/definitions/PIICategory'
+        type: array
+        x-nullable: false
+      purpose:
+        format: purposeName
+        type: string
+        x-nullable: false
+    type: object
+  TokenResponse:
+    properties:
+      access_token:
+        type: string
+        x-nullable: false
+      cdr_arrangement_id:
+        type: string
+        x-nullable: false
+      expires_in:
+        format: int64
+        type: integer
+        x-nullable: false
+      grant_id:
+        type: string
+        x-nullable: false
+      id_token:
+        type: string
+        x-nullable: false
+      issued_token_type:
+        type: string
+        x-nullable: false
+      refresh_token:
+        type: string
+        x-nullable: false
+      scope:
+        type: string
+        x-nullable: false
+      token_type:
+        description: 'Token type: Bearer or DPoP'
+        type: string
+        x-nullable: false
+    type: object
+  genericError:
+    description: Error response
+    properties:
+      cause:
+        description: error cause
+        type: string
+        x-nullable: false
+      details:
+        description: error details
+        type: object
+        x-nullable: false
+      error:
+        example: The requested resource could not be found
+        type: string
+        x-nullable: false
+      error_description:
+        description: error description
+        type: string
+        x-nullable: false
+      error_hint:
+        example: Object with ID 12345 does not exist
+        type: string
+        x-nullable: false
+      status_code:
+        description: Code represents the error status code (404, 403, 401, ...).
+        example: 404
+        format: int64
+        type: integer
+        x-nullable: false
+    required:
+    - error
+    type: object
+  userinfoResponse:
+    properties:
+      aid:
+        description: Server ID - Authorization Server ID that this ID Token is intended
+          for.
+        type: string
+        x-nullable: false
+      aud:
+        description: Audience - Audiences that this ID Token is intended for.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      birthdate:
+        description: End-User's birthday, represented as an ISO 8601:2004 [ISO8601‑2004]
+          YYYY-MM-DD format. The year MAY be 0000, indicating that it is omitted.
+          To represent only the year, YYYY format is allowed. Note that depending
+          on the underlying platform's date related function, providing just year
+          can result in varying month and day, so the implementers need to take this
+          factor into account to correctly process the dates.
+        type: string
+        x-nullable: false
+      email:
+        description: End-User's preferred e-mail address. Its value MUST conform to
+          the RFC 5322 [RFC5322] addr-spec syntax. The RP MUST NOT rely upon this
+          value being unique, as discussed in Section 5.7.
+        type: string
+        x-nullable: false
+      email_verified:
+        description: True if the End-User's e-mail address has been verified; otherwise
+          false. When this Claim Value is true, this means that the OP took affirmative
+          steps to ensure that this e-mail address was controlled by the End-User
+          at the time the verification was performed. The means by which an e-mail
+          address is verified is context-specific, and dependent upon the trust framework
+          or contractual agreements within which the parties are operating.
+        type: boolean
+        x-nullable: false
+      family_name:
+        description: Surname(s) or last name(s) of the End-User. Note that in some
+          cultures, people can have multiple family names or no family name; all can
+          be present, with the names being separated by space characters.
+        type: string
+        x-nullable: false
+      gender:
+        description: End-User's gender. Values defined by this specification are female
+          and male. Other values MAY be used when neither of the defined values are
+          applicable.
+        type: string
+        x-nullable: false
+      given_name:
+        description: Given name(s) or first name(s) of the End-User. Note that in
+          some cultures, people can have multiple given names; all can be present,
+          with the names being separated by space characters.
+        type: string
+        x-nullable: false
+      idp:
+        description: IdpID - IDP ID that this ID Token is intended for.
+        type: string
+        x-nullable: false
+      idp_method:
+        description: IdpMethod - IDP Method that this ID Token is intended for.
+        type: string
+        x-nullable: false
+      locale:
+        description: End-User's locale, represented as a BCP47 [RFC5646] language
+          tag. This is typically an ISO 639-1 Alpha-2 [ISO639‑1] language code in
+          lowercase and an ISO 3166-1 Alpha-2 [ISO3166‑1] country code in uppercase,
+          separated by a dash. For example, en-US or fr-CA. As a compatibility note,
+          some implementations have used an underscore as the separator rather than
+          a dash, for example, en_US; Relying Parties MAY choose to accept this locale
+          syntax as well.
+        type: string
+        x-nullable: false
+      middle_name:
+        description: Middle name(s) of the End-User. Note that in some cultures, people
+          can have multiple middle names; all can be present, with the names being
+          separated by space characters. Also note that in some cultures, middle names
+          are not used.
+        type: string
+        x-nullable: false
+      name:
+        description: End-User's full name in displayable form including all name parts,
+          possibly including titles and suffixes, ordered according to the End-User's
+          locale and preferences.
+        type: string
+        x-nullable: false
+      nickname:
+        description: Casual name of the End-User that may or may not be the same as
+          the given_name. For instance, a nickname value of Mike might be returned
+          alongside a given_name value of Michael.
+        type: string
+        x-nullable: false
+      phone_number:
+        description: End-User's preferred telephone number. E.164 [E.164] is RECOMMENDED
+          as the format of this Claim, for example, +1 (425) 555-1212 or +56 (2) 687
+          2400. If the phone number contains an extension, it is RECOMMENDED that
+          the extension be represented using the RFC 3966 [RFC3966] extension syntax,
+          for example, +1 (604) 555-1234;ext=5678.
+        type: string
+        x-nullable: false
+      phone_number_verified:
+        description: True if the End-User's phone number has been verified; otherwise
+          false. When this Claim Value is true, this means that the OP took affirmative
+          steps to ensure that this phone number was controlled by the End-User at
+          the time the verification was performed. The means by which a phone number
+          is verified is context-specific, and dependent upon the trust framework
+          or contractual agreements within which the parties are operating. When true,
+          the phone_number Claim MUST be in E.164 format and any extensions MUST be
+          represented in RFC 3966 format.
+        type: boolean
+        x-nullable: false
+      picture:
+        description: URL of the End-User's profile picture. This URL MUST refer to
+          an image file (for example, a PNG, JPEG, or GIF image file), rather than
+          to a Web page containing an image. Note that this URL SHOULD specifically
+          reference a profile photo of the End-User suitable for displaying when describing
+          the End-User, rather than an arbitrary photo taken by the End-User.
+        type: string
+        x-nullable: false
+      preferred_username:
+        description: Non-unique shorthand name by which the End-User wishes to be
+          referred to at the RP, such as janedoe or j.doe. This value MAY be any valid
+          JSON string including special characters such as @, /, or whitespace.
+        type: string
+        x-nullable: false
+      profile:
+        description: URL of the End-User's profile page. The contents of this Web
+          page SHOULD be about the End-User.
+        type: string
+        x-nullable: false
+      sub:
+        description: Subject - Identifier for the End-User at the IssuerURL.
+        type: string
+        x-nullable: false
+      tid:
+        description: TenantID - Tenant ID that this ID Token is intended for.
+        type: string
+        x-nullable: false
+      updated_at:
+        description: Time the End-User's information was last updated. Its value is
+          a JSON number representing the number of seconds from 1970-01-01T0:0:0Z
+          as measured in UTC until the date/time.
+        format: int64
+        type: integer
+        x-nullable: false
+      website:
+        description: URL of the End-User's Web page or blog. This Web page SHOULD
+          contain information published by the End-User or an organization that the
+          End-User is affiliated with.
+        type: string
+        x-nullable: false
+      zoneinfo:
+        description: String from zoneinfo [zoneinfo] time zone database representing
+          the End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+        type: string
+        x-nullable: false
+    type: object
+  wellKnown:
+    description: |-
+      WellKnown represents important OpenID Connect discovery metadata.
+
+      It includes links to several endpoints (e.g. /oauth2/token) and exposes information on supported signature algorithms
+      among others.
+    properties:
+      acr_values_supported:
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      attachments_supported:
+        description: JSON array containing all attachment types supported by the OP.  REQUIRED
+          when OP supports attachments. Possible values are external and embedded.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_details_types_supported:
+        description: List of supported authorization details types
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_encryption_alg_values_supported:
+        description: optional JSON array containing a list of the encryption algorithms
+          (alg values) supported by the authorization endpoint to encrypt the response.
+        items:
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          type: string
+        type: array
+        x-nullable: false
+      authorization_encryption_enc_values_supported:
+        description: optional JSON array containing a list of the encryption algorithms
+          (enc values) supported by the authorization endpoint to encrypt the response.
+        items:
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          type: string
+        type: array
+        x-nullable: false
+      authorization_endpoint:
+        description: URL of the OP's OAuth 2.0 Authorization Endpoint.
+        example: https://example.com/oauth2/auth
+        type: string
+        x-nullable: false
+      authorization_grant_profiles_supported:
+        description: JSON array containing a list of the authorization grant profiles
+          that this OP supports.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      authorization_response_iss_parameter_supported:
+        type: boolean
+        x-nullable: false
+      authorization_signing_alg_values_supported:
+        description: optional JSON array containing a list of the signing algorithms
+          supported by the authorization endpoint to sign the response.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      backchannel_authentication_endpoint:
+        description: URL of the OP's Backchannel Authentication Endpoint
+        type: string
+        x-nullable: false
+      backchannel_authentication_request_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for signed authentication requests
+          If omitted, signed authentication requests are not supported by the OP.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      backchannel_logout_session_supported:
+        description: |-
+          Boolean value specifying whether the OP can pass a sid (session ID) Claim in the Logout Token to identify the RP
+          session with the OP. If supported, the sid Claim is also included in ID Tokens issued by the OP
+        type: boolean
+        x-nullable: false
+      backchannel_logout_supported:
+        description: Boolean value specifying whether the OP supports back-channel
+          logout, with true indicating support.
+        type: boolean
+        x-nullable: false
+      backchannel_token_delivery_modes_supported:
+        description: 'JSON array containing one or more of the following values: poll,
+          ping, and push.'
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      backchannel_user_code_parameter_supported:
+        description: |-
+          Boolean value specifying whether the OP supports the use of the user_code parameter, with true indicating support.
+          If omitted, the default value is false.
+        type: boolean
+        x-nullable: false
+      cdr_arrangement_revocation_endpoint:
+        description: |-
+          The URL of the CDR Arrangement Revocation End Point for consent revocation.
+          Available only for "cdr_australia" workspace profile.
+        type: string
+        x-nullable: false
+      claims_in_verified_claims_supported:
+        description: |-
+          JSON array containing all Claims supported within verified_claims.
+          Claims that are not present in this array MUST NOT be returned within the verified_claims object.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      claims_parameter_supported:
+        description: Boolean value specifying whether the OP supports use of the claims
+          parameter, with true indicating support.
+        type: boolean
+        x-nullable: false
+      claims_supported:
+        description: |-
+          JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply
+          values for. Note that for privacy or other reasons, this might not be an exhaustive list.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      client_id_metadata_document_supported:
+        description: Boolean value indicating whether the authorization server accepts
+          a client_id that is an https URL pointing at the client's own metadata document
+        type: boolean
+        x-nullable: false
+      code_challenge_methods_supported:
+        description: List of supported Proof Key for Code Exchange (PKCE) code challenge
+          methods
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      device_authorization_endpoint:
+        description: URL of the authorization server's device authorization endpoint
+        type: string
+        x-nullable: false
+      digest_algorithms_supported:
+        description: |-
+          REQUIRED when OP supports external attachments. JSON array containing all supported digest algorithms which can be used as alg property within
+          the digest object of external attachments. If the OP supports external attachments, at least the algorithm sha-256 MUST be supported by the OP as well.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      documents_check_methods_supported:
+        description: JSON array containing the check methods the OP supports for evidences
+          of type "document".
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      documents_methods_supported:
+        description: JSON array containing the methods the OP supports for evidences
+          of type "document".
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      documents_supported:
+        description: JSON array containing all identity document types utilized by
+          the OP for identity verification. REQUIRED when evidence_supported contains
+          "document".
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      dpop_signing_alg_values_supported:
+        description: JSON array containing a list of the JWS algorithms supported
+          for DPoP proof JWTs
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      electronic_records_supported:
+        description: JSON array containing all electronic record types the OP supports.
+          REQUIRED when evidence_supported contains "electronic_record".
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      end_session_endpoint:
+        description: URL at the OP to which an RP can perform a redirect to request
+          that the End-User be logged out at the OP.
+        type: string
+        x-nullable: false
+      evidence_supported:
+        description: JSON array containing all types of identity evidence the OP uses.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      frontchannel_logout_session_supported:
+        description: |-
+          Boolean value specifying whether the OP can pass iss (issuer) and sid (session ID) query parameters to identify
+          the RP session with the OP when the frontchannel_logout_uri is used. If supported, the sid Claim is also
+          included in ID Tokens issued by the OP.
+        type: boolean
+        x-nullable: false
+      frontchannel_logout_supported:
+        description: Boolean value specifying whether the OP supports HTTP-based logout,
+          with true indicating support.
+        type: boolean
+        x-nullable: false
+      grant_types_supported:
+        description: JSON array containing a list of the OAuth 2.0 Grant Type values
+          that this OP supports.
+        items:
+          enum:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          - password
+          - urn:ietf:params:oauth:grant-type:jwt-bearer
+          - urn:openid:params:grant-type:ciba
+          - urn:ietf:params:oauth:grant-type:token-exchange
+          - urn:ietf:params:oauth:grant-type:device_code
+          type: string
+        type: array
+        x-nullable: false
+      id_token_encryption_alg_values_supported:
+        description: JSON array containing a list of the JWE encryption algorithms
+          (alg values) supported by the OP for the ID Token to encode the Claims in
+          a JWT
+        items:
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          type: string
+        type: array
+        x-nullable: false
+      id_token_encryption_enc_values_supported:
+        description: JSON array containing a list of the JWE encryption algorithms
+          (enc values) supported by the OP for the ID Token to encode the Claims in
+          a JWT
+        items:
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          type: string
+        type: array
+        x-nullable: false
+      id_token_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token
+          to encode the Claims in a JWT.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      identity_chaining_requested_token_types_supported:
+        description: JSON array containing a list of token type identifiers the authorization
+          server can issue via token exchange for identity chaining
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      introspection_endpoint:
+        description: OAuth 2.0 Introspection Endpoint.
+        type: string
+        x-nullable: false
+      introspection_endpoint_auth_methods_supported:
+        description: |-
+          JSON array containing a list of Client Authentication methods supported by Introspection Endpoint. The options are
+          client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0
+        items:
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        type: array
+        x-nullable: false
+      introspection_endpoint_auth_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms ("alg" values) supported by the introspection endpoint for the signature
+          on the JWT [JWT] used to authenticate the client at the introspection endpoint for the "private_key_jwt" and "client_secret_jwt" authentication methods.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      issuer:
+        description: |-
+          URL using the https scheme with no query or fragment component that the OP asserts as its IssuerURL Identifier.
+          If IssuerURL discovery is supported , this value MUST be identical to the issuer value returned
+          by WebFinger. This also MUST be identical to the iss Claim value in ID Tokens issued from this IssuerURL.
+        example: https://example.com/
+        type: string
+        x-nullable: false
+      jwks_uri:
+        description: |-
+          URL of the OP's JSON Web Key Set [JWK] document. This contains the signing key(s) the RP uses to validate
+          signatures from the OP. The JWK Set MAY also contain the Server's encryption key(s), which are used by RPs
+          to encrypt requests to the Server. When both signing and encryption keys are made available, a use (Key Use)
+          parameter value is REQUIRED for all keys in the referenced JWK Set to indicate each key's intended usage.
+          Although some algorithms allow the same key to be used for both signatures and encryption, doing so is
+          NOT RECOMMENDED, as it is less secure. The JWK x5c parameter MAY be used to provide X.509 representations of
+          keys provided. When used, the bare key values MUST still be present and MUST match those in the certificate.
+        example: https://example.com/.well-known/jwks.json
+        type: string
+        x-nullable: false
+      mtls_endpoint_aliases:
+        $ref: '#/definitions/MTLSEndpointAliases'
+      mtls_issuer:
+        type: string
+        x-nullable: false
+      pushed_authorization_request_endpoint:
+        description: |-
+          The URL of the pushed authorization request endpoint at which a client can post an authorization request to exchange
+          for a "request_uri" value usable at the authorization server.
+        type: string
+        x-nullable: false
+      registration_endpoint:
+        description: URL of the authorization server's OAuth 2.0 dynamic client registration
+          endpoint.
+        type: string
+        x-nullable: false
+      request_object_encryption_alg_values_supported:
+        description: List of JWE encryption algorithms (alg values) supported by the
+          OP for Request Objects. These algorithms are used both when the Request
+          Object is passed by a value and when it is passed by a reference.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      request_object_encryption_enc_values_supported:
+        description: List of JWE encryption algorithms (enc values) supported by the
+          OP for Request Objects. These algorithms are used both when the Request
+          Object is passed by a value and when it is passed by a reference.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      request_object_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects, which are described in Section 6.1 of OpenID Connect Core 1.0 [OpenID.Core].
+          These algorithms are used both when the Request Object is passed by value (using the request parameter) and when it is passed by reference (using the request_uri parameter).
+          Servers SHOULD support none and RS256.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      request_parameter_supported:
+        description: Boolean value specifying whether the OP supports use of the request
+          parameter, with true indicating support.
+        type: boolean
+        x-nullable: false
+      request_uri_parameter_supported:
+        description: Boolean value specifying whether the OP supports use of the request_uri
+          parameter, with true indicating support.
+        type: boolean
+        x-nullable: false
+      require_pushed_authorization_requests:
+        description: Boolean parameter indicating whether the authorization server
+          accepts authorization request data only via PAR.
+        type: boolean
+        x-nullable: false
+      require_request_uri_registration:
+        description: |-
+          Boolean value specifying whether the OP requires any request_uri values used to be pre-registered
+          using the request_uris registration parameter.
+        type: boolean
+        x-nullable: false
+      response_modes_supported:
+        description: JSON array containing a list of the OAuth 2.0 response_mode values
+          that this OP supports.
+        items:
+          enum:
+          - query
+          - fragment
+          - form_post
+          - query.jwt
+          - fragment.jwt
+          - form_post.jwt
+          - jwt
+          type: string
+        type: array
+        x-nullable: false
+      response_types_supported:
+        description: |-
+          JSON array containing a list of the OAuth 2.0 response_type values that this OP supports. Dynamic OpenID
+          Providers MUST support the code, id_token, and the token id_token Response Type values.
+        items:
+          enum:
+          - token
+          - id_token
+          - code
+          - code id_token
+          - token id_token
+          - token code
+          - token id_token code
+          - none
+          type: string
+        type: array
+        x-nullable: false
+      revocation_endpoint:
+        description: URL of the authorization server's OAuth 2.0 revocation endpoint.
+        type: string
+        x-nullable: false
+      revocation_endpoint_auth_methods_supported:
+        description: |-
+          JSON array containing a list of Client Authentication methods supported by Revocation Endpoint. The options are
+          client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0
+        items:
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        type: array
+        x-nullable: false
+      revocation_endpoint_auth_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms ("alg" values) supported by the revocation endpoint for
+          the signature on the JWT [JWT] used to authenticate the client at the revocation endpoint for the "private_key_jwt" and "client_secret_jwt" authentication methods.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      scopes_supported:
+        description: |-
+          SON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports. The server MUST
+          support the openid scope value. Servers MAY choose not to advertise some supported scope values even when this parameter is used
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      subject_types_supported:
+        description: |-
+          JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include
+          pairwise and public.
+        example: public, pairwise
+        items:
+          enum:
+          - public
+          - pairwise
+          type: string
+        type: array
+        x-nullable: false
+      tls_client_certificate_bound_access_tokens:
+        description: Boolean value indicating server support for mutual TLS client
+          certificate bound access tokens
+        type: boolean
+        x-nullable: false
+      token_endpoint:
+        description: URL of the OP's OAuth 2.0 Token Endpoint
+        example: https://example.com/oauth2/token
+        type: string
+        x-nullable: false
+      token_endpoint_auth_methods_supported:
+        description: |-
+          JSON array containing a list of Client Authentication methods supported by Token Endpoint. The options are
+          client_secret_post, client_secret_basic, client_secret_jwt, and private_key_jwt, as described in Section 9 of OpenID Connect Core 1.0
+        items:
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        type: array
+        x-nullable: false
+      token_endpoint_auth_signing_alg_values_supported:
+        description: |-
+          JSON array containing a list of the JWS signing algorithms ("alg" values) supported by the token endpoint for the
+          signature on the JWT [JWT] used to authenticate the client at the token endpoint for the "private_key_jwt" and "client_secret_jwt" authentication methods.
+          This metadata entry MUST be present if either of these authentication methods are specified in the "token_endpoint_auth_methods_supported" entry.
+          No default algorithms are implied if this entry is omitted.  Servers SHOULD support "RS256".  The value "none" MUST NOT be used.
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      trust_frameworks_supported:
+        description: JSON array containing all supported trust frameworks
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      userinfo_endpoint:
+        description: URL of the OP's UserInfo Endpoint.
+        type: string
+        x-nullable: false
+      userinfo_signing_alg_values_supported:
+        description: JSON array containing a list of the JWS [JWS] signing algorithms
+          (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims
+          in a JWT [JWT].
+        items:
+          type: string
+        type: array
+        x-nullable: false
+      verified_claims_supported:
+        description: Boolean value indicating support for verified_claims, i.e., the
+          OpenID Connect for Identity Assurance extension.
+        type: boolean
+        x-nullable: false
+    required:
+    - issuer
+    - authorization_endpoint
+    - token_endpoint
+    - jwks_uri
+    - subject_types_supported
+    - response_types_supported
+    - id_token_signing_alg_values_supported
+    title: WellKnown response
+    type: object
+host: localhost:8443
+info:
+  description: |-
+    SecureAuth OAuth2 API
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+    To use idempotent requests:
+
+    1. Generate a unique idempotency key (32-255 characters long).
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+    3. Retry failed requests with the same key within 1 minute.
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.
+  title: SecureAuth  API
+  version: latest
+paths:
+  /.well-known/jwks.json:
+    get:
+      description: |-
+        This endpoint returns the signing key(s) the client uses to validate
+        signatures from the authorization server.
+      operationId: jwks
+      responses:
+        "200":
+          $ref: '#/responses/jwksResponse'
+        "404":
+          $ref: '#/responses/genericError'
+      summary: JSON Web Keys Discovery endpoint
+      tags:
+      - oauth2
+  /.well-known/openid-configuration:
+    get:
+      description: Returns OpenID configuration.
+      operationId: wellKnown
+      responses:
+        "200":
+          $ref: '#/responses/wellKnownResponse'
+        "404":
+          $ref: '#/responses/genericError'
+      summary: OpenID Connect Discovery endpoint
+      tags:
+      - oauth2
+  /backchannel/authentication:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Client-Initiated Backchannel Authentication defines an authentication
+        request that is requested directly from the Client to the OpenID Provider
+        without going through the user's browser.
+      operationId: backchannelAuthentication
+      parameters:
+      - in: formData
+        name: client_id
+        type: string
+      - in: formData
+        name: client_secret
+        type: string
+      - description: The scope of the access request. Must contain openid scope value.
+        in: formData
+        name: scope
+        type: string
+      - description: It is a bearer token provided by the Client that will be used
+          by the OpenID Provider to authenticate the callback request to the Client.
+        in: formData
+        name: client_notification_token
+        type: string
+      - description: |-
+          Requested Authentication Context Class Reference values.
+          A space-separated string that specifies the acr values that the OpenID Provider is being requested to use for processing this Authentication Request, with the values appearing in order of preference
+        in: formData
+        name: acr_values
+        type: string
+      - description: A token containing information identifying the end-user for whom
+          authentication is being requested
+        in: formData
+        name: login_hint_token
+        type: string
+      - description: An ID Token previously issued to the Client by the OpenID Provider
+          being passed back as a hint to identify the end-user for whom authentication
+          is being requested.
+        in: formData
+        name: id_token_hint
+        type: string
+      - description: A hint to the OpenID Provider regarding the end-user for whom
+          authentication is being requested.
+        in: formData
+        name: login_hint
+        type: string
+      - description: A human-readable identifier or message intended to be displayed
+          on both the consumption device and the authentication device to interlock
+          them together for the transaction by way of a visual cue for the end-user.
+        in: formData
+        name: binding_message
+        type: string
+      - description: A secret code, such as a password or pin, that is known only
+          to the user but verifiable by the OP. The code is used to authorize sending
+          an authentication request to the user's authentication device.
+        in: formData
+        name: user_code
+        type: string
+      - description: A positive integer allowing the client to request the expires_in
+          value for the auth_req_id the server will return.
+        format: int64
+        in: formData
+        name: requested_expiry
+        type: integer
+      - description: client assertion type
+        in: formData
+        name: client_assertion_type
+        type: string
+      - description: client assertion
+        in: formData
+        name: client_assertion
+        type: string
+      - description: signed authentication request
+        in: formData
+        name: request
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/BackchannelAuthenticationResponse'
+        "400":
+          $ref: '#/responses/BackchannelAuthenticationError'
+        "401":
+          $ref: '#/responses/BackchannelAuthenticationError'
+      summary: OpenID Connect Client-Initiated Backchannel Authentication endpoint
+      tags:
+      - oauth2
+  /device/authorization:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        The Device Authorization endpoint is designed for Internet-
+        connected devices that either lack a browser to perform a user-agent-
+        based authorization or are input constrained to the extent that
+        requiring the user to input text in order to authenticate during the
+        authorization flow is impractical.
+      operationId: deviceAuthorization
+      parameters:
+      - description: Client id
+        in: formData
+        name: client_id
+        required: true
+        type: string
+      - description: Scope
+        in: formData
+        name: scope
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/DeviceResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "405":
+          $ref: '#/responses/methodNotAllowedHTTPError'
+        "413":
+          $ref: '#/responses/payloadTooLargeHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - default: []
+      summary: OAuth 2.0 Device Authorization endpoint
+      tags:
+      - oauth2
+  /oauth2/authorize:
+    get:
+      description: |-
+        The authorization endpoint is used to interact with the resource
+        owner and obtain an authorization grant.
+      operationId: authorize
+      parameters:
+      - in: query
+        name: response_type
+        required: true
+        type: string
+      - in: query
+        name: redirect_uri
+        type: string
+      - description: |-
+          Client application identifier
+
+
+          You can find the `client_id` value on the Settings page of the required client application.
+        in: query
+        name: client_id
+        required: true
+        type: string
+      - in: query
+        name: scope
+        type: string
+      - in: query
+        name: state
+        type: string
+      - in: query
+        name: nonce
+        type: string
+      - in: query
+        name: code_challenge
+        type: string
+      - in: query
+        name: code_challenge_method
+        type: string
+      - in: query
+        name: request
+        type: string
+      - in: query
+        name: request_uri
+        type: string
+      - in: query
+        name: claims
+        type: string
+      - in: query
+        name: idp_hint
+        type: string
+      - description: Thumbprint of the DPoP public key
+        in: query
+        name: dpop_jkt
+        type: string
+      - description: Authorization correlation ID
+        in: query
+        name: authorization_correlation_id
+        type: string
+      responses:
+        "302":
+          $ref: '#/responses/emptyResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      summary: The OAuth 2.0 authorize endpoint
+      tags:
+      - oauth2
+  /oauth2/introspect:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Takes the `token` parameter representing an OAuth 2.0 token (the one the application wants to
+        introspect) and returns a JSON
+        representing the metadata surrounding the token such as, for example,
+        whether the token is still active, what are the approved access scopes, what is the
+        authentication context in which the token was issued.
+
+        Token introspection allows resource servers or applications to
+        query this information regardless of whether or not it is carried in
+        the token itself. It allows to use this method along with or
+        independently of structured token values.  Additionally, you can use the mechanism to
+        introspect the token in a particular authentication context
+        and ascertain the relevant metadata about the token to make the
+        authorization decision appropriately.
+
+        Client applications that call the OAuth 2.0 Introspection Endpoint must authenticate with the
+        SecureAuth authorization server either with a valid access token provided as the value of
+        the `Authorization: Bearer $AT` request header or using the client authentication method
+        configured for the client application.
+
+        When a client application is assigned the `introspect_tokens` scope, it can introspect tokens
+        that belong to client applications **registered within the same workspace** as the client app
+        requesting the token instrospection. When a client application has no `introspect_tokens` scope
+        assigned, it can **only introspect its tokens**.
+      operationId: introspect
+      parameters:
+      - in: formData
+        name: token
+        type: string
+      - description: Indicates if sso session should be extended for the request.
+          Optional. Default `true`
+        in: header
+        name: SSO-Session-Extend
+        type: boolean
+      responses:
+        "200":
+          $ref: '#/responses/IntrospectResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      security:
+      - default:
+        - introspect_tokens
+      summary: The OAuth 2.0 Introspection Endpoint
+      tags:
+      - oauth2
+  /oauth2/register:
+    post:
+      description: |-
+        Dynamic Client Registration endpoint allows to dynamically register OAuth 2.0 client applications
+        with the SecureAuth Platform. When a request with all required registration metadata
+        values reaches the SecureAuth authorization server, the server issues a client
+        identifier and provides client metadata values registered for the client.
+        Client applications can use their registration data to communicate with the SecureAuth
+        platform using the OAuth 2.0 protocol.
+      operationId: dynamicClientRegistration
+      parameters:
+      - in: body
+        name: Client
+        schema:
+          $ref: '#/definitions/DynamicClientRegistrationRequest'
+      responses:
+        "201":
+          $ref: '#/responses/DynamicClientRegistrationResponse'
+        "400":
+          $ref: '#/responses/RFC6749Error'
+        "401":
+          $ref: '#/responses/RFC6749Error'
+        "403":
+          $ref: '#/responses/RFC6749Error'
+        "404":
+          $ref: '#/responses/genericError'
+      security:
+      - default:
+        - dcr_register
+      summary: OAuth 2.0 Dynamic Client Registration Endpoint
+      tags:
+      - oauth2
+  /oauth2/register/{cid}:
+    delete:
+      description: This endpoint allows to delete a dynamically registered client.
+      operationId: dynamicClientRegistrationDeleteClient
+      parameters:
+      - default: default
+        description: Client id
+        in: path
+        name: cid
+        required: true
+        type: string
+      responses:
+        "204":
+          description: ' Client has been deleted'
+        "400":
+          $ref: '#/responses/RFC6749Error'
+        "401":
+          $ref: '#/responses/RFC6749Error'
+        "403":
+          $ref: '#/responses/RFC6749Error'
+        "404":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OAuth 2.0 Dynamic Client Registration Delete Client Endpoint
+      tags:
+      - oauth2
+    get:
+      description: This endpoint allows to get metadata values of a dynamically registered
+        client.
+      operationId: dynamicClientRegistrationGetClient
+      parameters:
+      - default: default
+        description: Client id
+        in: path
+        name: cid
+        required: true
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/DynamicClientRegistrationResponse'
+        "400":
+          $ref: '#/responses/RFC6749Error'
+        "401":
+          $ref: '#/responses/RFC6749Error'
+        "403":
+          $ref: '#/responses/RFC6749Error'
+        "404":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OAuth 2.0 Dynamic Client Registration Get Client Endpoint
+      tags:
+      - oauth2
+    put:
+      description: This endpoint allows to update metadata values of a dynamically
+        registered client.
+      operationId: dynamicClientRegistrationUpdateClient
+      parameters:
+      - default: default
+        description: Client id
+        in: path
+        name: cid
+        required: true
+        type: string
+      - in: body
+        name: Client
+        schema:
+          $ref: '#/definitions/DynamicClientRegistrationRequest'
+      responses:
+        "200":
+          $ref: '#/responses/DynamicClientRegistrationResponse'
+        "400":
+          $ref: '#/responses/RFC6749Error'
+        "401":
+          $ref: '#/responses/RFC6749Error'
+        "403":
+          $ref: '#/responses/RFC6749Error'
+        "404":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OAuth 2.0 Dynamic Client Registration Update Client Endpoint
+      tags:
+      - oauth2
+  /oauth2/revoke:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Supports revocation of access and refresh tokens. The token to be revoked must be provided as the
+        value of the `token` parameter. When a token is revoked, it cannot be used to, for example,
+        exchange a refresh token to an access token.
+
+        Client applications that call the OAuth 2.0 Revocation Endpoint must authenticate with the
+        SecureAuth authorization server either
+        with a valid access token provided as the value of the `Authorization: Bearer $AT` request header
+        or using the client authentication method configured for the client application.
+
+        When a client application is assigned the `revoke_tokens` scope, it can revoke tokens
+        that belong to client applications **registered within the same workspace** as the client app
+        requesting the token revocation. When a client application has no `revoke_tokens` scope
+        assigned, it can **only revoke its tokens**.
+      operationId: revoke
+      parameters:
+      - in: formData
+        name: token
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/emptyResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      security:
+      - default:
+        - revoke_tokens
+      summary: The OAuth 2.0 Revocation Endpoint
+      tags:
+      - oauth2
+  /oauth2/token:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        The token endpoint is used by the client to obtain an access token by
+        presenting its authorization grant or refresh token.
+      operationId: token
+      parameters:
+      - description: A server will only return requested resources if the resource
+          matches one of the listed ETag value
+        format: etag
+        in: header
+        name: if-match
+        type: string
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        type: string
+      - in: formData
+        name: grant_type
+        required: true
+        type: string
+      - in: formData
+        name: code
+        type: string
+      - in: formData
+        name: scope
+        type: string
+      - in: formData
+        name: redirect_uri
+        type: string
+      - in: formData
+        name: client_id
+        type: string
+      - in: formData
+        name: client_secret
+        type: string
+      - in: formData
+        name: refresh_token
+        type: string
+      - in: formData
+        name: username
+        type: string
+      - in: formData
+        name: password
+        type: string
+      - in: formData
+        name: code_verifier
+        type: string
+      - in: formData
+        name: requested_token_type
+        type: string
+      - in: formData
+        name: subject_token
+        type: string
+      - in: formData
+        name: subject_token_type
+        type: string
+      - in: formData
+        name: actor_token
+        type: string
+      - in: formData
+        name: actor_token_type
+        type: string
+      - description: DPoP proof
+        in: header
+        name: dpop
+        type: string
+      responses:
+        "200":
+          $ref: '#/responses/tokenResponse'
+        "400":
+          $ref: '#/responses/genericError'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "412":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      summary: The OAuth 2.0 token endpoint
+      tags:
+      - oauth2
+  /oidc/logout:
+    get:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Perform RP-Initiated Logout. See
+        [OpenID Connect RP-Initiated Logout 1.0 spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html).
+      operationId: rpInitiatedLogout
+      parameters:
+      - in: formData
+        name: id_token_hint
+        type: string
+      - in: formData
+        name: logout_hint
+        type: string
+      - in: formData
+        name: client_id
+        type: string
+      - in: formData
+        name: post_logout_redirect_uri
+        type: string
+      - in: formData
+        name: state
+        type: string
+      - in: formData
+        items:
+          type: string
+        name: ui_locales
+        type: array
+      responses:
+        "200":
+          $ref: '#/responses/emptyResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OIDC 1.0 RP-Initiated Logout Endpoint
+      tags:
+      - oauth2
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        Perform RP-Initiated Logout. See
+        [OpenID Connect RP-Initiated Logout 1.0 spec](https://openid.net/specs/openid-connect-rpinitiated-1_0.html).
+      operationId: rpInitiatedLogoutPost
+      parameters:
+      - in: formData
+        name: id_token_hint
+        type: string
+      - in: formData
+        name: logout_hint
+        type: string
+      - in: formData
+        name: client_id
+        type: string
+      - in: formData
+        name: post_logout_redirect_uri
+        type: string
+      - in: formData
+        name: state
+        type: string
+      - in: formData
+        items:
+          type: string
+        name: ui_locales
+        type: array
+      responses:
+        "200":
+          $ref: '#/responses/emptyResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OIDC 1.0 RP-Initiated Logout Endpoint
+      tags:
+      - oauth2
+  /par:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: |-
+        This endpoint allows clients to push the payload of an OAuth 2.0 authorization request to the authorization server
+        via a direct request and provides them with a request URI that is used as reference to the data in a subsequent call
+        to the authorization endpoint.
+      operationId: pushedAuthorizationRequest
+      parameters:
+      - description: Client id
+        in: formData
+        name: client_id
+        required: true
+        type: string
+      - description: Client secret
+        in: formData
+        name: client_secret
+        type: string
+      - description: client assertion type
+        in: formData
+        name: client_assertion_type
+        type: string
+      - description: client assertion
+        in: formData
+        name: client_assertion
+        type: string
+      - description: Response type
+        in: formData
+        name: response_type
+        required: true
+        type: string
+      - description: Redirect uri
+        in: formData
+        name: redirect_uri
+        required: true
+        type: string
+      - description: Scope
+        in: formData
+        name: scope
+        type: string
+      - description: State
+        in: formData
+        name: state
+        type: string
+      - description: Requested Authentication Context Class Reference values.
+        in: formData
+        name: acr_values
+        type: string
+      - description: Code challenge
+        in: formData
+        name: code_challenge
+        type: string
+      - description: Code challenge method
+        in: formData
+        name: code_challenge_method
+        type: string
+      - description: Request Object that holds authorization request parameters
+        in: query
+        name: request
+        type: string
+      - description: Authorization details
+        in: formData
+        name: authorization_details
+        type: string
+      - description: Thumbprint of the DPoP public key
+        in: formData
+        name: dpop_jkt
+        type: string
+      - description: DPoP proof
+        in: header
+        name: dpop
+        type: string
+      responses:
+        "201":
+          $ref: '#/responses/PARResponse'
+        "400":
+          $ref: '#/responses/badRequestHTTPError'
+        "401":
+          $ref: '#/responses/unauthorizedHTTPError'
+        "405":
+          $ref: '#/responses/methodNotAllowedHTTPError'
+        "413":
+          $ref: '#/responses/payloadTooLargeHTTPError'
+        "429":
+          $ref: '#/responses/tooManyRequestsHTTPError'
+      security:
+      - default: []
+      summary: Pushed Authorization Request (PAR) endpoint
+      tags:
+      - oauth2
+  /userinfo:
+    get:
+      description: |-
+        The UserInfo Endpoint is an OAuth 2.0 Protected Resource that
+        returns Claims about the authenticated End-User. To obtain the requested
+        Claims about the End-User, the Client makes a request to the UserInfo Endpoint
+        using an Access Token obtained through OpenID Connect Authentication. These Claims
+        are represented by a JSON object that contains a collection of name and value
+        pairs for the Claims.
+      operationId: userinfo
+      parameters:
+      - description: Indicates if sso session should be extended for the request.
+          Optional. Default `true`
+        in: header
+        name: SSO-Session-Extend
+        type: boolean
+      responses:
+        "200":
+          $ref: '#/responses/userinfoResponse'
+        "401":
+          $ref: '#/responses/genericError'
+        "404":
+          $ref: '#/responses/genericError'
+        "429":
+          $ref: '#/responses/genericError'
+      security:
+      - default: []
+      summary: OpenID Connect Userinfo endpoint
+      tags:
+      - oauth2
+produces:
+- application/json
+responses:
+  BackchannelAuthenticationError:
+    description: Backchannel authentication error
+    schema:
+      $ref: '#/definitions/BackchannelAuthenticationError'
+  BackchannelAuthenticationResponse:
+    description: Backchannel authentication response
+    schema:
+      $ref: '#/definitions/BackchannelAuthenticationResponse'
+  DeviceResponse:
+    description: Device Authorization Response
+    schema:
+      $ref: '#/definitions/DeviceResponse'
+  DynamicClientRegistrationResponse:
+    description: Dynamic client registration response
+    schema:
+      $ref: '#/definitions/DynamicClientRegistrationResponse'
+  IntrospectResponse:
+    description: Token introspection response
+    schema:
+      $ref: '#/definitions/IntrospectResponse'
+  PARResponse:
+    description: Pushed Authorization Response
+    schema:
+      $ref: '#/definitions/PARResponse'
+  RFC6749Error:
+    description: RFC6749 error
+    schema:
+      $ref: '#/definitions/RFC6749Error'
+  badRequestHTTPError:
+    description: Bad request
+    schema:
+      $ref: '#/definitions/Error'
+  conflictHTTPError:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/Error'
+  emptyResponse:
+    description: Empty response
+  forbiddenHTTPError:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/Error'
+  genericError:
+    description: ErrorResponse
+    schema:
+      $ref: '#/definitions/genericError'
+  internalServerErrorHTTPError:
+    description: Internal server error
+    schema:
+      $ref: '#/definitions/Error'
+  jwksResponse:
+    description: JWKs
+    schema:
+      $ref: '#/definitions/ClientJWKs'
+  methodNotAllowedHTTPError:
+    description: Method not allowed
+    schema:
+      $ref: '#/definitions/Error'
+  notFoundHTTPError:
+    description: Not found
+    schema:
+      $ref: '#/definitions/Error'
+  payloadTooLargeHTTPError:
+    description: Payload too large
+    schema:
+      $ref: '#/definitions/Error'
+  preconditionFailedHTTPError:
+    description: Precondition failed
+    schema:
+      $ref: '#/definitions/Error'
+  tokenResponse:
+    description: Token
+    headers:
+      etag:
+        description: |-
+          The ETag HTTP header is an identifier for a specific version of a resource
+
+          in:header
+        format: etag
+        type: string
+      x-external-error:
+        description: |-
+          Indicates that a 5xx error was caused by tenant-provided code
+
+          in:header
+        type: string
+      x-trace-id:
+        description: |-
+          OpenTelemetry trace identifier
+
+          in:header
+        type: string
+    schema:
+      $ref: '#/definitions/TokenResponse'
+  tooManyRequestsHTTPError:
+    description: Too many requests
+    schema:
+      $ref: '#/definitions/Error'
+  unauthorizedHTTPError:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/Error'
+  unprocessableEntityHTTPError:
+    description: Unprocessable entity
+    schema:
+      $ref: '#/definitions/Error'
+  userinfoResponse:
+    description: Userinfo
+    schema:
+      $ref: '#/definitions/userinfoResponse'
+  wellKnownResponse:
+    description: OpenID configuration
+    schema:
+      $ref: '#/definitions/wellKnown'
+schemes:
+- https
+securityDefinitions:
+  default:
+    authorizationUrl: /default/default/oauth2/authorize
+    flow: accessCode
+    scopes:
+      dcr_register: dcr_register
+      introspect_tokens: introspect_tokens
+      list_clients_with_access: list_clients_with_access
+      manage_consents: manage_consents
+      revoke_client_access: revoke_client_access
+      revoke_tokens: revoke_tokens
+      view_consents: view_consents
+    tokenUrl: /default/default/oauth2/token
+    type: oauth2
+swagger: "2.0"

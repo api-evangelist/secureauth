@@ -1,0 +1,30 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-conformance.py
+source: openapi/ (23 document(s), 554 mutating operations)
+idempotency:
+  coverage: partial
+  header: x-idempotency-key
+  mechanism: request header / body token declared in the OpenAPI
+  evidence: x-idempotency-key on 357 of 554 mutating operations
+  verified: derived
+  scope:
+  - secureauth-developer-openapi.yml
+  - secureauth-analytics-openapi.yml
+  - secureauth-identityroot-openapi.yml
+  - secureauth-licensingadmin-openapi.yml
+  - secureauth-admin-openapi.yml
+  - secureauth-hub-openapi.yml
+  - secureauth-identity-openapi.yml
+  - secureauth-obuk-openapi.yml
+  - secureauth-identitysystem-openapi.yml
+  - secureauth-identityself-openapi.yml
+  - secureauth-licensingroot-openapi.yml
+  - secureauth-opin-openapi.yml
+  - secureauth-oauth2-openapi.yml
+  - secureauth-saml-openapi.yml
+  - secureauth-obbr-openapi.yml
+  - secureauth-permissions-openapi.yml
+  - secureauth-public-openapi.yml
+  - secureauth-root-openapi.yml
+  - secureauth-system-openapi.yml
