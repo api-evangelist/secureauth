@@ -1,0 +1,510 @@
+generated: '2026-10-13'
+method: derived
+source: openapi/secureauth-admin-openapi.yml, openapi/secureauth-analytics-openapi.yml, openapi/secureauth-cdr-openapi.yml,
+  openapi/secureauth-developer-openapi.yml, openapi/secureauth-fdx-openapi.yml, openapi/secureauth-hub-openapi.yml,
+  openapi/secureauth-identity-openapi.yml, openapi/secureauth-identityroot-openapi.yml, openapi/secureauth-identityself-openapi.yml,
+  openapi/secureauth-identitysystem-openapi.yml, openapi/secureauth-ksa-openapi.yml, openapi/secureauth-licensingadmin-openapi.yml,
+  openapi/secureauth-licensingroot-openapi.yml, openapi/secureauth-oauth2-openapi.yml, openapi/secureauth-obbr-openapi.yml,
+  openapi/secureauth-obuk-openapi.yml, openapi/secureauth-opin-openapi.yml, openapi/secureauth-permissions-openapi.yml,
+  openapi/secureauth-public-openapi.yml, openapi/secureauth-root-openapi.yml, openapi/secureauth-system-openapi.yml
+schemes:
+- name: admin
+  source: openapi/secureauth-admin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+- name: admin
+  source: openapi/secureauth-analytics-openapi.yml
+  flows:
+  - flow: clientCredentials
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+- name: default
+  source: openapi/secureauth-cdr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-cdr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-cdr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: developer
+  source: openapi/secureauth-developer-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/developer/oauth2/authorize
+    tokenUrl: /default/developer/oauth2/token
+- name: default
+  source: openapi/secureauth-fdx-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-fdx-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-fdx-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: setup
+  source: openapi/secureauth-hub-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/system/oauth2/authorize
+    tokenUrl: /system/system/oauth2/token
+- name: system
+  source: openapi/secureauth-hub-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: admin
+  source: openapi/secureauth-identity-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+- name: adminSystem
+  source: openapi/secureauth-identityroot-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/admin/oauth2/authorize
+    tokenUrl: /system/admin/oauth2/token
+- name: setup
+  source: openapi/secureauth-identityroot-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/system/oauth2/authorize
+    tokenUrl: /system/system/oauth2/token
+- name: self
+  source: openapi/secureauth-identityself-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-identitysystem-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: default
+  source: openapi/secureauth-ksa-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-ksa-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-ksa-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: admin
+  source: openapi/secureauth-licensingadmin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+- name: adminSystem
+  source: openapi/secureauth-licensingroot-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/admin/oauth2/authorize
+    tokenUrl: /system/admin/oauth2/token
+- name: setup
+  source: openapi/secureauth-licensingroot-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/system/oauth2/authorize
+    tokenUrl: /system/system/oauth2/token
+- name: default
+  source: openapi/secureauth-oauth2-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: default
+  source: openapi/secureauth-obbr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-obbr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-obbr-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: default
+  source: openapi/secureauth-obuk-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-obuk-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-obuk-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: default
+  source: openapi/secureauth-opin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: defaultcc
+  source: openapi/secureauth-opin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: system
+  source: openapi/secureauth-opin-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+- name: admin
+  source: openapi/secureauth-permissions-openapi.yml
+  flows:
+  - flow: clientCredentials
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+- name: default
+  source: openapi/secureauth-public-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/default/oauth2/authorize
+    tokenUrl: /default/default/oauth2/token
+- name: adminSystem
+  source: openapi/secureauth-root-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/admin/oauth2/authorize
+    tokenUrl: /system/admin/oauth2/token
+- name: setup
+  source: openapi/secureauth-root-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /system/system/oauth2/authorize
+    tokenUrl: /system/system/oauth2/token
+- name: system
+  source: openapi/secureauth-system-openapi.yml
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/system/oauth2/authorize
+    tokenUrl: /default/system/oauth2/token
+scopes:
+- scope: accounts
+  description: accounts
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: admin:metadata:update
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+- scope: client_register
+  sources:
+  - openapi/secureauth-fdx-openapi.yml
+- scope: consents
+  description: consents
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: dcr_register
+  description: dcr_register
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: gateway_exchange_tokens
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: identity
+  description: identity
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identitysystem-openapi.yml
+- scope: identity_self_registration
+  description: identity_self_registration
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identitysystem-openapi.yml
+- scope: introspect_openbanking_tokens
+  description: introspect_openbanking_tokens
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: introspect_tokens
+  description: introspect_tokens
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: list_clients_with_access
+  description: list_clients_with_access
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-public-openapi.yml
+- scope: manage_clients
+  description: manage_clients
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_configuration
+  description: manage_configuration
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-hub-openapi.yml
+  - openapi/secureauth-identityroot-openapi.yml
+  - openapi/secureauth-identitysystem-openapi.yml
+  - openapi/secureauth-licensingroot-openapi.yml
+  - openapi/secureauth-root-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_consents
+  description: manage_consents
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-public-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_idps
+  description: manage_idps
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_logins
+  description: manage_logins
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_openbanking_consents
+  description: manage_openbanking_consents
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: manage_post_authn
+  description: manage_post_authn
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-public-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_scope_grants
+  description: manage_scope_grants
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_scripts
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_secrets
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_servers
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: manage_sessions
+  description: manage_sessions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-public-openapi.yml
+- scope: manage_ss_profile
+  description: manage_ss_profile
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identityself-openapi.yml
+- scope: manage_tokens
+  sources:
+  - openapi/secureauth-public-openapi.yml
+- scope: payments
+  description: payments
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+- scope: push_audit_events
+  description: push_audit_events
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-root-openapi.yml
+- scope: push_gateway_requests
+  description: push_gateway_requests
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: read_configuration
+  description: read_configuration
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identitysystem-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: read_gateway_configuration
+  description: read_gateway_configuration
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: read_secrets
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: recurringPayments
+  sources:
+  - openapi/secureauth-obbr-openapi.yml
+- scope: revoke_client_access
+  description: revoke_client_access
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-public-openapi.yml
+- scope: revoke_tokens
+  description: revoke_tokens
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: scim_v2
+  description: scim_v2
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identitysystem-openapi.yml
+- scope: transient_otp
+  description: transient_otp
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-public-openapi.yml
+- scope: update_client_status
+  sources:
+  - openapi/secureauth-fdx-openapi.yml
+- scope: view_audit_events
+  description: view_audit_events
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: view_clients
+  description: view_clients
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: view_consents
+  description: view_consents
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-public-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- scope: view_scopes
+  sources:
+  - openapi/secureauth-system-openapi.yml
+- scope: view_sessions
+  description: view_sessions
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-public-openapi.yml
+- scope: view_ss_profile
+  description: view_ss_profile
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-identityself-openapi.yml
+- scope: write_gateway_configuration
+  description: write_gateway_configuration
+  flows:
+  - authorizationCode
+  sources:
+  - openapi/secureauth-system-openapi.yml

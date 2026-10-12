@@ -1,0 +1,60 @@
+generated: '2026-10-13'
+method: derived
+source: openapi/secureauth-admin-openapi.yml, openapi/secureauth-analytics-openapi.yml, openapi/secureauth-cdr-openapi.yml,
+  openapi/secureauth-developer-openapi.yml, openapi/secureauth-fdx-openapi.yml, openapi/secureauth-hub-openapi.yml,
+  openapi/secureauth-identity-openapi.yml, openapi/secureauth-identityroot-openapi.yml, openapi/secureauth-identityself-openapi.yml,
+  openapi/secureauth-identitysystem-openapi.yml, openapi/secureauth-ksa-openapi.yml, openapi/secureauth-licensingadmin-openapi.yml
+  ...
+summary:
+  types:
+  - apiKey
+  - oauth2
+  api_key_in:
+  - header
+  oauth2_flows:
+  - authorizationCode
+  - clientCredentials
+schemes:
+- name: admin
+  type: oauth2
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+    scopes: 0
+  sources:
+  - openapi/secureauth-admin-openapi.yml
+  - openapi/secureauth-cdr-openapi.yml
+  - openapi/secureauth-developer-openapi.yml
+  - openapi/secureauth-fdx-openapi.yml
+  - openapi/secureauth-hub-openapi.yml
+  - openapi/secureauth-identity-openapi.yml
+  - openapi/secureauth-identityroot-openapi.yml
+  - openapi/secureauth-identityself-openapi.yml
+  - openapi/secureauth-identitysystem-openapi.yml
+  - openapi/secureauth-ksa-openapi.yml
+  - openapi/secureauth-licensingadmin-openapi.yml
+  - openapi/secureauth-licensingroot-openapi.yml
+  - openapi/secureauth-oauth2-openapi.yml
+  - openapi/secureauth-obbr-openapi.yml
+  - openapi/secureauth-obuk-openapi.yml
+  - openapi/secureauth-opin-openapi.yml
+  - openapi/secureauth-public-openapi.yml
+  - openapi/secureauth-root-openapi.yml
+  - openapi/secureauth-system-openapi.yml
+- name: admin
+  type: oauth2
+  flows:
+  - flow: clientCredentials
+    authorizationUrl: /default/admin/oauth2/authorize
+    tokenUrl: /default/admin/oauth2/token
+    scopes: 0
+  sources:
+  - openapi/secureauth-analytics-openapi.yml
+  - openapi/secureauth-permissions-openapi.yml
+- name: token
+  type: apiKey
+  in: header
+  parameter: X-API-KEY
+  sources:
+  - openapi/secureauth-permissions-openapi.yml

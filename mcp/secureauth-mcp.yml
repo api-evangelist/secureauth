@@ -1,0 +1,237 @@
+generated: '2026-10-13'
+method: derived
+generator: derive-mcp-candidate.py
+source:
+- openapi/secureauth-admin-openapi.yml
+- openapi/secureauth-analytics-openapi.yml
+- openapi/secureauth-cdr-openapi.yml
+- openapi/secureauth-developer-openapi.yml
+- openapi/secureauth-fdx-openapi.yml
+- openapi/secureauth-hub-openapi.yml
+- openapi/secureauth-identity-openapi.yml
+- openapi/secureauth-identityroot-openapi.yml
+- openapi/secureauth-identityself-openapi.yml
+- openapi/secureauth-identitysystem-openapi.yml
+- openapi/secureauth-ksa-openapi.yml
+- openapi/secureauth-licensingadmin-openapi.yml
+- openapi/secureauth-licensingroot-openapi.yml
+- openapi/secureauth-oauth2-openapi.yml
+- openapi/secureauth-obbr-openapi.yml
+- openapi/secureauth-obuk-openapi.yml
+- openapi/secureauth-opin-openapi.yml
+- openapi/secureauth-permissions-openapi.yml
+- openapi/secureauth-public-openapi.yml
+- openapi/secureauth-root-openapi.yml
+- openapi/secureauth-saml-openapi.yml
+- openapi/secureauth-system-openapi.yml
+- openapi/secureauth-web-openapi.yml
+status: candidate
+deployment:
+  mode: none
+  auth: unknown
+  verified: probed
+note: 'No MCP server was found. The pre-flight posted tools/list to /mcp on api.secureauth.com, secureauth.com, connect.secureauth.com, docs.secureauth.com;
+  verdict opaque (https://status.secureauth.com/mcp answered 403: the edge authenticates before it routes, which proves nothing either way). Candidate
+  tools below are derived from the 789 operation(s) in the provider''s own OpenAPI (40 listed); they describe what a server WOULD expose, not
+  one that exists.'
+tools:
+- name: list_consent_actions
+  operationId: listConsentActions
+  method: GET
+  path: /actions
+  description: List consent actions
+- name: tenant_single_access_token_metrics
+  operationId: tenantSingleAccessTokenMetrics
+  method: GET
+  path: /access-tokens
+  description: Query access tokens
+- name: refresh_metadata
+  operationId: refreshMetadata
+  method: POST
+  path: /admin/register/metadata
+  description: Refresh ADR Metadata
+- name: list_clients_for_developer
+  operationId: listClientsForDeveloper
+  method: GET
+  path: /clients
+  description: List clients
+- name: get_fdxconsent
+  operationId: getFDXConsent
+  method: GET
+  path: /consents/{consentID}
+  description: Get Consent Grant
+- name: export_tenant_config
+  operationId: ExportTenantConfig
+  method: GET
+  path: /{tid}/promote/config
+  description: Export Tenant Configuration
+- name: list_users_b2_b
+  operationId: listUsersB2B
+  method: GET
+  path: /admin/b2b/pools/{ipID}/users
+  description: List B2B Users
+- name: system_generate_code
+  operationId: systemGenerateCode
+  method: POST
+  path: /code/generate
+  description: Generate code of a specific type
+- name: reset_password_confirm
+  operationId: resetPasswordConfirm
+  method: POST
+  path: /public/pools/{ipID}/reset-password/confirm
+  description: Confirm Reset Password
+- name: export_tenant_configuration
+  operationId: exportTenantConfiguration
+  method: GET
+  path: /configuration
+  description: GET /configuration
+- name: get_ksaconsent_system
+  operationId: getKSAConsentSystem
+  method: GET
+  path: /ksa/consent/{login}
+  description: Get KSA consent
+- name: get_admin_license
+  operationId: getAdminLicense
+  method: GET
+  path: /admin/license
+  description: Get license
+- name: admin_get_tenant_license
+  operationId: adminGetTenantLicense
+  method: GET
+  path: /admin/tenants/{tenantID}/license
+  description: Get tenant license
+- name: jwks
+  operationId: jwks
+  method: GET
+  path: /.well-known/jwks.json
+  description: JSON Web Keys Discovery endpoint
+- name: get_obbrcustomer_data_access_consent_system
+  operationId: getOBBRCustomerDataAccessConsentSystem
+  method: GET
+  path: /open-banking-brasil/consent/{login}
+  description: Get Customer Data Access Consent
+- name: get_account_access_consent_system
+  operationId: getAccountAccessConsentSystem
+  method: GET
+  path: /open-banking/account-access-consent/{login}
+  description: Get account-access consent
+- name: create_insurance_data_access_consent
+  operationId: CreateInsuranceDataAccessConsent
+  method: POST
+  path: /open-insurance/consents/v1/
+  description: Create insurance data access consent
+- name: list_systems
+  operationId: listSystems
+  method: GET
+  path: /admin/systems
+  description: List permission systems
+- name: list_user_applications
+  operationId: ListUserApplications
+  method: GET
+  path: /applications
+  description: Lists user applications.
+- name: list_admin_tenants
+  operationId: listAdminTenants
+  method: GET
+  path: /api/admin/tenants
+  description: List tenants
+- name: idp_certificate
+  operationId: idpCertificate
+  method: GET
+  path: /saml/certificate
+  description: SAML IDP certificate endpoint
+- name: list_clients_system
+  operationId: listClientsSystem
+  method: GET
+  path: /clients/{wid}
+  description: List clients by authorization server
+- name: discover_idps
+  operationId: discoverIDPs
+  method: POST
+  path: /{aid}/login/discovery
+  description: Discover IDPs for a user identifier.
+- name: create_consent_action
+  operationId: createConsentAction
+  method: POST
+  path: /actions
+  description: Create consent action
+- name: tenant_aggregated_access_token_metrics
+  operationId: tenantAggregatedAccessTokenMetrics
+  method: GET
+  path: /access-tokens/{group}
+  description: Query access tokens by group
+- name: revoke_cdrarrangement
+  operationId: revokeCDRArrangement
+  method: POST
+  path: /arrangements/revoke
+  description: Revoke CDR Arrangement
+- name: create_client_for_developer
+  operationId: createClientForDeveloper
+  method: POST
+  path: /clients
+  description: Create new OAuth client
+- name: get_fdxconsent_revocation
+  operationId: getFDXConsentRevocation
+  method: GET
+  path: /consents/{consentID}/revocation
+  description: Retrieve Consent Revocation Record
+- name: import_tenant_config
+  operationId: ImportTenantConfig
+  method: POST
+  path: /{tid}/promote/config
+  description: Import Tenant Configuration
+- name: create_b2_buser
+  operationId: createB2BUser
+  method: POST
+  path: /admin/b2b/pools/{ipID}/users
+  description: Create B2B User Account
+- name: export_configuration
+  operationId: exportConfiguration
+  method: GET
+  path: /configuration
+  description: GET /configuration
+- name: complete_address_verification
+  operationId: completeAddressVerification
+  method: POST
+  path: /self/address-verification/complete
+  description: Complete Address Verification
+- name: patch_tenant_configuration
+  operationId: patchTenantConfiguration
+  method: PATCH
+  path: /configuration
+  description: PATCH /configuration
+- name: accept_ksaconsent_system
+  operationId: acceptKSAConsentSystem
+  method: POST
+  path: /ksa/consent/{login}/accept
+  description: Accept KSA consent
+- name: get_usage
+  operationId: getUsage
+  method: GET
+  path: /admin/usage
+  description: Get usage
+- name: admin_set_tenant_license
+  operationId: adminSetTenantLicense
+  method: PUT
+  path: /admin/tenants/{tenantID}/license
+  description: Set tenant license
+- name: well_known
+  operationId: wellKnown
+  method: GET
+  path: /.well-known/openid-configuration
+  description: OpenID Connect Discovery endpoint
+- name: accept_obbrcustomer_data_access_consent_system
+  operationId: acceptOBBRCustomerDataAccessConsentSystem
+  method: POST
+  path: /open-banking-brasil/consent/{login}/accept
+  description: Accept Customer Data Access Consent
+- name: accept_account_access_consent_system
+  operationId: acceptAccountAccessConsentSystem
+  method: POST
+  path: /open-banking/account-access-consent/{login}/accept
+  description: Accept account-access consent
+- name: delete_insurance_data_access_consent
+  operationId: DeleteInsuranceDataAccessConsent
+  method: DELETE
+  path: /open-insurance/consents/v1/{consentID}
+  description: Delete insurance data access consent
