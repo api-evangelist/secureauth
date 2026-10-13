@@ -67,10 +67,18 @@ hosts:
   - probed
   - contract-discovery
   - well-known
+  - vendor-detect
   types:
+  - TermsOfService
+  - PrivacyPolicy
+  - Pricing
+  - Newsroom
+  - Leadership
   - Website
   - Blog
-  serves: []
+  serves:
+  - cdn
+  vendor: cloudflare
   registrable_domain: secureauth.com
   role: website
   relation: own
@@ -93,9 +101,12 @@ hosts:
   - probed
   - site-links
   - well-known
+  - vendor-detect
   types:
   - Support
-  serves: []
+  serves:
+  - support
+  vendor: zendesk
   registrable_domain: secureauth.com
   role: support
   relation: own
