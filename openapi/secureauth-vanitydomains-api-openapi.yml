@@ -1,0 +1,336 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Vanity Domains API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: vanityDomains
+paths:
+  /vanity-domains:
+    delete:
+      description: Delete vanity domain.
+      operationId: deleteVanityDomain
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Vanity domain has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete vanity domain
+      tags:
+      - vanityDomains
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VanityDomain'
+    get:
+      description: Get vanity domain.
+      operationId: getVanityDomain
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Get vanity domain for a given server
+        in: query
+        name: server_id
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/VanityDomain'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get vanity domain
+      tags:
+      - vanityDomains
+    post:
+      description: Create vanity domain.
+      operationId: createVanityDomain
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/VanityDomain'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create vanity domain
+      tags:
+      - vanityDomains
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VanityDomain'
+    put:
+      description: Update vanity domain.
+      operationId: updateVanityDomain
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/VanityDomain'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update vanity domain
+      tags:
+      - vanityDomains
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VanityDomain'
+components:
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    VanityDomain:
+      description: Vanity domain
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VanityDomain'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    VanityDomain:
+      properties:
+        api_key:
+          description: api key
+          type: string
+        base_path:
+          description: base path to use with a configured vanity domain
+          example: /prefix
+          type: string
+        cert:
+          description: domain cerificate
+          type: string
+        domain:
+          description: vanity domain
+          example: example.com
+          type: string
+        id:
+          description: ID
+          format: vanityDomainID
+          type: string
+        key:
+          description: domain private key
+          type: string
+        server_id:
+          description: Unique identifier of an authorization server (workspace)
+          example: default
+          format: serverID
+          type: string
+        tenant_id:
+          description: ID of a tenant
+          example: default
+          format: tenantID
+          type: string
+        type:
+          $ref: '#/components/schemas/VanityDomainType'
+      required:
+      - domain
+      type: object
+    VanityDomainType:
+      type: string
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

@@ -1,0 +1,924 @@
+openapi: 3.2.0
+info:
+  title: Secureauth OTP API
+  version: latest
+  description: 'Operations tagged OTP across 3 of this provider''s published API definitions: secureauth-identity-openapi.yml, secureauth-identityself-openapi.yml, secureauth-identitysystem-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/identity/default
+- url: https://localhost:8443/default/default/identity
+tags:
+- name: OTP
+paths:
+  /admin/pools/{ipID}/users/{userID}/address/verification/request:
+    post:
+      description: 'Generate and send a verification link to the provided address.
+
+        The `address` value must be a valid email or mobile number marked as the user''s `unverified address` and
+
+        must not be a verified address of any other user.
+
+
+        Error `404` is returned when either `userID` or `address` are incorrect.
+
+
+        The requested link validity period is configured in the identity pool settings.'
+      operationId: requestAddressVerification
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: 'optional server''s identifier (used for themes etc.)
+
+          ServerID'
+        in: query
+        name: server_id
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Request accepted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Request Address Verification
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOTPForAddress'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/users/{userID}/otp/request:
+    post:
+      description: 'Generate and send an OTP to the provided address.
+
+
+        The `address` value must be a valid email or mobile number marked as the user''s `unverified address` and
+
+        must not be a verified address of any other user.
+
+
+        The requested OTP validity period is configured in the identity pool settings.
+
+
+        Generating new challenge invalidates a previous challenge.'
+      operationId: requestOTPChallenge
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: 'optional server''s identifier (used for themes etc.)
+
+          ServerID'
+        in: query
+        name: server_id
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Request accepted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Request OTP Challenge
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOTPChallenge'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/users/{userID}/otp/verify:
+    post:
+      description: 'Verify the OTP generates as part of a challenge-response mechanism.
+
+
+        A valid OTP is removed, and the endpoint returns the **Request accepted** response.
+
+
+        For password change or activation, call **Request Reset Password** and **Send Activation Message**. Find these
+
+        endpoints documented under the **Users** section of this specification.'
+      operationId: verifyOTP
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/UserIDResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - admin: []
+      summary: Verify OTP Challenge
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InspectOTP'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /self/address-verification/complete:
+    post:
+      description: 'Completes unverified address verification by checking if code is valid or not.
+
+        Both address and code must be provided.
+
+        Fails if address is not user''s address or is user''s verified or is someone''s verified address.
+
+        If the OTP is valid it is removed and a successful response is returned.
+
+        Endpoint is protected by Brute Force mechanism.
+
+
+        This endpoint requires special privileges and is disabled by default.'
+      operationId: completeAddressVerification
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/AddressVerificationCompletedResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      summary: Complete Address Verification
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteAddressVerification'
+    servers:
+    - url: https://localhost:8443/default/default/identity
+  /system/pools/{ipID}/user/otp/inspect:
+    post:
+      description: 'Verifies if the provided extended OTP is valid and returns basic user operational data.
+
+        Endpoint is protected by Brute Force mechanism.
+
+        This endpoint is meant for UI integration during user activation.'
+      operationId: inspectOTP
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/InspectOTPResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Inspect Extended OTP
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InspectOTP'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/user/otp/request:
+    post:
+      description: 'Generates and sends OTP to the provided address.
+
+        Address must be a valid email or mobile which is marked as a verified address for the user.
+
+        For validating unverified address either userID or identifier must be provided.
+
+        When both userID or identifier and address are provided then matching address is taken from user pointed by either userID or identifier.
+
+        Regardless if the address points to some user or not, the request ends successfully to prevent email/mobile enumeration.
+
+        Requested OTP is valid for specific period of time configured in Identity Pool.
+
+        Generating new challenge invalidates previous challenge.
+
+
+        REFACTORED: input field name has been renamed from `identifier` to `address`; new field `identifier` has been added and described in documentation'
+      operationId: postSystemPoolsByIpIDUserOtpRequest
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: 'optional server''s identifier (used for themes etc.)
+
+          ServerID'
+        in: query
+        name: server_id
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/RequestOTPChallengeResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Request OTP Challenge
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOTPCode'
+      x-operation-id-source: normalized
+      x-operation-id-original: requestOTPChallenge
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/user/otp/verify:
+    post:
+      description: 'Verifies if the provided OTP is valid or not.
+
+        This API is meant for challenge OTPs, not for activation or password change.
+
+        Either identifier (must be user''s identifier), user id or extended code must be provided.
+
+        If the OTP is valid it is removed and a successful response is returned.
+
+        Endpoint is protected by Brute Force mechanism.
+
+        This endpoint is meant for integration when external system requests and verifies OTP.
+
+
+        REFACTORED: input field name has been changed from `id` to `userID`; field `id` stays for backward compatibility and overrides `userID` if not empty'
+      operationId: postSystemPoolsByIpIDUserOtpVerify
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/VerifyCodeResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Verify OTP Challenge
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTP'
+      x-operation-id-source: normalized
+      x-operation-id-original: verifyOTP
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/users/{userID}/address/verification/complete:
+    post:
+      description: 'Completes unverified address verification by checking if code is valid or not.
+
+        Both address and code must be provided.
+
+        Fails if address is not user''s address or is user''s verified or is someone''s verified address.
+
+        If the OTP is valid it is removed and a successful response is returned.
+
+        Endpoint is protected by Brute Force mechanism.'
+      operationId: postSystemPoolsByIpIDUsersByUserIDAddressVerificationComplete
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/CompleteAddressVerificationResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Complete Address Verification
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteAddressVerification'
+      x-operation-id-source: normalized
+      x-operation-id-original: completeAddressVerification
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/users/{userID}/address/verification/request:
+    post:
+      description: 'Generate and send a verification code to the provided address.
+
+        The `address` value must be a valid email or mobile number marked as the user''s `unverified address`.
+
+
+        Also, this value must not be a verified address of any other user. Otherwise, the request returns the
+
+        verification link and runs protection for email or mobile enumeration for the address specified.
+
+
+        The requested code validity period is configured in the identity pool settings.'
+      operationId: postSystemPoolsByIpIDUsersByUserIDAddressVerificationRequest
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: Code type in message
+        in: query
+        name: code_type_in_message
+        schema:
+          type: string
+          enum:
+          - link
+          - code
+          default: code
+      responses:
+        '204':
+          $ref: '#/components/responses/RequestAddressVerificationResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Request Address Verification
+      tags:
+      - OTP
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestOTPForAddress'
+      x-operation-id-source: normalized
+      x-operation-id-original: requestAddressVerification
+    servers:
+    - url: https://localhost:8443/api/identity/default
+components:
+  schemas:
+    RequestOTPForAddress:
+      properties:
+        address:
+          type: string
+      required:
+      - address
+      type: object
+    UserID:
+      properties:
+        id:
+          format: userID
+          type: string
+      required:
+      - id
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    RequestOTPChallenge:
+      properties:
+        address:
+          type: string
+      required:
+      - address
+      type: object
+    InspectOTP:
+      properties:
+        code:
+          type: string
+      required:
+      - code
+      type: object
+    CompleteAddressVerification:
+      properties:
+        address:
+          example: sample@email.com/+48123456789
+          type: string
+        code:
+          type: string
+      required:
+      - address
+      - code
+      type: object
+    VerifyOTP:
+      properties:
+        code:
+          type: string
+        id:
+          type: string
+        identifier:
+          example: sample@email.com/+48123456789
+          type: string
+        userID:
+          type: string
+      required:
+      - code
+      type: object
+    InspectOTPUserOperationalData:
+      properties:
+        code_type:
+          enum:
+          - activation
+          - reset_password
+          - reset_totp
+          - enroll_webauthn
+          - challenge
+          - verify_address
+          - authentication
+          - pair_device
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: metadata associated with the code when it was generated
+          type: object
+        password_set:
+          type: boolean
+        user_id:
+          type: string
+      required:
+      - user_id
+      - password_set
+      - code_type
+      type: object
+    RequestOTPCode:
+      properties:
+        address:
+          type: string
+        identifier:
+          type: string
+        userID:
+          type: string
+      type: object
+    VerifyCodeResult:
+      properties:
+        id:
+          format: userID
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: metadata associated with the code when it was generated
+          type: object
+      required:
+      - id
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    preconditionFailedHTTPError:
+      description: Precondition failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UserIDResponse:
+      description: User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserID'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    AddressVerificationCompletedResponse:
+      description: Address verification completed
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    CompleteAddressVerificationResponse:
+      description: Complete address veritifaction response
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    VerifyCodeResponse:
+      description: OTP
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VerifyCodeResult'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RequestAddressVerificationResponse:
+      description: Request accepted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    RequestOTPChallengeResponse:
+      description: Request accepted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    InspectOTPResponse:
+      description: OTP
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InspectOTPUserOperationalData'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    self:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_ss_profile: manage_ss_profile
+            view_ss_profile: view_ss_profile
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-identity-openapi.yml
+- secureauth-identityself-openapi.yml
+- secureauth-identitysystem-openapi.yml

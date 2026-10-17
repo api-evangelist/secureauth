@@ -1,0 +1,270 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Features API
+  version: latest
+  description: 'Operations tagged features across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-root-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/
+tags:
+- name: Features
+paths:
+  /beta-feature:
+    post:
+      operationId: setBetaFeature
+      responses:
+        '204':
+          description: ' beta feature set'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set beta feature
+      tags:
+      - Features
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetBetaFeature'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /beta-features:
+    get:
+      operationId: getBetaFeatures
+      responses:
+        '200':
+          $ref: '#/components/responses/BetaFeaturesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get beta features
+      tags:
+      - Features
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /api/admin/tenants/{tid}/feature:
+    post:
+      description: 'Enable or disable one of the tenant''s features.
+
+        To be able to set a tenant feature flag, you need to use an access token issued for a system tenant and admin workspace.'
+      operationId: setTenantFeature
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' tenant feature set'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set tenant feature
+      tags:
+      - Features
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetTenantFeature'
+    servers:
+    - url: https://localhost:8443/
+  /api/admin/tenants/{tid}/features:
+    get:
+      description: 'Returns a map of all feature flags and their values.
+
+
+        To be able to set a tenant feature flag, you need to use an access token issued for a system tenant and admin workspace.'
+      operationId: getTenantFeatures
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/GetTenantFeaturesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get tenant features
+      tags:
+      - Features
+    servers:
+    - url: https://localhost:8443/
+components:
+  schemas:
+    SetBetaFeature:
+      properties:
+        flag:
+          type: string
+        value:
+          type: boolean
+      type: object
+    FeaturesResponse:
+      properties:
+        features:
+          items:
+            $ref: '#/components/schemas/FeatureResponse'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    FeatureResponse:
+      properties:
+        description:
+          type: string
+        display_name:
+          type: string
+        enabled:
+          type: boolean
+        name:
+          type: string
+      type: object
+    FeatureResponse_2:
+      properties:
+        description:
+          type: string
+        enabled:
+          type: boolean
+        name:
+          type: string
+        type:
+          type: string
+      type: object
+    SetTenantFeature:
+      properties:
+        flag:
+          type: string
+        value:
+          type: boolean
+      type: object
+  responses:
+    BetaFeaturesResponse:
+      description: Beta features
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FeaturesResponse'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetTenantFeaturesResponse:
+      description: Get tenant features
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FeaturesResponse'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-root-openapi.yml

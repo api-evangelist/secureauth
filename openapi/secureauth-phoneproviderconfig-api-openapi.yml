@@ -1,0 +1,334 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Phone Provider Config API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: phoneProviderConfig
+paths:
+  /phone-provider-config:
+    delete:
+      description: Delete phone provider config for the current tenant.
+      operationId: deletePhoneProviderConfig
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Phone provider config has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete phone provider config
+      tags:
+      - phoneProviderConfig
+    get:
+      description: Get phone provider config for the current tenant.
+      operationId: getPhoneProviderConfig
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PhoneProviderConfig'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get phone provider config
+      tags:
+      - phoneProviderConfig
+    put:
+      description: Create or update phone provider config for the current tenant.
+      operationId: upsertPhoneProviderConfig
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PhoneProviderConfig'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Upsert phone provider config
+      tags:
+      - phoneProviderConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneProviderConfig'
+components:
+  schemas:
+    VonagePhoneProvider:
+      description: 'VonagePhoneProvider holds Vonage-specific configuration. From and VoiceFrom
+
+        are orthogonal: From is the SMS sender (alpha or E.164), VoiceFrom is the
+
+        E.164 caller ID for voice. Required when voice is enabled.'
+      properties:
+        api_key:
+          type: string
+        api_secret:
+          type: string
+        application_id:
+          description: Vonage Application ID for voice API (optional — only needed for voice calls).
+          type: string
+        disable_delivery_callback_url:
+          description: 'When true, do not push a per-call delivery callback URL to Vonage.
+
+            Use this if your Vonage account is pre-configured with a webhook URL
+
+            you manage yourself. Applies to both SMS and voice.'
+          type: boolean
+        from:
+          type: string
+        private_key:
+          description: PEM-encoded RSA private key for voice API JWT auth (optional — only needed for voice calls).
+          type: string
+        signature_secret:
+          description: Vonage account signature secret for webhook JWT verification (optional — from Dashboard → Settings).
+          type: string
+        voice_from:
+          description: E.164 caller ID for voice calls (required when voice is enabled).
+          type: string
+      required:
+      - api_key
+      - api_secret
+      - from
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    PhoneProviderConfig:
+      description: 'Providers is consulted only when Mode is custom. Active is derived from
+
+        Mode (true when Mode is non-empty) and kept for back-compat reads.'
+      properties:
+        active:
+          type: boolean
+        mode:
+          enum:
+          - built_in
+          - custom
+          type: string
+        providers:
+          items:
+            $ref: '#/components/schemas/PhoneProvider'
+          maxItems: 5
+          type: array
+        tenant_id:
+          format: tenantID
+          type: string
+      required:
+      - mode
+      title: PhoneProviderConfig represents a tenant's phone provider configuration.
+      type: object
+    TwilioPhoneProvider:
+      properties:
+        auth_token:
+          type: string
+        disable_delivery_callback_url:
+          description: 'When true, do not push a per-call delivery callback URL to Twilio.
+
+            Use this if your Twilio account is pre-configured with a webhook URL
+
+            you manage yourself. Applies to both SMS and voice.'
+          type: boolean
+        from:
+          type: string
+        sid:
+          type: string
+      required:
+      - sid
+      - auth_token
+      - from
+      title: TwilioPhoneProvider holds Twilio-specific configuration.
+      type: object
+    PhoneProvider:
+      description: Set exactly one provider type (e.g. twilio, vonage, telesign).
+      properties:
+        telesign:
+          $ref: '#/components/schemas/TelesignPhoneProvider'
+        twilio:
+          $ref: '#/components/schemas/TwilioPhoneProvider'
+        vonage:
+          $ref: '#/components/schemas/VonagePhoneProvider'
+      title: PhoneProvider defines a single phone messaging provider.
+      type: object
+    TelesignPhoneProvider:
+      properties:
+        api_key:
+          type: string
+        customer_id:
+          type: string
+        disable_delivery_callback_url:
+          description: 'When true, do not push a per-call delivery callback URL to TeleSign.
+
+            Use this if your TeleSign account is pre-configured with a webhook URL
+
+            you manage yourself. Applies to both SMS and voice.'
+          type: boolean
+        from:
+          type: string
+      required:
+      - customer_id
+      - api_key
+      title: TelesignPhoneProvider holds TeleSign-specific configuration.
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PhoneProviderConfig:
+      description: Phone provider config
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PhoneProviderConfig'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

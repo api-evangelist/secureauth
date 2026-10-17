@@ -1,0 +1,637 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth System API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Post Authn API
+  version: latest
+servers:
+- url: https://localhost:8443/api/system/default
+tags:
+- name: post-authn
+paths:
+  /post-authn/{login}:
+    get:
+      description: This API is used by a postAuthn page to make a decision if user should post authn.
+      operationId: getPostAuthnRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: login_state
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/LoginSessionResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_post_authn
+      summary: Get postAuthn request
+      tags:
+      - post-authn
+  /post-authn/{login}/abort:
+    post:
+      description: This API is used by a postAuthn page to notify ACP that postAuthn has been aborted.
+      operationId: abortPostAuthnRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PostAuthnAborted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_post_authn
+      summary: Abort postAuthn request
+      tags:
+      - post-authn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbortPostAuthnSession'
+  /post-authn/{login}/complete:
+    post:
+      description: This API is used by a postAuthn page to notify ACP that postAuthn has been successfully stored.
+      operationId: completePostAuthnRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PostAuthnCompleteed'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_post_authn
+      summary: Complete postAuthn request
+      tags:
+      - post-authn
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompletePostAuthnSession'
+components:
+  schemas:
+    CompletePostAuthnSession:
+      properties:
+        authentication_context:
+          $ref: '#/components/schemas/AuthenticationContext'
+        id:
+          description: login identifier
+          format: loginID
+          type: string
+        login_state:
+          description: login state
+          format: loginState
+          type: string
+      type: object
+    ClaimRequest:
+      properties:
+        essential:
+          type: boolean
+        value:
+          type: object
+        values:
+          items:
+            type: object
+          type: array
+      type: object
+    RFC6749Error:
+      properties:
+        cause:
+          type: string
+        details:
+          type: object
+        error:
+          type: string
+        error_description:
+          type: string
+        error_hint:
+          type: string
+        error_uri:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    AuthenticationContext:
+      additionalProperties:
+        type: object
+      type: object
+    LoginSessionResponse:
+      properties:
+        acr:
+          description: authentication context class reference
+          format: acr
+          type: string
+        allowed_scopes:
+          additionalProperties:
+            type: boolean
+          description: scopes that passed policy validation
+          type: object
+        amr:
+          description: authentication methods references
+          items:
+            format: amr
+            type: string
+          type: array
+        auth_time:
+          description: time when user authenticated
+          format: date-time
+          type: string
+        authentication_context:
+          $ref: '#/components/schemas/AuthenticationContext'
+        authorization_correlation_id:
+          description: authorization correlation id
+          format: authorizationCorrelationID
+          type: string
+        authorization_details:
+          description: authorization details
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        client_id:
+          description: OAuth client identifier
+          example: default
+          format: clientID
+          type: string
+        client_info:
+          $ref: '#/components/schemas/ClientInfo'
+        error:
+          $ref: '#/components/schemas/RFC6749Error'
+        granted_audience:
+          description: list of granted audience
+          items:
+            type: string
+          type: array
+        granted_scopes:
+          description: list of granted scopes
+          example:
+          - email
+          - profile
+          - openid
+          items:
+            format: scopeName
+            type: string
+          type: array
+        id:
+          description: unique id of login session
+          format: loginID
+          type: string
+        idp_id:
+          description: idp identifier
+          format: idpID
+          type: string
+        idp_subject:
+          description: idp subject
+          format: subject
+          type: string
+        login_approved:
+          description: is login approved
+          example: false
+          type: boolean
+        login_rejected:
+          description: is login rejected
+          example: false
+          type: boolean
+        max_age:
+          description: max age for a session to live
+          format: duration
+          type: string
+        request_query_params:
+          $ref: '#/components/schemas/Values'
+        request_url:
+          description: original url requested by oauth client
+          type: string
+        requested_acr:
+          description: requested acr
+          items:
+            type: string
+          type: array
+        requested_at:
+          description: time when oauth client made a request
+          format: date-time
+          type: string
+        requested_audience:
+          description: list of requested audiences
+          items:
+            type: string
+          type: array
+        requested_claims:
+          $ref: '#/components/schemas/ClaimsRequests'
+        requested_claims_to_consent:
+          description: requested claims to display on consent page
+          items:
+            type: string
+          type: array
+        requested_grant_type:
+          description: requested grant type
+          type: string
+        requested_max_age:
+          description: requested max age
+          type: string
+        requested_redirect_uri:
+          description: requested redirect uri
+          type: string
+        requested_scopes:
+          description: list of requested scopes
+          items:
+            $ref: '#/components/schemas/RequestedScope'
+          type: array
+        requested_verified_claims:
+          $ref: '#/components/schemas/VerifiedClaimsRequests'
+        scope_grant_approved:
+          description: is scope grant approved
+          example: true
+          type: boolean
+        scope_grant_rejected:
+          description: is scope grant rejected
+          example: false
+          type: boolean
+        server_id:
+          description: authorization server identifier
+          example: default
+          format: serverID
+          type: string
+        subject:
+          description: user identifier
+          format: subject
+          type: string
+        tenant_id:
+          description: tenant identifier
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    RequestedVerifiedClaims:
+      properties:
+        claims:
+          additionalProperties:
+            $ref: '#/components/schemas/ClaimRequest'
+          type: object
+        verification:
+          $ref: '#/components/schemas/ClaimsVerification'
+      type: object
+    Values:
+      additionalProperties:
+        items:
+          type: string
+        type: array
+      description: 'It is typically used for query parameters and form values.
+
+        Unlike in the http.Header map, the keys in a Values map
+
+        are case-sensitive.'
+      title: Values maps a string key to a list of values.
+      type: object
+    ClaimsVerification:
+      properties:
+        trust_framework:
+          $ref: '#/components/schemas/ClaimRequest'
+      type: object
+    RequestedScope:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        params:
+          items:
+            type: string
+          type: array
+        requested_name:
+          format: scopeName
+          type: string
+        service:
+          $ref: '#/components/schemas/Service'
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+        with_service:
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    AbortPostAuthnSession:
+      properties:
+        error:
+          description: reject error
+          type: string
+        error_description:
+          description: reject error description
+          type: string
+        id:
+          description: login identifier
+          format: loginID
+          type: string
+        login_state:
+          description: login state
+          format: loginState
+          type: string
+        status_code:
+          description: reject http status code
+          format: int64
+          type: integer
+      type: object
+    ServiceCapability:
+      type: string
+    VerifiedClaimsRequests:
+      properties:
+        id_token:
+          $ref: '#/components/schemas/RequestedVerifiedClaims'
+        userinfo:
+          $ref: '#/components/schemas/RequestedVerifiedClaims'
+      type: object
+    PostAuthnCompleted:
+      properties:
+        redirect_to:
+          description: url where user should be redirected
+          type: string
+      type: object
+    ClaimsRequests:
+      properties:
+        extra:
+          additionalProperties:
+            type: object
+          type: object
+        id_token:
+          additionalProperties:
+            $ref: '#/components/schemas/ClaimRequest'
+          type: object
+        userinfo:
+          additionalProperties:
+            $ref: '#/components/schemas/ClaimRequest'
+          type: object
+      type: object
+    ClientInfo:
+      properties:
+        client_name:
+          description: Human-readable name of a client application.
+          example: My app
+          type: string
+        client_uri:
+          description: URI of a client application.
+          type: string
+        description:
+          description: Description of the client application.
+          type: string
+        logo_uri:
+          description: Logo URI.
+          type: string
+        organisation_id:
+          description: 'External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+
+            Data Recipient Brand.
+
+
+            The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+
+            required for authorization, and represents the audience(s) the JWT is intended for.'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        policy_uri:
+          description: Policy URL to read about how the profile data is used.
+          type: string
+        tos_uri:
+          description: Terms of Service URL.
+          type: string
+      type: object
+    PostAuthnAborted:
+      properties:
+        redirect_to:
+          description: url where user should be redirected
+          type: string
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PostAuthnCompleteed:
+      description: PostAuthn completeed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostAuthnCompleted'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    LoginSessionResponse:
+      description: Login session
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginSessionResponse'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PostAuthnAborted:
+      description: Login aborted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostAuthnAborted'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

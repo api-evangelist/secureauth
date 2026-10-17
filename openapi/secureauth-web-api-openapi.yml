@@ -1,0 +1,154 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Web API
+  version: ''
+tags:
+- name: Web
+paths:
+  /{aid}/login/discovery:
+    post:
+      description: 'Returns a list of IDPs that match the given user identifier based on
+
+        identity pool membership, domain matching, or IDP discovery scripts.'
+      operationId: discoverIDPs
+      parameters:
+      - description: Authorization server id
+        in: path
+        name: aid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/DiscoveryResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+      summary: Discover IDPs for a user identifier
+      tags:
+      - Web
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DiscoveryRequest'
+  /{aid}/styling:
+    get:
+      operationId: getStyling
+      parameters:
+      - description: Authorization server id
+        in: path
+        name: aid
+        required: true
+        schema:
+          type: string
+          default: admin
+      responses:
+        '200':
+          $ref: '#/components/responses/Styling'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+      summary: Get styling for a tenant
+      tags:
+      - Web
+components:
+  schemas:
+    Styling:
+      properties:
+        colors:
+          properties:
+            background:
+              type: string
+            header:
+              type: string
+            primary:
+              type: string
+          type: object
+        font_url:
+          type: string
+        logo_size:
+          type: string
+        logo_url:
+          type: string
+      type: object
+    DiscoveryRequest:
+      description: Discovery request
+      properties:
+        identifier:
+          description: User identifier (e.g. email address)
+          type: string
+        login_id:
+          description: Login session ID (required for script_execution discovery mode)
+          type: string
+        login_state:
+          description: Login state (required for script_execution discovery mode)
+          type: string
+      type: object
+    DiscoveryResponse:
+      properties:
+        idps:
+          description: List of matching IDPs
+          items:
+            $ref: '#/components/schemas/DiscoveryIDP'
+          type: array
+      type: object
+    DiscoveryIDP:
+      properties:
+        hidden:
+          description: Whether IDP is hidden from the login page
+          type: boolean
+        id:
+          description: IDP ID
+          type: string
+        instant_redirect:
+          description: Whether to instantly redirect to this IDP
+          type: boolean
+        logo_uri:
+          description: IDP logo URI
+          type: string
+        method:
+          description: IDP method (e.g. oidc, saml, static)
+          type: string
+        name:
+          description: IDP display name
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DiscoveryResponse:
+      description: Discovery response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DiscoveryResponse'
+    Styling:
+      description: Styling
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Styling'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'

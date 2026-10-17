@@ -1,0 +1,1071 @@
+openapi: 3.2.0
+info:
+  title: Secureauth System API
+  version: latest
+  description: 'Operations tagged system across 3 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-identityroot-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/identity/system
+- url: https://localhost:8443/api/system/default
+tags:
+- name: System
+paths:
+  /system/apis:
+    get:
+      description: List APIs of the system tenant and system authorization server.
+      operationId: listSystemAPIs
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: List apis that have no data classifications
+        in: query
+        name: without_data_classifications
+        schema:
+          type: boolean
+      - description: List apis that have given data classifications
+        in: query
+        name: data_classification
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerAPIsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List system APIs
+      tags:
+      - System
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /system/apis/{wid}/bindings:
+    get:
+      description: List policy to system api bindings.
+      operationId: listSystemAPIBindings
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemAPIBindings'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List system api bindings
+      tags:
+      - System
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /system/apis/bind:
+    post:
+      description: Bind policy to a system api.
+      operationId: bindSystemAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' success'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Bind system api
+      tags:
+      - System
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BindSystemAPIRequest'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /system/apis/unbind:
+    delete:
+      description: Unbind policy from a system api.
+      operationId: unbindSystemAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' success'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Unbind system api
+      tags:
+      - System
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnbindSystemAPIRequest'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /system/services:
+    get:
+      description: List services of the system tenant and system authorization server.
+      operationId: listSystemServices
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemServicesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List system services
+      tags:
+      - System
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /code/generate:
+    post:
+      description: 'Generate code of a specific type for provided address
+
+        Invalidates previously generated OTPs for action associated with the type.
+
+        Code is valid for specific period of time configured in Identity Pool.
+
+
+        Keep in mind that `address` attribute for different code types does not mean the same:
+
+        for `reset_password`, `authentication` and `challenge` it must be user''s address (verified or unverified)
+
+        for `activation` it is not mandatory (system will pick up address itself if there is only one in user entry) but if provided it must be one of the user''s addresses (can be not verified)
+
+        for `verify_address` it must be user''s unverified address and that address cannot be someone''s else verified address
+
+
+        For `activation`, `reset_password` and `challenge` there is only one active code for a user (generating new one invalidates previous)
+
+        For `verify_address` there might be many codes for a user. During verification latest for an address is being compared.
+
+
+        REFACTORED: input field name has been changed from `identifier` to `address`; field `identifier` stays for backward compatibility and overrides `address` if not empty'
+      operationId: systemGenerateCode
+      parameters:
+      - in: query
+        name: tenantID
+        schema:
+          type: string
+      - in: query
+        name: ipID
+        schema:
+          type: string
+      - in: query
+        name: userID
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/RootGenerateCodeResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup:
+        - manage_configuration
+      summary: Generate code of a specific type
+      tags:
+      - System
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestCode'
+    servers:
+    - url: https://localhost:8443/api/identity/system
+  /gateways/exchange:
+    post:
+      operationId: gatewayExchange
+      responses:
+        '200':
+          $ref: '#/components/responses/GatewayExchangeResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - gateway_exchange_tokens
+      summary: Exchange token endpoint as a gateway
+      tags:
+      - System
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                subject_token:
+                  type: string
+                request_scopes:
+                  type: string
+                  default: original_token
+    servers:
+    - url: https://localhost:8443/api/system/default
+  /gateways/introspect:
+    post:
+      operationId: gatewayIntrospect
+      responses:
+        '200':
+          $ref: '#/components/responses/IntrospectResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - introspect_tokens
+      summary: Introspect access token endpoint as a gateway
+      tags:
+      - System
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+    servers:
+    - url: https://localhost:8443/api/system/default
+  /servers/{wid}/tokens:
+    delete:
+      description: 'This API can be utilized for one of the following purposes:
+
+
+        Revoke by consent ID**: If a `consent_id` is provided in the query parameter,
+
+        the tokens issued for that consent ID will be revoked. This option takes precedence
+
+        over subject-based revocation.
+
+
+        Subject-based revocation**: If no `consent_id` is provided, the API will revoke
+
+        tokens for the specified set of subjects provided in the body.
+
+
+        #Subject-based revocation:
+
+
+        Tokens will be revoked for the specified set of subjects, which can include access tokens,
+
+        refresh tokens, authorization codes, authorization requests, SSO sessions, and scope grants.
+
+
+        Additionally, if an optional `idp_id` is provided, the subject values will be recalculated
+
+        if the server is using hashed subject types.'
+      operationId: revokeTokens
+      parameters:
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Consent ID
+        in: query
+        name: consent_id
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Tokens removed'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - system:
+        - revoke_tokens
+      summary: Revoke tokens
+      tags:
+      - System
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTokenRequest'
+    servers:
+    - url: https://localhost:8443/api/system/default
+components:
+  responses:
+    SystemAPIBindings:
+      description: System API bindings
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SystemAPIBindings'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SystemServicesResponse:
+      description: System services
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SystemServicesResponse'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerAPIsResponse:
+      description: APIs grouped by service ids
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerAPIs'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RootGenerateCodeResponse:
+      description: Code
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Codes'
+    IntrospectResponse:
+      description: Introspect
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IntrospectResponse'
+    GatewayExchangeResponse:
+      description: Gateway Exchange response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GatewayExchangeResponse'
+  schemas:
+    CrossTenantAPIPolicyBinding:
+      properties:
+        api_id:
+          description: api id
+          format: apiID
+          type: string
+        api_tenant_id:
+          description: api tenant id
+          example: system
+          format: tenantID
+          type: string
+        policy_id:
+          description: policy id
+          format: policyID
+          type: string
+        policy_server_id:
+          description: policy server id
+          example: default
+          format: serverID
+          type: string
+        policy_tenant_id:
+          description: policy tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    API:
+      properties:
+        api_type:
+          default: rest
+          description: api type
+          enum:
+          - rest
+          - graphql
+          example: rest
+          type: string
+        can_have_policy:
+          description: if false it is not possible to assign a policy
+          type: boolean
+        data_classifications:
+          description: Data classifications
+          items:
+            type: string
+          type: array
+        graphql_schema:
+          description: graphql schema
+          type: string
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        id:
+          description: API id
+          example: '1'
+          format: apiID
+          type: string
+        method:
+          description: HTTP request method
+          example: GET
+          type: string
+        path:
+          description: HTTP request path
+          example: /pets
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+        position:
+          description: position of the api in the apis list
+          example: 1
+          format: int64
+          type: integer
+        server_id:
+          description: server id
+          example: default
+          format: serverID
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          format: serviceID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    GraphQLTypes:
+      items:
+        $ref: '#/components/schemas/GraphQLType'
+      type: array
+    ServiceCapability:
+      type: string
+    SystemAPIBindings:
+      properties:
+        bindings:
+          items:
+            $ref: '#/components/schemas/CrossTenantAPIPolicyBinding'
+          type: array
+      type: object
+    GraphQLField:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        name:
+          description: name of graphQL field
+          example: id
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    BindSystemAPIRequest:
+      properties:
+        api_id:
+          format: apiID
+          type: string
+        policy_id:
+          format: policyID
+          type: string
+        policy_server_id:
+          format: serverID
+          type: string
+      type: object
+    GraphQLType:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        fields:
+          description: optional fields of graphql type
+          items:
+            $ref: '#/components/schemas/GraphQLField'
+          type: array
+        name:
+          description: name of graphQL type, currently supported types are Interfaces and Objects
+          example: block
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    SystemServicesResponse:
+      properties:
+        services:
+          items:
+            $ref: '#/components/schemas/Service'
+          type: array
+      type: object
+    UnbindSystemAPIRequest:
+      properties:
+        api_id:
+          format: apiID
+          type: string
+        policy_id:
+          format: policyID
+          type: string
+        policy_server_id:
+          format: serverID
+          type: string
+      type: object
+    ServerAPIs:
+      properties:
+        apis_by_services:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/API'
+            type: array
+          type: object
+      type: object
+    Codes:
+      properties:
+        code:
+          type: string
+        extended_code:
+          type: string
+      required:
+      - extended_code
+      - code
+      type: object
+    RequestCode:
+      properties:
+        address:
+          type: string
+        identifier:
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: code metadata
+          type: object
+        type:
+          enum:
+          - activation
+          - reset_password
+          - reset_totp
+          - enroll_webauthn
+          - challenge
+          - verify_address
+          - authentication
+          - pair_device
+          type: string
+      required:
+      - type
+      type: object
+    GatewayExchangeResponse:
+      properties:
+        access_token:
+          description: Exchanged access token
+          type: string
+        error:
+          $ref: '#/components/schemas/ExchangeError'
+        exchanged:
+          description: has token been exchanged
+          type: boolean
+        expires_in:
+          description: Access token expiration
+          format: int64
+          type: integer
+      type: object
+    RevokeTokenRequest:
+      properties:
+        idp_id:
+          description: optional idp id - if provided subjects will be recalculated if server is using hashed subject type
+          format: idpID
+          type: string
+        subjects:
+          description: list of subjects (min 1, max 100)
+          items:
+            format: subject
+            type: string
+          type: array
+      type: object
+    ExchangeError:
+      type: string
+    IntrospectResponse:
+      properties:
+        acr:
+          description: Authentication context class reference
+          type: string
+        act:
+          additionalProperties:
+            type: object
+          description: Actor claims used in the Token Exchange flow.
+          type: object
+        active:
+          description: 'Active is a boolean indicator of whether or not the presented token
+
+            is currently active. The specifics of a token''s `active` state
+
+            varies depending on the implementation of an authorization
+
+            server and the information it keeps about its token. Still, the `true`
+
+            value returned for the `active` property generally indicates
+
+            that a given token has been issued by this authorization server,
+
+            has not been revoked by the resource owner, and is within its
+
+            given time window of validity (e.g., between its issuance and
+
+            expiration time).'
+          type: boolean
+        amr:
+          description: Authentication method references
+          items:
+            type: string
+          type: array
+        aud:
+          description: Audience contains the list of the audiences the token is intended for.
+          items:
+            type: string
+          type: array
+        authorization_details:
+          description: Granted authorization details
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        client_id:
+          description: 'A client application identifier for the OAuth 2.0 client that
+
+            requested this token.'
+          type: string
+        cnf:
+          $ref: '#/components/schemas/Confirmation'
+        exp:
+          description: 'ExpiredAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC (1970-01-01T00:00:00Z). It indicates when this token will expire.'
+          format: int64
+          type: integer
+        ext:
+          additionalProperties:
+            type: object
+          description: Extra is arbitrary data set by the session.
+          type: object
+        iat:
+          description: 'IssuedAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates when this token was
+
+            originally issued.'
+          format: int64
+          type: integer
+        idp:
+          description: The identifier of an identity provider that user authenticated with.
+          type: string
+        idp_sub:
+          description: IDP subject
+          type: string
+        iss:
+          description: Issuer URL is a string representing the issuer of this token.
+          type: string
+        may_act:
+          additionalProperties:
+            type: object
+          description: May act claims used in the Token Exchange flow.s
+          type: object
+        nbf:
+          description: 'NotBefore is an integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates this token was not
+
+            used before the specified time.'
+          format: int64
+          type: integer
+        scope:
+          description: 'Scope is a JSON string containing a space-separated list of
+
+            scopes associated with this token.'
+          type: string
+        server_id:
+          description: 'The OAuth 2.0 authorization server identifier that
+
+            issued this token.'
+          type: string
+        sub:
+          description: 'Subject of the token, as defined in JWT [RFC7519].
+
+            Usually a machine-readable identifier of the resource owner who
+
+            authorized this token.'
+          type: string
+        tenant_id:
+          description: 'TenantID identifies a tenant holding the authorization server that
+
+            issued this token.'
+          type: string
+        token_type:
+          description: TokenType is the type of the introspected token. For example, `access_token` or `refresh_token`.
+          type: string
+        username:
+          description: 'Username is a human-readable identifier for the resource owner who
+
+            authorized this token.'
+          type: string
+      type: object
+    Confirmation:
+      properties:
+        jkt:
+          type: string
+        x5t#S256:
+          type: string
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-identityroot-openapi.yml
+- secureauth-system-openapi.yml

@@ -1,0 +1,172 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Workforce API
+  version: latest
+servers:
+- url: https://localhost:8443/
+tags:
+- name: workforce
+paths:
+  /api/admin/tenants/{tid}/workforce:
+    get:
+      operationId: getTenantWorkforce
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/GetTenantWorkforceResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get tenant workforce settings
+      tags:
+      - workforce
+    post:
+      operationId: setTenantWorkforce
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' tenant workforce settings'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set tenant workforce settings
+      tags:
+      - workforce
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantWorkforceSettings'
+components:
+  schemas:
+    TenantWorkforceSettings:
+      properties:
+        faye_url:
+          type: string
+        manifest_url:
+          type: string
+        url:
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetTenantWorkforceResponse:
+      description: Get tenant workforce settings
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TenantWorkforceSettings'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token

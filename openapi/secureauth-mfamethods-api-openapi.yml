@@ -1,0 +1,725 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Mfa Methods API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: mfaMethods
+paths:
+  /mfa-methods:
+    get:
+      description: List MFA methods.
+      operationId: listMFAMethods
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MFAMethods'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List MFA methods
+      tags:
+      - mfaMethods
+    post:
+      description: Create MFA method.
+      operationId: createMFAMethod
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          description: MFAMethod
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MFAMethod'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create MFA method
+      tags:
+      - mfaMethods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MFAMethod'
+  /mfa-methods/{mfaID}:
+    delete:
+      description: Delete MFA method.
+      operationId: deleteMFAMethod
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: mfaID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' MFA method has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete MFA method
+      tags:
+      - mfaMethods
+    get:
+      description: Get MFA method.
+      operationId: getMFAMethod
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: mfaID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/MFAMethodResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get MFA method
+      tags:
+      - mfaMethods
+    put:
+      description: Update mfaMethod.
+      operationId: updateMFAMethod
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: mfaID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: MFAMethod
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MFAMethod'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update mfaMethod
+      tags:
+      - mfaMethods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MFAMethod'
+  /mfa-methods/{mfaID}/test:
+    post:
+      description: Send test OTP message.
+      operationId: testMFAMethod
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: MFA id
+        in: path
+        name: mfaID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ' MFA OTP message sent'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Send test OTP message
+      tags:
+      - mfaMethods
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestMFAMethodRequest'
+components:
+  responses:
+    MFAMethodResponse:
+      description: MFA method
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MFAMethodResponse'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    MFAMethods:
+      description: MFA methods
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MFAMethods'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    DefaultSMSSettings:
+      properties:
+        message_template:
+          type: string
+        source:
+          type: string
+      type: object
+    MFAAuth:
+      properties:
+        arculix:
+          $ref: '#/components/schemas/ArculixAuth'
+        email:
+          $ref: '#/components/schemas/EmailAuth'
+        sms:
+          $ref: '#/components/schemas/SMSAuth'
+        voice:
+          $ref: '#/components/schemas/VoiceAuth'
+      type: object
+    DefaultEmailSettings:
+      properties:
+        from:
+          type: string
+        message_subject:
+          type: string
+        message_template:
+          type: string
+      type: object
+    EmailSettings:
+      properties:
+        custom_from:
+          description: 'Custom email From address.
+
+
+            If not set, the default is used.'
+          example: noreply@cloudentity.com
+          type: string
+        custom_message_subject:
+          description: 'Custom email subject.
+
+
+            If not set, the default is used.'
+          type: string
+        custom_message_template:
+          description: 'Custom email template.
+
+
+            If not set, the default is used.'
+          type: string
+        otp:
+          $ref: '#/components/schemas/OTPConfiguration'
+        provider:
+          description: Email provider.
+          enum:
+          - smtp
+          - embedded
+          example: embedded
+          type: string
+      type: object
+    OTPConfiguration:
+      properties:
+        expiration:
+          default: 5m
+          description: The maximum time one-time code is valid.
+          example: 5m
+          format: duration
+          type: string
+        length:
+          default: 6
+          description: The number of characters for one-time code.
+          example: 6
+          format: int64
+          maximum: 10
+          minimum: 4
+          type: integer
+      required:
+      - length
+      - expiration
+      type: object
+    SMSAuth:
+      description: 'Deprecated: kept for existing legacy configuration only and not used at runtime. Any new
+
+        setup, including Twilio, belongs in the tenant''s phone provider configuration
+
+        (phone_provider_config).'
+      properties:
+        auth_token:
+          type: string
+        sid:
+          type: string
+      title: Legacy Twilio SMS credentials.
+      type: object
+    MFAMethods:
+      properties:
+        mfa_methods:
+          items:
+            $ref: '#/components/schemas/MFAMethod'
+          type: array
+      type: object
+    TestMFAMethodRequest:
+      properties:
+        address:
+          type: string
+        provider_index:
+          description: 'ProviderIndex, when set, forces the test to route through the
+
+            provider at this position in the tenant''s phone provider config
+
+            (0 = primary, 1+ = fallback). Requires the tenant to have an
+
+            active phone provider config with at least one configured provider.
+
+            When omitted, the default routing chain is used.'
+          format: int64
+          minimum: 0
+          type: integer
+      required:
+      - address
+      type: object
+    VoiceSettings:
+      properties:
+        custom_source:
+          description: 'Custom voice call From phone number.
+
+
+            Deprecated: not used at runtime; the sender ID is configured per-tenant.'
+          type: string
+        otp:
+          $ref: '#/components/schemas/OTPConfiguration'
+        provider:
+          description: 'Voice provider.
+
+
+            Deprecated: kept for existing legacy configuration only; it no longer selects a
+
+            messaging provider. Voice delivery routes through the tenant''s phone provider
+
+            configuration (phone_provider_config), which is where any new setup belongs.
+
+            "embedded" is the only value still accepted here; the retired "twilio" value is
+
+            tolerated on write so existing configuration keeps round-tripping.'
+          enum:
+          - embedded
+          example: embedded
+          type: string
+      type: object
+    VoiceAuth:
+      description: 'Deprecated: kept for existing legacy configuration only and not used at runtime. Any new
+
+        setup, including Twilio, belongs in the tenant''s phone provider configuration
+
+        (phone_provider_config).'
+      properties:
+        auth_token:
+          type: string
+        sid:
+          type: string
+      title: Legacy Twilio voice credentials.
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    MFAMethodResponse:
+      properties:
+        auth:
+          $ref: '#/components/schemas/MFAAuth'
+        default_email_settings:
+          $ref: '#/components/schemas/DefaultEmailSettings'
+        default_sms_settings:
+          $ref: '#/components/schemas/DefaultSMSSettings'
+        enabled:
+          type: boolean
+        id:
+          format: mfaMethodID
+          type: string
+        mechanism:
+          enum:
+          - sms
+          - email
+          - voice
+          example: email
+          type: string
+        settings:
+          $ref: '#/components/schemas/MFASettings'
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+      required:
+      - tenant_id
+      - mechanism
+      - enabled
+      type: object
+    EmailAuth:
+      properties:
+        auth:
+          description: 'SMTP auth mechanism: crammd5, plain or login'
+          example: plain
+          type: string
+        host:
+          description: The host of the SMTP server.
+          type: string
+        password:
+          description: Password which is used to authenticate to the SMTP server.
+          type: string
+        port:
+          default: 25
+          description: The port of the SMTP server.
+          example: 25
+          format: int64
+          type: integer
+        username:
+          description: Username which is used to authenticate to the SMTP server.
+          type: string
+      required:
+      - username
+      - password
+      - auth
+      - host
+      - port
+      type: object
+    ArculixAuth:
+      properties:
+        client_id:
+          description: The Arculix client ID.
+          type: string
+        client_secret:
+          description: The Arculix client secret.
+          type: string
+      required:
+      - client_id
+      - client_secret
+      type: object
+    SMSSettings:
+      properties:
+        custom_message_template:
+          description: 'Custom message template.
+
+
+            If not set, the default is used.'
+          type: string
+        custom_source:
+          description: 'Custom SMS From phone number.
+
+
+            Deprecated: not used at runtime; the sender ID is configured per-tenant.'
+          type: string
+        otp:
+          $ref: '#/components/schemas/OTPConfiguration'
+        provider:
+          description: 'SMS provider.
+
+
+            Deprecated: kept for existing legacy configuration only; it no longer selects a
+
+            messaging provider. SMS delivery routes through the tenant''s phone provider
+
+            configuration (phone_provider_config), which is where any new setup belongs.
+
+            "embedded" is the only value still accepted here; the retired "twilio" value is
+
+            tolerated on write so existing configuration keeps round-tripping.'
+          enum:
+          - embedded
+          example: embedded
+          type: string
+      type: object
+    MFASettings:
+      properties:
+        email:
+          $ref: '#/components/schemas/EmailSettings'
+        sms:
+          $ref: '#/components/schemas/SMSSettings'
+        voice:
+          $ref: '#/components/schemas/VoiceSettings'
+      type: object
+    MFAMethod:
+      properties:
+        auth:
+          $ref: '#/components/schemas/MFAAuth'
+        enabled:
+          type: boolean
+        id:
+          format: mfaMethodID
+          type: string
+        mechanism:
+          enum:
+          - sms
+          - email
+          - voice
+          example: email
+          type: string
+        settings:
+          $ref: '#/components/schemas/MFASettings'
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+      required:
+      - tenant_id
+      - mechanism
+      - enabled
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

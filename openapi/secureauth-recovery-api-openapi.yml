@@ -1,0 +1,524 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth System API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Recovery API
+  version: latest
+servers:
+- url: https://localhost:8443/api/system/default
+tags:
+- name: Recovery
+paths:
+  /recovery/{login}:
+    get:
+      description: This API is used by a custom IDP to retrieve information about the recovery request.
+      operationId: getRecoveryRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: login_state
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/RecoverySessionResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_logins
+      summary: Get recovery request
+      tags:
+      - Recovery
+  /recovery/{login}/accept:
+    post:
+      description: 'This API is used by a custom IDP to notify ACP that recovery has been successfully completed.
+
+        The recovery methods list contains the methods that were successfully verified by the custom IDP.'
+      operationId: acceptRecoveryRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/RecoveryAccepted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_logins
+      summary: Accept recovery request
+      tags:
+      - Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcceptRecoveryRequest'
+  /recovery/{login}/reject:
+    post:
+      description: This API is used by a custom IDP to notify ACP that recovery has been rejected.
+      operationId: rejectRecoveryRequest
+      parameters:
+      - in: path
+        name: login
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/RecoveryRejected'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - manage_logins
+      summary: Reject recovery request
+      tags:
+      - Recovery
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RejectRecovery'
+components:
+  schemas:
+    CompletedAuthenticationMechanism:
+      properties:
+        Mechanism:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          type: string
+        Time:
+          format: date-time
+          type: string
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    RecoveryAccepted:
+      properties:
+        redirect_to:
+          description: URL pointing to SecureAuth where the user is redirected to after completing recovery.
+          example: https://authorization.cloudentity.com:8443/tenant/server/oauth2/authorize?client_id=bugkgm23g9kregtu051g&verify_mfa=true&login_id=cavai7d8s9nelp7k792g&login_state=cauq8fonbud6q8806bf0
+          type: string
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    RecoverySessionResponse:
+      properties:
+        authorization_details:
+          description: authorization details
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        authorization_details_recovery:
+          additionalProperties:
+            items: {}
+            type: array
+          description: recovery methods required for authorization details
+          type: object
+        client_id:
+          description: OAuth client identifier
+          example: default
+          format: clientID
+          type: string
+        client_info:
+          $ref: '#/components/schemas/ClientInfo'
+        id:
+          description: unique id of login session
+          format: loginID
+          type: string
+        idp_id:
+          description: idp identifier
+          format: idpID
+          type: string
+        idp_subject:
+          description: idp subject
+          format: subject
+          type: string
+        login_recovery:
+          description: recovery methods required for login
+          items: {}
+          type: array
+        requested_scopes:
+          description: list of requested scopes
+          items:
+            $ref: '#/components/schemas/RequestedScope'
+          type: array
+        scopes_recovery:
+          additionalProperties:
+            items: {}
+            type: array
+          description: recovery methods required for scopes
+          type: object
+        server_id:
+          description: authorization server identifier
+          example: default
+          format: serverID
+          type: string
+        subject:
+          description: user identifier
+          format: subject
+          type: string
+        tenant_id:
+          description: tenant identifier
+          example: default
+          format: tenantID
+          type: string
+        verified_recovery_methods:
+          description: verified recovery methods
+          items: {}
+          type: array
+      type: object
+    RequestedScope:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        params:
+          items:
+            type: string
+          type: array
+        requested_name:
+          format: scopeName
+          type: string
+        service:
+          $ref: '#/components/schemas/Service'
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+        with_service:
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    ServiceCapability:
+      type: string
+    RecoveryRejected:
+      properties:
+        redirect_to:
+          description: url where user should be redirected
+          type: string
+      type: object
+    AcceptRecoveryRequest:
+      properties:
+        amr:
+          description: authentication methods references
+          items:
+            format: amr
+            type: string
+          type: array
+        completed_authentication_mechanisms:
+          description: completed authentication mechanisms with timestamps
+          items:
+            $ref: '#/components/schemas/CompletedAuthenticationMechanism'
+          type: array
+        login_state:
+          description: login state
+          format: loginState
+          type: string
+        recovery_methods:
+          description: recovery methods that were successfully verified
+          example:
+          - totp
+          - sms
+          items: {}
+          type: array
+      required:
+      - recovery_methods
+      type: object
+    RejectRecovery:
+      properties:
+        error:
+          description: reject error
+          type: string
+        error_description:
+          description: reject error description
+          type: string
+        id:
+          description: login identifier
+          format: loginID
+          type: string
+        login_state:
+          description: login state
+          format: loginState
+          type: string
+        status_code:
+          description: reject http status code
+          format: int64
+          type: integer
+      type: object
+    ClientInfo:
+      properties:
+        client_name:
+          description: Human-readable name of a client application.
+          example: My app
+          type: string
+        client_uri:
+          description: URI of a client application.
+          type: string
+        description:
+          description: Description of the client application.
+          type: string
+        logo_uri:
+          description: Logo URI.
+          type: string
+        organisation_id:
+          description: 'External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+
+            Data Recipient Brand.
+
+
+            The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+
+            required for authorization, and represents the audience(s) the JWT is intended for.'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        policy_uri:
+          description: Policy URL to read about how the profile data is used.
+          type: string
+        tos_uri:
+          description: Terms of Service URL.
+          type: string
+      type: object
+  responses:
+    RecoverySessionResponse:
+      description: Recovery session
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecoverySessionResponse'
+    RecoveryRejected:
+      description: Recovery rejected
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecoveryRejected'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RecoveryAccepted:
+      description: Recovery accepted
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecoveryAccepted'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

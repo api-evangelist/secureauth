@@ -1,0 +1,1453 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Services API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: Services
+paths:
+  /servers/{wid}/services:
+    get:
+      description: List services.
+      operationId: listServices
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: comma separated service types that are to be filtered out
+        in: query
+        name: service_types
+        schema:
+          type: string
+          default: user,oauth2,oidc,system,openbanking
+      - description: 'Optional search phrase: service id OR service name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'optional list services after given id
+
+          AfterServiceID'
+        in: query
+        name: after_service_id
+        schema:
+          type: string
+      - description: 'optional list services before given id
+
+          BeforeServiceID'
+        in: query
+        name: before_service_id
+        schema:
+          type: string
+      - description: 'optional sort services by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order services by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/ServicesResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List services
+      tags:
+      - Services
+  /services:
+    post:
+      description: Service name is required. Service id will be generated if not provided.
+      operationId: createService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/CreateServiceResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create service
+      tags:
+      - Services
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+  /services/{sid}:
+    delete:
+      description: Delete service.
+      operationId: deleteService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Service has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete service
+      tags:
+      - Services
+    get:
+      description: Get service.
+      operationId: getService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServiceWithScopesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get service
+      tags:
+      - Services
+    put:
+      description: Update service.
+      operationId: updateService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/UpdateServiceResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update service
+      tags:
+      - Services
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+  /services/{sid}/apis:
+    delete:
+      description: 'Remove all apis and policies created during import for a service.
+
+
+        If policy is used by another service it will not be removed.
+
+
+        If service is connected to a gateway, it will be disconnected.
+
+
+        If a gateway api group is connected to this service, it will be disconnected.'
+      operationId: removeSpecification
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/RemoveServiceConfigurationResult'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Remove imported apis and policies
+      tags:
+      - Services
+  /services/{sid}/apis/import/file:
+    post:
+      description: It removes all apis before import.
+      operationId: importSpecificationFromFile
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: gateway_type
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ImportServiceConfigurationResult'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Import OpenAPI specification from file
+      tags:
+      - Services
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+  /services/{sid}/apis/import/text:
+    post:
+      description: It removes all apis and policies (created by previous import) before import.
+      operationId: importSpecificationFromText
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ImportServiceConfigurationResult'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Import OpenAPI specification from text
+      tags:
+      - Services
+      requestBody:
+        content:
+          text/plain:
+            schema:
+              type: string
+  /services/{sid}/apis/import/url:
+    post:
+      description: It removes all apis before import.
+      operationId: importSpecificationFromURL
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: gateway_type
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ImportServiceConfigurationResult'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Import OpenAPI specification from url
+      tags:
+      - Services
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+components:
+  responses:
+    CreateServiceResponse:
+      description: Service
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceWithAudience'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServiceWithScopesResponse:
+      description: Service with scopes
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceWithScopesResponse'
+    ImportServiceConfigurationResult:
+      description: Import service configuration result
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ImportServiceConfigurationResult'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UpdateServiceResponse:
+      description: Service
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceWithAudience'
+    ServicesResponse:
+      description: Services
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServicesResponse'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RemoveServiceConfigurationResult:
+      description: Remove service configuration result
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RemoveServiceConfigurationResult'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    RecoveryConfig:
+      properties:
+        type:
+          type: string
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    ServiceWithScopesResponse:
+      properties:
+        audience:
+          type: string
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        scopes:
+          description: list of scopes
+          items:
+            $ref: '#/components/schemas/Scope'
+          type: array
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    ServicesResponse:
+      properties:
+        services:
+          items:
+            $ref: '#/components/schemas/ServiceResponse'
+          type: array
+      type: object
+    ServiceResponse:
+      properties:
+        audience:
+          type: string
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        number_of_apis:
+          format: int64
+          type: integer
+        number_of_scopes:
+          format: int64
+          type: integer
+        number_of_subscribers:
+          format: int64
+          type: integer
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    ImportServiceConfigurationResult:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        created_apis:
+          items:
+            $ref: '#/components/schemas/API'
+          type: array
+        created_policies:
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+        created_scopes:
+          items:
+            $ref: '#/components/schemas/Scope'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        not_removed_policies:
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+        removed_apis:
+          items:
+            $ref: '#/components/schemas/API'
+          type: array
+        removed_policies:
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    API:
+      properties:
+        api_type:
+          default: rest
+          description: api type
+          enum:
+          - rest
+          - graphql
+          example: rest
+          type: string
+        can_have_policy:
+          description: if false it is not possible to assign a policy
+          type: boolean
+        data_classifications:
+          description: Data classifications
+          items:
+            type: string
+          type: array
+        graphql_schema:
+          description: graphql schema
+          type: string
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        id:
+          description: API id
+          example: '1'
+          format: apiID
+          type: string
+        method:
+          description: HTTP request method
+          example: GET
+          type: string
+        path:
+          description: HTTP request path
+          example: /pets
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+        position:
+          description: position of the api in the apis list
+          example: 1
+          format: int64
+          type: integer
+        server_id:
+          description: server id
+          example: default
+          format: serverID
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          format: serviceID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    RemoveServiceConfigurationResult:
+      properties:
+        not_removed_policies:
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+        removed_apis:
+          items:
+            $ref: '#/components/schemas/API'
+          type: array
+        removed_policies:
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+      type: object
+    ValidatorConfig:
+      description: Depending on the type of a policy different validators are available.
+      properties:
+        conf:
+          additionalProperties:
+            type: object
+          description: 'Configuration of the validator provided in the JSON format
+
+
+            Validators configuration is an array of fields where each node consists of a comparator used,
+
+            validated field, and a value for comparison. Configuration can be also branched, which means
+
+            that it is possible to create conditional validators. It allows to define complex
+
+            authorization scenarios based on the results from other policy validators.'
+          type: object
+        name:
+          description: The name of your validator
+          example: identity-context
+          type: string
+        recovery:
+          items:
+            $ref: '#/components/schemas/RecoveryConfig'
+          type: array
+      title: Configuration of a policy validator
+      type: object
+    Scope:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    GraphQLTypes:
+      items:
+        $ref: '#/components/schemas/GraphQLType'
+      type: array
+    ServiceCapability:
+      type: string
+    Policy:
+      properties:
+        definition:
+          description: The definition of an Open Policy Agent (OPA) policy provided using the REGO language.
+          type: string
+        env_version:
+          $ref: '#/components/schemas/FnEnvVersion'
+        id:
+          description: Unique ID of your policy
+          example: '1'
+          format: policyID
+          type: string
+        language:
+          description: 'Language of a policy
+
+
+            ACP supports creating SecureAuth policies (using a visual editor or defined using JSON or
+
+            YAML) and policies defined using REGO (language used by Open Policy Agent (OPA)).'
+          example: cloudentity
+          format: policyLanguage
+          type: string
+        policy_name:
+          description: Display name for your policy
+          example: check_consent
+          type: string
+        server_id:
+          description: ID of your authorization server (workspace)
+          example: default
+          format: serverID
+          type: string
+        tenant_id:
+          description: ID of your tenant
+          example: default
+          format: tenantID
+          type: string
+        type:
+          description: 'Define a type of your policy
+
+
+            ACP is provided with the following policy types: user, developer, machine, dcr, api.
+
+
+            Depending on the policy type the policy can be assigned to different policy
+
+            execution points.
+
+
+            A policy of the `user` type can be assigned only to the following scopes: `scope_user_grant`,
+
+            `server_user_token`, `client_user_token`.
+
+
+            A `developer` policy can be assigned only to the `scope_client_assignment` and
+
+            `server_client_assignment` scopes.
+
+
+            A policy of the `machine` type can be assigned only to the following scopes:
+
+            `scope_machine_grant`, `server_machine_token`, `client_machine_token`.
+
+
+            A `dcr` policy can be assigned only to the `scope_dynamic_client_registration` and the
+
+            `server_dynamic_client_registration` scopes.
+
+
+            An `api` policy can be assigned to all of the policy execution points.
+
+
+            Each of the policies type has its defined and provided out of the box policy validators.'
+          example: user
+          format: policyType
+          type: string
+        validators:
+          description: An array of validators for a SecureAuth policy
+          items:
+            $ref: '#/components/schemas/ValidatorConfig'
+          type: array
+      type: object
+    FnEnvVersion:
+      type: string
+    GraphQLField:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        name:
+          description: name of graphQL field
+          example: id
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    GraphQLType:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        fields:
+          description: optional fields of graphql type
+          items:
+            $ref: '#/components/schemas/GraphQLField'
+          type: array
+        name:
+          description: name of graphQL type, currently supported types are Interfaces and Objects
+          example: block
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    ServiceWithAudience:
+      properties:
+        audience:
+          type: string
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

@@ -1,0 +1,965 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Workspaces API
+  version: latest
+  description: 'Operations tagged workspaces across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-root-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/
+tags:
+- name: Workspaces
+paths:
+  /user/workspaces:
+    get:
+      description: List workspaces that the current user has access to.
+      operationId: listUserWorkspaces
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Cursor
+        in: query
+        name: cursor
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/UserWorkspaces'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List user workspaces
+      tags:
+      - Workspaces
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /workspaces:
+    get:
+      operationId: listWorkspaces
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: comma separated workspace types that are to be filtered out
+        in: query
+        name: workspace_types
+        schema:
+          type: string
+          default: admin,developer,system,regular,organization
+      - description: optional flag to filter by template
+        in: query
+        name: template
+        schema:
+          type: boolean
+      - description: optional flag to filter by theme id
+        in: query
+        name: theme_id
+        schema:
+          type: string
+      - description: 'Optional search phrase: workspace id OR workspace name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'optional list workspaces after given id
+
+          AfterWorkspaceID'
+        in: query
+        name: after_workspace_id
+        schema:
+          type: string
+      - description: 'optional list workspaces before given id
+
+          BeforeWorkspaceID'
+        in: query
+        name: before_workspace_id
+        schema:
+          type: string
+      - description: 'optional sort workspaces by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order workspaces by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Workspaces'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List workspaces
+      tags:
+      - Workspaces
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /workspaces/{wid}:
+    get:
+      description: Get workspace.
+      operationId: getWorkspace
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/Workspace'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get workspace
+      tags:
+      - Workspaces
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /workspaces/{wid}/metadata:
+    put:
+      description: Update workspace metadata.
+      operationId: updateWorkspaceMetadata
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspaceMetadata'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update workspace metadata
+      tags:
+      - Workspaces
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkspaceMetadata'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /api/admin/tenants/{tenantID}/workspaces:
+    get:
+      operationId: getApiAdminTenantsByTenantIDWorkspaces
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Tenant ID
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: comma separated workspace types that are to be filtered out
+        in: query
+        name: workspace_types
+        schema:
+          type: string
+          default: admin,developer,system,regular,organization
+      - description: optional flag to filter by template
+        in: query
+        name: template
+        schema:
+          type: boolean
+      - description: optional flag to filter by theme id
+        in: query
+        name: theme_id
+        schema:
+          type: string
+      - description: 'Optional search phrase: workspace id OR workspace name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'optional list workspaces after given id
+
+          AfterWorkspaceID'
+        in: query
+        name: after_workspace_id
+        schema:
+          type: string
+      - description: 'optional list workspaces before given id
+
+          BeforeWorkspaceID'
+        in: query
+        name: before_workspace_id
+        schema:
+          type: string
+      - description: 'optional sort workspaces by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order workspaces by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Workspaces'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup: []
+      summary: List workspaces
+      tags:
+      - Workspaces
+      x-operation-id-source: normalized
+      x-operation-id-original: listWorkspaces
+    servers:
+    - url: https://localhost:8443/
+components:
+  schemas:
+    WorkforceConfiguration:
+      properties:
+        client_id:
+          description: workforce authentication client id
+          type: string
+        client_secret:
+          description: workforce authentication client secret
+          type: string
+        status:
+          $ref: '#/components/schemas/WorkforceProvisioningStatus'
+        tenant_slug:
+          description: workforce tenant slug
+          type: string
+      type: object
+    ServerSettings:
+      properties:
+        deactivated:
+          type: boolean
+        default_client_id:
+          format: clientID
+          type: string
+        default_post_authn_ctx_script_id:
+          format: scriptID
+          type: string
+      type: object
+    UserWorkspacesResponse:
+      properties:
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceResponse'
+          type: array
+      type: object
+    IDPDiscovery:
+      properties:
+        discovery_mode:
+          enum:
+          - domain_matching
+          - script_execution
+          type: string
+        enabled:
+          description: 'If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+      type: object
+    WorkforceProvisioningStatus:
+      type: string
+    WorkspaceResponse:
+      properties:
+        authentication_context_settings:
+          $ref: '#/components/schemas/AuthenticationContextSettings'
+        authentication_mechanisms:
+          description: allowed authentication mechanisms for users in the identity pools
+          example:
+          - password
+          - totp
+          - otp
+          - webauthn
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        id:
+          description: Unique identifier of an workspace
+          example: default
+          format: serverID
+          type: string
+        idp_discovery:
+          $ref: '#/components/schemas/IDPDiscovery'
+        issuer_url:
+          type: string
+        logo_uri:
+          description: Logo URI
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        number_of_child_organizations:
+          format: int64
+          type: integer
+        number_of_clients:
+          format: int64
+          type: integer
+        number_of_idps_excluding_organization:
+          format: int64
+          type: integer
+        number_of_services:
+          format: int64
+          type: integer
+        preferences:
+          $ref: '#/components/schemas/ServerPreferences'
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        settings:
+          $ref: '#/components/schemas/ServerSettings'
+        sso:
+          $ref: '#/components/schemas/SSOConfiguration'
+        subject_format:
+          description: Subject format
+          enum:
+          - hash
+          - legacy
+          - custom
+          type: string
+        subject_identifier_algorithm_salt:
+          description: Subject identifier algorithm salt
+          type: string
+        template:
+          type: boolean
+        theme_id:
+          description: optional theme id
+          format: themeID
+          type: string
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+        workforce:
+          $ref: '#/components/schemas/WorkforceConfiguration'
+      type: object
+    SupportedJSONSchema:
+      properties:
+        additionalProperties:
+          type: boolean
+        allOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        anyOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        const:
+          type: string
+        contains:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        dependentRequired:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        dependentSchemas:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        description:
+          type: string
+        else:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        enum:
+          items:
+            type: string
+          type: array
+        exclusiveMaximum:
+          format: int64
+          type: integer
+        exclusiveMinimum:
+          format: int64
+          type: integer
+        hidden:
+          type: boolean
+        if:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        items:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        maxContains:
+          format: int64
+          type: integer
+        maxItems:
+          description: arrays
+          format: int64
+          type: integer
+        maxLength:
+          description: strings
+          format: int64
+          type: integer
+        maxProperties:
+          description: objects
+          format: int64
+          type: integer
+        maximum:
+          format: int64
+          type: integer
+        minContains:
+          format: int64
+          type: integer
+        minItems:
+          format: int64
+          type: integer
+        minLength:
+          format: int64
+          type: integer
+        minProperties:
+          format: int64
+          type: integer
+        minimum:
+          format: int64
+          type: integer
+        multipleOf:
+          description: numeric
+          format: int64
+          type: integer
+        not:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        oneOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        pattern:
+          type: string
+        patternProperties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        propertyNames:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        required:
+          items:
+            type: string
+          type: array
+        then:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        title:
+          type: string
+        type:
+          description: any
+          type: string
+        uniqueItems:
+          type: boolean
+      type: object
+    Cursor:
+      type: string
+    AuthenticationContextSettings:
+      properties:
+        attributes:
+          items:
+            $ref: '#/components/schemas/AuthenticationContextAttribute'
+          type: array
+      type: object
+    ServerMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          description: metadata payload
+          type: object
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+      type: object
+    RiskLOA:
+      description: Risk engine level of assurance
+      format: double
+      type: number
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    AuthenticationContextAttribute:
+      description: Authentication context attribute
+      properties:
+        description:
+          description: String represented display name of an attribute
+          type: string
+        labels:
+          description: Array of Strings represents attribute labels
+          items:
+            format: label
+            type: string
+          type: array
+        name:
+          description: String represented variable name of an attribute
+          type: string
+        type:
+          description: 'The data type of an attribute
+
+
+            It stores information what kind of data is used as the value of the attribute.
+
+
+            Available types: `number`, `string`, `bool`, `object`, `number_array`, `string_array`, `bool_array`, `object_array` or `any`.'
+          format: type
+          type: string
+      type: object
+    WorkspaceMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    ServerPreferences:
+      properties:
+        display_identity_pool_idp:
+          description: display identity pool IDP
+          type: boolean
+        display_organization_idp:
+          description: display organization IDP
+          type: boolean
+      type: object
+    WorkspacesResponse:
+      properties:
+        workspaces:
+          items:
+            $ref: '#/components/schemas/WorkspaceResponse'
+          type: array
+      type: object
+    SSOConfiguration:
+      properties:
+        domain:
+          description: Domain for the SSO cookie
+          type: string
+        enabled:
+          description: If enabled, single-sign-on (SSO) is active for all IDPs in this workspace.
+          example: false
+          type: boolean
+        loa_threshold:
+          $ref: '#/components/schemas/RiskLOA'
+        logout_redirect_domains:
+          description: Additional domains permitted in the logout redirect_to parameter
+          items:
+            type: string
+          type: array
+        max_age:
+          description: Active TTL - Active SSO sessions expire after MaxAge nanoseconds.
+          format: duration
+          type: string
+        max_idle:
+          description: Idle TTL - Idle SSO sessions expire after MaxIdle nanoseconds.
+          format: duration
+          type: string
+        post_logout_url:
+          description: Admin-configured target URL after logout, if redirect_to omitted or invalid
+          type: string
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    WorkspaceMetadata:
+      description: Workspace metadata
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkspaceMetadata'
+    UserWorkspaces:
+      description: User Workspaces
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserWorkspacesResponse'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Workspaces:
+      description: Workspaces
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkspacesResponse'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Workspace:
+      description: Workspace
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkspaceResponse'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-root-openapi.yml

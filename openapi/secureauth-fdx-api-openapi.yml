@@ -1,0 +1,514 @@
+openapi: 3.2.0
+info:
+  description: 'Financial Data Exchange (FDX)
+
+    APIs ensure compliance with the FDX standard.'
+  title: SecureAuth Financial Data Exchange FDX API
+  version: latest
+servers:
+- url: https://localhost:8443/default/default
+tags:
+- name: FDX
+paths:
+  /consents/{consentID}:
+    get:
+      description: Retrieve FDX consent grant data by the consent identifier.
+      operationId: getFDXConsent
+      parameters:
+      - description: Consent id
+        in: path
+        name: consentID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: GetFDXConsent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFDXConsent'
+        '400':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '401':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '404':
+          $ref: '#/components/responses/FDXErrorResponse'
+      summary: Get Consent Grant
+      tags:
+      - FDX
+  /consents/{consentID}/revocation:
+    get:
+      description: 'Retrieve the details about consent revocation by the consent identifier.
+
+
+        This endpoint returns the `404` response code when:
+
+
+        1. No consent with this ID exists.
+
+
+        2. The specified consent isn''t revoked.'
+      operationId: getFDXConsentRevocation
+      parameters:
+      - description: Consent id
+        in: path
+        name: consentID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: GetFDXConsentRevocation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetFDXConsentRevocation'
+        '400':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '401':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '404':
+          $ref: '#/components/responses/FDXErrorResponse'
+      summary: Retrieve Consent Revocation Record
+      tags:
+      - FDX
+    put:
+      description: 'Revoke a user''s consent.
+
+
+        The `204` response indicates that the consent status is changed to `REVOKED`. The revocation `initiator` and `reason`
+
+        passed in the request body are saved.'
+      operationId: revokeFDXConsent
+      parameters:
+      - description: Consent id
+        in: path
+        name: consentID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' FDX Consent Revoked'
+        '400':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '401':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '403':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '404':
+          $ref: '#/components/responses/FDXErrorResponse'
+        '409':
+          $ref: '#/components/responses/FDXErrorResponse'
+      summary: Revoke FDX Consent
+      tags:
+      - FDX
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FDXConsentRevocation'
+        description: Revocation details
+  /fdx/consents/introspect:
+    post:
+      description: 'Accepts an OAuth 2.0 token and returns meta information surrounding the token along with the FDX consent.
+
+
+        Authorization: Bearer token.
+
+
+        To obtain a token, use the
+
+        Authorization code grant type.'
+      operationId: fdxConsentIntrospect
+      responses:
+        '200':
+          $ref: '#/components/responses/IntrospectFDXConsentResponse'
+        '401':
+          $ref: '#/components/responses/genericError'
+        '404':
+          $ref: '#/components/responses/genericError'
+        '429':
+          $ref: '#/components/responses/genericError'
+      security:
+      - default:
+        - introspect_openbanking_tokens
+      summary: Introspect FDX Consent
+      tags:
+      - FDX
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+components:
+  schemas:
+    FDXError:
+      properties:
+        code:
+          description: 'Long term persistent identifier
+
+            which can be used to trace error condition back to log information'
+          type: string
+        message:
+          description: End user displayable information which might help the customer diagnose an error
+          type: string
+      type: object
+    FDXConsentRevocation:
+      description: Revocation data
+      properties:
+        initiator:
+          description: Revocation initiator
+          enum:
+          - DATA_ACCESS_PLATFORM
+          - DATA_PROVIDER
+          - DATA_RECIPIENT
+          - INDIVIDUAL
+          - MERCHANT
+          - VENDOR
+          example: '"INDIVIDUAL"'
+          type: string
+        reason:
+          description: Revocation reason
+          enum:
+          - BUSINESS_RULE
+          - USER_ACTION
+          example: '"USER_ACTION"'
+          type: string
+      type: object
+    FDXConsentID:
+      type: string
+    IntrospectResponse:
+      properties:
+        acr:
+          description: Authentication context class reference
+          type: string
+        act:
+          additionalProperties:
+            type: object
+          description: Actor claims used in the Token Exchange flow.
+          type: object
+        active:
+          description: 'Active is a boolean indicator of whether or not the presented token
+
+            is currently active. The specifics of a token''s `active` state
+
+            varies depending on the implementation of an authorization
+
+            server and the information it keeps about its token. Still, the `true`
+
+            value returned for the `active` property generally indicates
+
+            that a given token has been issued by this authorization server,
+
+            has not been revoked by the resource owner, and is within its
+
+            given time window of validity (e.g., between its issuance and
+
+            expiration time).'
+          type: boolean
+        amr:
+          description: Authentication method references
+          items:
+            type: string
+          type: array
+        aud:
+          description: Audience contains the list of the audiences the token is intended for.
+          items:
+            type: string
+          type: array
+        authorization_details:
+          description: Granted authorization details
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        client_id:
+          description: 'A client application identifier for the OAuth 2.0 client that
+
+            requested this token.'
+          type: string
+        cnf:
+          $ref: '#/components/schemas/Confirmation'
+        exp:
+          description: 'ExpiredAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC (1970-01-01T00:00:00Z). It indicates when this token will expire.'
+          format: int64
+          type: integer
+        ext:
+          additionalProperties:
+            type: object
+          description: Extra is arbitrary data set by the session.
+          type: object
+        iat:
+          description: 'IssuedAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates when this token was
+
+            originally issued.'
+          format: int64
+          type: integer
+        idp:
+          description: The identifier of an identity provider that user authenticated with.
+          type: string
+        idp_sub:
+          description: IDP subject
+          type: string
+        iss:
+          description: Issuer URL is a string representing the issuer of this token.
+          type: string
+        may_act:
+          additionalProperties:
+            type: object
+          description: May act claims used in the Token Exchange flow.s
+          type: object
+        nbf:
+          description: 'NotBefore is an integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates this token was not
+
+            used before the specified time.'
+          format: int64
+          type: integer
+        scope:
+          description: 'Scope is a JSON string containing a space-separated list of
+
+            scopes associated with this token.'
+          type: string
+        server_id:
+          description: 'The OAuth 2.0 authorization server identifier that
+
+            issued this token.'
+          type: string
+        sub:
+          description: 'Subject of the token, as defined in JWT [RFC7519].
+
+            Usually a machine-readable identifier of the resource owner who
+
+            authorized this token.'
+          type: string
+        tenant_id:
+          description: 'TenantID identifies a tenant holding the authorization server that
+
+            issued this token.'
+          type: string
+        token_type:
+          description: TokenType is the type of the introspected token. For example, `access_token` or `refresh_token`.
+          type: string
+        username:
+          description: 'Username is a human-readable identifier for the resource owner who
+
+            authorized this token.'
+          type: string
+      type: object
+    GetFDXConsent:
+      properties:
+        createdTime:
+          description: Time of consent creation
+          format: date-time
+          type: string
+        durationPeriod:
+          description: Consent duration, in days, from day of original grant.
+          format: int64
+          type: integer
+        durationType:
+          $ref: '#/components/schemas/DurationType'
+        expirationTime:
+          description: Time of consent expiration
+          format: date-time
+          type: string
+        id:
+          $ref: '#/components/schemas/FDXConsentID'
+        lookbackPeriod:
+          description: Period, in days, for which historical data may be requested; period is measured from request time, not grant time
+          format: int64
+          type: integer
+        parties:
+          description: 'A collection of parameters identifying the Parties (including the legal entity operating branded products or services)
+
+            in the data sharing chain. Descriptive information is collected during Data Recipient registration at Data Provider,
+
+            and populated during issuance by DataProvider from its registry;'
+          items:
+            $ref: '#/components/schemas/FDXConsentGrantParty'
+          type: array
+        resources:
+          description: 'Enumeration of the Clusters of granted data elements permissioned by this Consent Grant.
+
+            Data Clusters are described in FDX RFC 0167.'
+          items:
+            $ref: '#/components/schemas/FDXGrantedResource'
+          type: array
+        status:
+          $ref: '#/components/schemas/FDXConsentGrantStatus'
+      type: object
+    GetFDXConsentRevocation:
+      properties:
+        initiator:
+          description: Consent revocation initiator
+          enum:
+          - DATA_ACCESS_PLATFORM
+          - DATA_PROVIDER
+          - DATA_RECIPIENT
+          - INDIVIDUAL
+          - MERCHANT
+          - VENDOR
+          example: DATA_RECIPIENT
+          type: string
+        reason:
+          description: Consent revocation reason
+          enum:
+          - BUSINESS_RULE
+          - USER_ACTION
+          example: BUSINESS_RULE
+          type: string
+        status:
+          $ref: '#/components/schemas/FDXConsentGrantStatus'
+        updatedTime:
+          description: Time of last consent's status change
+          format: date-time
+          type: string
+      type: object
+    FDXGrantedResource:
+      properties:
+        dataClusters:
+          description: The names of clusters with data elements permitted.
+          example:
+          - ACCOUNT_DETAILED
+          - TRANSACTIONS
+          - STATEMENTS
+          items:
+            type: string
+          type: array
+        id:
+          description: resource ID
+          example: b14e1e714693bc00
+          type: string
+        resourceType:
+          description: A type of resource that holds the permitted data elements. This parameter can be extended to support additional resource types.
+          example: ACCOUNT
+          type: string
+      type: object
+    FDXConsentGrantStatus:
+      title: Current status of Consent Grant.
+      type: string
+    DurationType:
+      type: string
+    FDXConsentGrantParty:
+      description: 'Consent Party entity
+
+        Details on the non-end user parties in the Consent Grant. Includes the legal entity operating branded products or services
+
+        in the data sharing chain. Descriptive information is collected during Data Recipient registration at Data Provider,
+
+        and populated during issuance by Data Provider from its registry'
+      properties:
+        homeUri:
+          description: URL for party, where an end user could learn more about the company or application involved in the data sharing chain
+          type: string
+        logoUri:
+          description: URL for a logo asset to be displayed to the end user
+          type: string
+        name:
+          description: Common name for party, as it should be displayed to the end user
+          type: string
+        registeredEntityIdentifier:
+          description: Registered id of party
+          type: string
+        registeredEntityName:
+          description: Registered name of party
+          type: string
+        registryName:
+          description: The registry with the party's registered name and id
+          type: string
+      type: object
+    FDXErrorResponse:
+      properties:
+        error:
+          $ref: '#/components/schemas/FDXError'
+      type: object
+    genericError:
+      description: Error response
+      properties:
+        error:
+          example: The requested resource could not be found
+          type: string
+        error_code:
+          description: Code represents the error status code (404, 403, 401, ...).
+          example: 404
+          format: int64
+          type: integer
+        error_hint:
+          example: Object with ID 12345 does not exist
+          type: string
+      required:
+      - error
+      type: object
+    Confirmation:
+      properties:
+        jkt:
+          type: string
+        x5t#S256:
+          type: string
+      type: object
+  responses:
+    IntrospectFDXConsentResponse:
+      description: Introspect FDX Consent Response
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IntrospectResponse'
+            - properties:
+                fdx_consent:
+                  $ref: '#/components/schemas/GetFDXConsent'
+              type: object
+    FDXErrorResponse:
+      description: FDX Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/FDXErrorResponse'
+    genericError:
+      description: ErrorResponse
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            dcr_register: dcr_register
+            introspect_openbanking_tokens: introspect_openbanking_tokens
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token
+    defaultcc:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            accounts: accounts
+            consents: consents
+            payments: payments
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_openbanking_consents: manage_openbanking_consents
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

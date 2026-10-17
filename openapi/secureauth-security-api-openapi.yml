@@ -1,0 +1,292 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Security API
+  version: latest
+servers:
+- url: https://localhost:8443/
+tags:
+- name: Security
+paths:
+  /api/admin/tenants/{tid}/security:
+    get:
+      operationId: getTenantSecurity
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/GetTenantSecurityResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get tenant security
+      tags:
+      - Security
+    post:
+      operationId: setTenantSecurity
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' tenant feature set'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set tenant security
+      tags:
+      - Security
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecureOptions'
+  /api/admin/tenants/security:
+    get:
+      description: Returns default security configuration
+      operationId: getSecurity
+      responses:
+        '200':
+          $ref: '#/components/responses/GetSecurityResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get security
+      tags:
+      - Security
+components:
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetSecurityResponse:
+      description: Get security
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SecureOptions'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetTenantSecurityResponse:
+      description: Get tenant security
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SecureOptions'
+  schemas:
+    SecureOptions:
+      properties:
+        AllowedHosts:
+          description: AllowedHosts is a slice of fully qualified domain names that are allowed. Default is an empty slice, which allows any and all host names.
+          items:
+            type: string
+          type: array
+        AllowedHostsAreRegex:
+          description: AllowedHostsAreRegex determines, if the provided `AllowedHosts` slice contains valid regular expressions. If this flag is set to true, every request's host will be checked against these expressions. Default is false.
+          type: boolean
+        BrowserXssFilter:
+          description: If BrowserXssFilter is true, adds the X-XSS-Protection header with the value `1; mode=block`. Default is false.
+          type: boolean
+        ContentSecurityPolicy:
+          description: ContentSecurityPolicy allows the Content-Security-Policy header value to be set with a custom value. Default is "".
+          type: string
+        ContentSecurityPolicyReportOnly:
+          description: ContentSecurityPolicyReportOnly allows the Content-Security-Policy-Report-Only header value to be set with a custom value. Default is "".
+          type: string
+        ContentTypeNosniff:
+          description: If ContentTypeNosniff is true, adds the X-Content-Type-Options header with the value `nosniff`. Default is false.
+          type: boolean
+        CrossOriginOpenerPolicy:
+          description: 'CrossOriginOpenerPolicy allows you to ensure a top-level document does not share a browsing context group with cross-origin documents. Default is "".
+
+            Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy'
+          type: string
+        CustomBrowserXssValue:
+          description: CustomBrowserXssValue allows the X-XSS-Protection header value to be set with a custom value. This overrides the BrowserXssFilter option. Default is "".
+          type: string
+        CustomFrameOptionsValue:
+          description: 'Passing a template string will replace `$NONCE` with a dynamic nonce value of 16 bytes for each request which can be later retrieved using the Nonce function.
+
+            Eg: script-src $NONCE -> script-src ''nonce-a2ZobGFoZg==''
+
+            CustomFrameOptionsValue allows the X-Frame-Options header value to be set with a custom value. This overrides the FrameDeny option. Default is "".'
+          type: string
+        ExpectCTHeader:
+          description: ExpectCTHeader allows the Expect-CT header value to be set with a custom value. Default is "".
+          type: string
+        FeaturePolicy:
+          description: 'FeaturePolicy allows to selectively enable and disable use of various browser features and APIs. Default is "".
+
+            Deprecated: This header has been renamed to Permissions-Policy.'
+          type: string
+        ForceSTSHeader:
+          description: If ForceSTSHeader is set to true, the STS header will be added even when the connection is HTTP. Default is false.
+          type: boolean
+        FrameDeny:
+          description: If FrameDeny is set to true, adds the X-Frame-Options header with the value of `DENY`. Default is false.
+          type: boolean
+        HostsProxyHeaders:
+          description: HostsProxyHeaders is a set of header keys that may hold a proxied hostname value for the request.
+          items:
+            type: string
+          type: array
+        IsDevelopment:
+          description: 'When developing, the AllowedHosts, SSL, and STS options can cause some unwanted effects. Usually testing happens on http, not https, and on localhost, not your production domain... so set this to true for dev environment.
+
+            If you would like your development environment to mimic production with complete Host blocking, SSL redirects, and STS headers, leave this as false. Default if false.'
+          type: boolean
+        PermissionsPolicy:
+          description: PermissionsPolicy allows to selectively enable and disable use of various browser features and APIs. Default is "".
+          type: string
+        PublicKey:
+          description: 'PublicKey implements HPKP to prevent MITM attacks with forged certificates. Default is "".
+
+            Deprecated: This feature is no longer recommended. Though some browsers might still support it, it may have already been removed from the relevant web standards, may be in the process of being dropped, or may only be kept for compatibility purposes. Avoid using it, and update existing code if possible.'
+          type: string
+        ReferrerPolicy:
+          description: ReferrerPolicy allows sites to control when browsers will pass the Referer header to other sites. Default is "".
+          type: string
+        SSLForceHost:
+          description: If SSLForceHost is true and SSLHost is set, requests will be forced to use SSLHost even the ones that are already using SSL. Default is false.
+          type: boolean
+        SSLHost:
+          description: SSLHost is the host name that is used to redirect http requests to https. Default is "", which indicates to use the same host.
+          type: string
+        SSLProxyHeaders:
+          additionalProperties:
+            type: string
+          description: 'SSLProxyHeaders is set of header keys with associated values that would indicate a valid https request. Useful when using Nginx: `map[string]string{"X-Forwarded-Proto": "https"}`. Default is blank map.'
+          type: object
+        SSLRedirect:
+          description: If SSLRedirect is set to true, then only allow https requests. Default is false.
+          type: boolean
+        SSLTemporaryRedirect:
+          description: If SSLTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
+          type: boolean
+        STSIncludeSubdomains:
+          description: If STSIncludeSubdomains is set to true, the `includeSubdomains` will be appended to the Strict-Transport-Security header. Default is false.
+          type: boolean
+        STSPreload:
+          description: If STSPreload is set to true, the `preload` flag will be appended to the Strict-Transport-Security header. Default is false.
+          type: boolean
+        STSSeconds:
+          description: STSSeconds is the max-age of the Strict-Transport-Security header. Default is 0, which would NOT include the header.
+          format: int64
+          type: integer
+        SecureContextKey:
+          description: SecureContextKey allows a custom key to be specified for context storage.
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token

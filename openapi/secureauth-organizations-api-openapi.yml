@@ -1,0 +1,1033 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Organizations API
+  version: latest
+  description: 'Operations tagged organizations across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/system/default
+tags:
+- name: Organizations
+paths:
+  /organizations:
+    get:
+      description: List organizations.
+      operationId: listOrganizations
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: 'Optional search phrase: organization id OR organization name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: optional flag to filter by template
+        in: query
+        name: template
+        schema:
+          type: boolean
+      - description: optional parent workspace id
+        in: query
+        name: parent_id
+        schema:
+          type: string
+          format: serverID
+      - description: 'optional: scope to organizations within this workspace/org subtree (all descendants, up to MaxOrganizationDepth levels)'
+        in: query
+        name: within_workspace_id
+        schema:
+          type: string
+          format: serverID
+      - description: 'optional: scope to organizations in the same top-level workspace tree as this workspace/org'
+        in: query
+        name: in_tree_of_workspace_id
+        schema:
+          type: string
+          format: serverID
+      - description: 'optional list organizations after given id
+
+          AfterServerID'
+        in: query
+        name: after_organization_id
+        schema:
+          type: string
+      - description: 'optional list organizations before given id
+
+          BeforeServerID'
+        in: query
+        name: before_organization_id
+        schema:
+          type: string
+      - description: 'optional sort organizations by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order organizations by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 512
+          minimum: 1
+      - description: Count child organizations for each organization
+        in: query
+        name: with_child_count
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/Orgs'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List organizations
+      tags:
+      - Organizations
+    post:
+      operationId: createOrganization
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Org'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create organization
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrganizationRequest'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /organizations/{wid}:
+    delete:
+      description: Delete organization.
+      operationId: deleteOrganization
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Organization id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' Organization has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete organization
+      tags:
+      - Organizations
+    get:
+      description: Get organization.
+      operationId: getOrganization
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Organization id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/Org'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get organization
+      tags:
+      - Organizations
+    put:
+      description: Update organization.
+      operationId: updateOrganization
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Organization id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/Org'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update organization
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Org'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /organizations/{wid}/metadata:
+    put:
+      description: Update organization metadata.
+      operationId: updateOrganizationMetadata
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Organization id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/OrganizationMetadata'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update organization metadata
+      tags:
+      - Organizations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizationMetadata'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /user/organizations:
+    get:
+      description: List organizations that the current user has access to.
+      operationId: listUserOrganizations
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Cursor
+        in: query
+        name: cursor
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional: scope to organizations in the same top-level workspace tree as this workspace/org'
+        in: query
+        name: in_tree_of_workspace_id
+        schema:
+          type: string
+          format: serverID
+      responses:
+        '200':
+          $ref: '#/components/responses/UserOrgs'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List user organizations
+      tags:
+      - Organizations
+    servers:
+    - url: https://localhost:8443/api/admin/default
+components:
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Org:
+      description: Org
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrganizationResponse'
+    UserOrgs:
+      description: User orgs
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserOrganizationsResponse'
+    OrganizationMetadata:
+      description: Organization metadata
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrganizationMetadata'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Orgs:
+      description: Orgs
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OrganizationsResponse'
+  schemas:
+    OrganizationResponse:
+      properties:
+        authentication_mechanisms:
+          description: allowed authentication mechanisms
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        color:
+          default: '#007FFF'
+          description: Your organization's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        deactivated:
+          type: boolean
+        description:
+          description: Display description of the organization
+          example: Organization description
+          type: string
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an organization
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        issuer_url:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: Display name of the organization
+          example: default
+          type: string
+        number_of_child_organizations:
+          format: int64
+          type: integer
+        parent_id:
+          description: The id of the parent workspace / organization
+          format: serverID
+          type: string
+        subject_format:
+          enum:
+          - hash
+          - legacy
+          - custom
+          type: string
+        subject_identifier_algorithm_salt:
+          type: string
+        template:
+          description: If true this organization can be used as a template when creating a new ones.
+          type: boolean
+        theme_id:
+          format: themeID
+          type: string
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    UserOrganizationsResponse:
+      properties:
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+        organizations:
+          items:
+            $ref: '#/components/schemas/OrganizationResponse'
+          type: array
+      type: object
+    OrganizationMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    OrganizationsResponse:
+      properties:
+        organizations:
+          items:
+            $ref: '#/components/schemas/OrganizationResponse'
+          type: array
+      type: object
+    Org:
+      properties:
+        authentication_mechanisms:
+          description: allowed authentication mechanisms
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        color:
+          default: '#007FFF'
+          description: Your organization's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        deactivated:
+          type: boolean
+        description:
+          description: Display description of the organization
+          example: Organization description
+          type: string
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an organization
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: Display name of the organization
+          example: default
+          type: string
+        parent_id:
+          description: The id of the parent workspace / organization
+          format: serverID
+          type: string
+        template:
+          description: If true this organization can be used as a template when creating a new ones.
+          type: boolean
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    CreateOrganizationRequest:
+      properties:
+        authentication_mechanisms:
+          description: allowed authentication mechanisms
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        color:
+          default: '#007FFF'
+          description: Your organization's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        deactivated:
+          type: boolean
+        description:
+          description: Display description of the organization
+          example: Organization description
+          type: string
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an organization
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: Display name of the organization
+          example: default
+          type: string
+        parent_id:
+          description: The id of the parent workspace / organization
+          format: serverID
+          type: string
+        template:
+          description: If true this organization can be used as a template when creating a new ones.
+          type: boolean
+        template_id:
+          description: The id of the organization template that should be used to create the new organization
+          format: serverID
+          type: string
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    SupportedJSONSchema:
+      properties:
+        additionalProperties:
+          type: boolean
+        allOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        anyOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        const:
+          type: string
+        contains:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        dependentRequired:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        dependentSchemas:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        description:
+          type: string
+        else:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        enum:
+          items:
+            type: string
+          type: array
+        exclusiveMaximum:
+          format: int64
+          type: integer
+        exclusiveMinimum:
+          format: int64
+          type: integer
+        hidden:
+          type: boolean
+        if:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        items:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        maxContains:
+          format: int64
+          type: integer
+        maxItems:
+          description: arrays
+          format: int64
+          type: integer
+        maxLength:
+          description: strings
+          format: int64
+          type: integer
+        maxProperties:
+          description: objects
+          format: int64
+          type: integer
+        maximum:
+          format: int64
+          type: integer
+        minContains:
+          format: int64
+          type: integer
+        minItems:
+          format: int64
+          type: integer
+        minLength:
+          format: int64
+          type: integer
+        minProperties:
+          format: int64
+          type: integer
+        minimum:
+          format: int64
+          type: integer
+        multipleOf:
+          description: numeric
+          format: int64
+          type: integer
+        not:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        oneOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        pattern:
+          type: string
+        patternProperties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        propertyNames:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        required:
+          items:
+            type: string
+          type: array
+        then:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        title:
+          type: string
+        type:
+          description: any
+          type: string
+        uniqueItems:
+          type: boolean
+      type: object
+    Cursor:
+      type: string
+    ServerMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          description: metadata payload
+          type: object
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-system-openapi.yml

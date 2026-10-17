@@ -1,0 +1,831 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Schemas API
+  version: latest
+  description: 'Operations tagged Schemas across 2 of this provider''s published API definitions: secureauth-identity-openapi.yml, secureauth-identitysystem-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: Schemas
+paths:
+  /admin/schemas:
+    get:
+      description: List schemas available for the current administrator.
+      operationId: listSchemas
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Schemas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schemas'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Schemas
+      tags:
+      - Schemas
+    post:
+      description: Create a schema. Set the `system` flag to prevent the schema from deletion or modifications.
+      operationId: createSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Schema
+      tags:
+      - Schemas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/schemas/{schID}:
+    delete:
+      description: Delete a schema. Schemas marked with the `system` flag aren't available for deletion.
+      operationId: deleteSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Schema has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Schema
+      tags:
+      - Schemas
+    get:
+      description: Retrieve information about a specified identity schema.
+      operationId: getSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SchemaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Schema
+      tags:
+      - Schemas
+    put:
+      description: Update a schema. Schemas marked with the `system` flag aren't available for update.
+      operationId: updateSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update Schema
+      tags:
+      - Schemas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/workspace/{wid}/schemas:
+    get:
+      description: List schemas available for the workspace.
+      operationId: listWorkspaceSchemas
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: Schemas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schemas'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Workspace Schemas
+      tags:
+      - Schemas
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/workspace/{wid}/schemas/{schID}:
+    get:
+      description: Retrieve information about a specified identity schema.
+      operationId: getWorkspaceSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SchemaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Workspace Schema
+      tags:
+      - Schemas
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/schemas:
+    get:
+      description: List all schemas.
+      operationId: systemListSchemas
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Schemas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schemas'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List Schemas
+      tags:
+      - Schemas
+    post:
+      description: Create a schema. Set the `system` flag to prevent the schema from deletion or modifications.
+      operationId: systemCreateSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          description: Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Create Schema
+      tags:
+      - Schemas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/schemas/{schID}:
+    delete:
+      description: Delete a schema. Schemas marked with the `system` flag aren't available for deletion.
+      operationId: systemDeleteSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Schema has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Delete Schema
+      tags:
+      - Schemas
+    get:
+      description: Gets schema.
+      operationId: systemGetSchema
+      parameters:
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SchemaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Get Schema
+      tags:
+      - Schemas
+    put:
+      description: Update a schema. Schemas marked with the `system` flag aren't available for update.
+      operationId: systemUpdateSchema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: schID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Schema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Update Schema
+      tags:
+      - Schemas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+components:
+  responses:
+    SchemaResponse:
+      description: Identity Schema
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Schema'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Schemas:
+      properties:
+        schemas:
+          items:
+            $ref: '#/components/schemas/Schema'
+          type: array
+      type: object
+    Schema:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        id:
+          format: schemaID
+          type: string
+        name:
+          type: string
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        system:
+          type: boolean
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+      - tenant_id
+      - name
+      - schema
+      type: object
+    SupportedJSONSchema:
+      properties:
+        additionalProperties:
+          type: boolean
+        allOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        anyOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        const:
+          type: string
+        contains:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        dependentRequired:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        dependentSchemas:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        description:
+          type: string
+        else:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        enum:
+          items:
+            type: string
+          type: array
+        exclusiveMaximum:
+          format: int64
+          type: integer
+        exclusiveMinimum:
+          format: int64
+          type: integer
+        hidden:
+          type: boolean
+        if:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        items:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        maxContains:
+          format: int64
+          type: integer
+        maxItems:
+          description: arrays
+          format: int64
+          type: integer
+        maxLength:
+          description: strings
+          format: int64
+          type: integer
+        maxProperties:
+          description: objects
+          format: int64
+          type: integer
+        maximum:
+          format: int64
+          type: integer
+        minContains:
+          format: int64
+          type: integer
+        minItems:
+          format: int64
+          type: integer
+        minLength:
+          format: int64
+          type: integer
+        minProperties:
+          format: int64
+          type: integer
+        minimum:
+          format: int64
+          type: integer
+        multipleOf:
+          description: numeric
+          format: int64
+          type: integer
+        not:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        oneOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        pattern:
+          type: string
+        patternProperties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        propertyNames:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        required:
+          items:
+            type: string
+          type: array
+        then:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        title:
+          type: string
+        type:
+          description: any
+          type: string
+        uniqueItems:
+          type: boolean
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-identity-openapi.yml
+- secureauth-identitysystem-openapi.yml

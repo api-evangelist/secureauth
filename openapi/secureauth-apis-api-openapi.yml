@@ -1,0 +1,726 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth APIs API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: APIs
+paths:
+  /apis:
+    post:
+      description: It is not possible to create APIs for a service with imported specification.
+      operationId: createAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/APIResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create API
+      tags:
+      - APIs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/API'
+        description: APIBody
+  /apis/{api}:
+    delete:
+      description: 'If this API was created by import specification operation then
+
+        it is not possible to delete it.'
+      operationId: deleteAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: api
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' API has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete API
+      tags:
+      - APIs
+    get:
+      description: Get API.
+      operationId: getAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: api
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/APIResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get API
+      tags:
+      - APIs
+    put:
+      description: Update API.
+      operationId: updateAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: API ID
+        in: path
+        name: api
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/APIResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update API
+      tags:
+      - APIs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAPIRequest'
+        description: APIBody
+  /apis/test:
+    post:
+      description: Check if an example request matches given API, if so, return policy list to evaluate.
+      operationId: testAPI
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/TestAPIResponseModel'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Test API
+      tags:
+      - APIs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestRequest'
+        description: APIBody
+  /servers/{wid}/apis:
+    get:
+      description: List APIs.
+      operationId: listAPIsByServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: List apis that have no data classifications
+        in: query
+        name: without_data_classifications
+        schema:
+          type: boolean
+      - description: List apis that have given data classifications
+        in: query
+        name: data_classification
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerAPIsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List APIs
+      tags:
+      - APIs
+  /services/{sid}/apis:
+    get:
+      description: List APIs.
+      operationId: listAPIsByService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Service id
+        in: path
+        name: sid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: List apis that have no data classifications
+        in: query
+        name: without_data_classifications
+        schema:
+          type: boolean
+      - description: List apis that have given data classifications
+        in: query
+        name: data_classification
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/APIsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List APIs
+      tags:
+      - APIs
+components:
+  schemas:
+    HTTPRequest:
+      properties:
+        body:
+          description: request body
+          type: string
+        method:
+          description: http method
+          example: GET
+          type: string
+        path:
+          description: url path
+          type: string
+        query:
+          description: url query params
+          items:
+            $ref: '#/components/schemas/HTTPRequestParam'
+          type: array
+      required:
+      - method
+      - path
+      type: object
+    TestRequest:
+      properties:
+        api:
+          $ref: '#/components/schemas/API'
+        test_request:
+          $ref: '#/components/schemas/HTTPRequest'
+      required:
+      - api
+      - test_request
+      type: object
+    TestAPIResult:
+      properties:
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        match:
+          type: boolean
+        policy_id:
+          format: policyID
+          type: string
+      type: object
+    APIs:
+      properties:
+        apis:
+          items:
+            $ref: '#/components/schemas/API'
+          type: array
+      type: object
+    API:
+      properties:
+        api_type:
+          default: rest
+          description: api type
+          enum:
+          - rest
+          - graphql
+          example: rest
+          type: string
+        can_have_policy:
+          description: if false it is not possible to assign a policy
+          type: boolean
+        data_classifications:
+          description: Data classifications
+          items:
+            type: string
+          type: array
+        graphql_schema:
+          description: graphql schema
+          type: string
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        id:
+          description: API id
+          example: '1'
+          format: apiID
+          type: string
+        method:
+          description: HTTP request method
+          example: GET
+          type: string
+        path:
+          description: HTTP request path
+          example: /pets
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+        position:
+          description: position of the api in the apis list
+          example: 1
+          format: int64
+          type: integer
+        server_id:
+          description: server id
+          example: default
+          format: serverID
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          format: serviceID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    GraphQLTypes:
+      items:
+        $ref: '#/components/schemas/GraphQLType'
+      type: array
+    HTTPRequestParam:
+      properties:
+        name:
+          description: name
+          type: string
+        value:
+          description: value
+          type: string
+      required:
+      - name
+      type: object
+    GraphQLField:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        name:
+          description: name of graphQL field
+          example: id
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    GraphQLType:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        fields:
+          description: optional fields of graphql type
+          items:
+            $ref: '#/components/schemas/GraphQLField'
+          type: array
+        name:
+          description: name of graphQL type, currently supported types are Interfaces and Objects
+          example: block
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    UpdateAPIRequest:
+      properties:
+        data_classifications:
+          description: Data classifications
+          items:
+            type: string
+          type: array
+        graphql_schema:
+          description: optional graphql schema
+          type: string
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    ServerAPIs:
+      properties:
+        apis_by_services:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/API'
+            type: array
+          type: object
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    APIsResponse:
+      description: APIs
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/APIs'
+    TestAPIResponseModel:
+      description: API test result
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TestAPIResult'
+    ServerAPIsResponse:
+      description: APIs grouped by service ids
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerAPIs'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    APIResponse:
+      description: API
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/API'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

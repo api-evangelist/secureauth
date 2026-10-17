@@ -1,0 +1,171 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Public API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Sessions API
+  version: latest
+servers:
+- url: https://localhost:8443/default/default
+tags:
+- name: Sessions
+paths:
+  /sso/sessions:
+    get:
+      description: User sessions.
+      operationId: listUserSessions
+      responses:
+        '200':
+          $ref: '#/components/responses/ListUserSessions'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - default:
+        - view_sessions
+      summary: Lists user sessions
+      tags:
+      - Sessions
+  /sso/sessions/{sessionID}:
+    delete:
+      operationId: deleteSession
+      parameters:
+      - description: Session id
+        in: path
+        name: sessionID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' Session has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - default:
+        - manage_sessions
+      summary: Delete user session
+      tags:
+      - Sessions
+components:
+  schemas:
+    ListUserSessions:
+      properties:
+        sessions:
+          items:
+            $ref: '#/components/schemas/UserSession'
+          type: array
+      type: object
+    UserSession:
+      properties:
+        active_time:
+          description: Time when the session was last used
+          format: date-time
+          type: string
+        auth_time:
+          description: time when user authenticated
+          format: date-time
+          type: string
+        id:
+          description: Session id
+          type: string
+        ip_address:
+          description: IP address of the user who created the session
+          type: string
+        issue_time:
+          description: Time when the session was issued
+          format: date-time
+          type: string
+        type:
+          description: Session type
+          type: string
+        user_agent:
+          description: User agent of the user who created the session
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ListUserSessions:
+      description: User  sessions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListUserSessions'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            list_clients_with_access: list_clients_with_access
+            manage_consents: manage_consents
+            manage_post_authn: manage_post_authn
+            manage_sessions: manage_sessions
+            revoke_client_access: revoke_client_access
+            transient_otp: transient_otp
+            view_consents: view_consents
+            view_sessions: view_sessions
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token

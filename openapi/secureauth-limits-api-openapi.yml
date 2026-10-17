@@ -1,0 +1,228 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Limits API
+  version: latest
+servers:
+- url: https://localhost:8443/
+tags:
+- name: Limits
+paths:
+  /api/admin/tenants/{tid}/rate-limits:
+    get:
+      description: List custom rate limits per tenant.
+      operationId: listRateLimits
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ListRateLimitsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: List rate limits
+      tags:
+      - Limits
+  /api/admin/tenants/{tid}/rate-limits/{module}:
+    delete:
+      description: Delete custom rate limit for a module per tenant.
+      operationId: deleteRateLimit
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      - in: path
+        name: module
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' custom rate limit has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Delete rate limit
+      tags:
+      - Limits
+    put:
+      description: Set custom rate limit for a module per tenant.
+      operationId: setRateLimit
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      - in: path
+        name: module
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' custom rate limit has been saved'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set rate limit
+      tags:
+      - Limits
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetRateLimitRequest'
+components:
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ListRateLimitsResponse:
+      description: Tenant rate limits
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListRateLimitsResponse'
+  schemas:
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    ListRateLimitsResponse:
+      properties:
+        global:
+          additionalProperties:
+            $ref: '#/components/schemas/RateLimitModel'
+          type: object
+        tenant:
+          additionalProperties:
+            $ref: '#/components/schemas/RateLimitModel'
+          type: object
+      type: object
+    SetRateLimitRequest:
+      properties:
+        burst:
+          description: max burst
+          format: int64
+          type: integer
+        period:
+          description: period
+          format: duration
+          type: string
+        rate:
+          description: rate
+          format: int64
+          type: integer
+      type: object
+    RateLimitModel:
+      properties:
+        burst:
+          description: max burst
+          format: int64
+          type: integer
+        period:
+          description: period
+          format: duration
+          type: string
+        rate:
+          description: rate
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token

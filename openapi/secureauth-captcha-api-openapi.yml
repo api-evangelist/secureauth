@@ -1,0 +1,229 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Captcha API
+  version: latest
+servers:
+- url: https://localhost:8443/
+tags:
+- name: captcha
+paths:
+  /api/admin/tenants/{tid}/captcha:
+    get:
+      operationId: getTenantCaptcha
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/TenantCaptchaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get tenant captcha settings
+      tags:
+      - captcha
+    put:
+      operationId: setTenantCaptcha
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/TenantCaptchaResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set tenant captcha settings
+      tags:
+      - captcha
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetTenantCaptcha'
+  /api/admin/tenants/captcha:
+    get:
+      operationId: getCaptcha
+      responses:
+        '200':
+          $ref: '#/components/responses/GetCaptchaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get deployment captcha state
+      tags:
+      - captcha
+components:
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TenantCaptchaResponse:
+      description: Tenant captcha settings
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CaptchaSettings'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetCaptchaResponse:
+      description: Get captcha
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CaptchaDeployment'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    CaptchaSettings:
+      properties:
+        whitelist:
+          description: 'Identifier suffixes exempt from captcha. Replaces the deployment-wide whitelist for
+
+            this tenant; leave empty to inherit it.'
+          items:
+            type: string
+          type: array
+      title: CaptchaSettings is the per-tenant captcha override, managed by SecureAuth.
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    SetTenantCaptcha:
+      properties:
+        whitelist:
+          description: 'Identifier suffixes exempt from captcha. Replaces the deployment-wide whitelist for
+
+            this tenant; leave empty to inherit it.'
+          items:
+            type: string
+          type: array
+      type: object
+    CaptchaDeployment:
+      properties:
+        enabled:
+          description: captcha is enforced in this deployment; when false, tenant whitelists change nothing
+          type: boolean
+        threshold:
+          description: minimum reCAPTCHA v3 score accepted before falling back to v2
+          format: float
+          type: number
+        v2_configured:
+          description: a usable reCAPTCHA v2 site and secret key pair is configured
+          type: boolean
+        v3_configured:
+          description: a reCAPTCHA v3 site and secret key pair is configured
+          type: boolean
+        whitelist:
+          description: identifier suffixes exempt for the whole deployment; a tenant whitelist replaces these
+          items:
+            type: string
+          type: array
+      title: CaptchaDeployment reports the deployment-wide captcha state without exposing any key.
+      type: object
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token

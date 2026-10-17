@@ -1,0 +1,214 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Analytics API
+
+
+    The SecureAuth Analytics APIs provide a robust solution for capturing and analyzing metrics related to various operational aspects including access token minting, policy validations, OTP validations, authorizer validations, and HTTP metrics, among others.'
+  title: SecureAuth Pool Metrics API
+  version: latest
+servers:
+- url: https://localhost:8443/api/analytics/default
+tags:
+- name: PoolMetrics
+paths:
+  /pools/{ipID}/users:
+    get:
+      description: Query pool users data points.
+      operationId: poolSingleUsersMetrics
+      parameters:
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Identity Pool ID
+        in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count_all
+          - count_standard
+          - count_jit
+          default: count_all
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query pool users metrics
+      tags:
+      - PoolMetrics
+components:
+  schemas:
+    DataPoints:
+      properties:
+        bucket:
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SingleDataPoint'
+          type: array
+      type: object
+    SingleDataPoint:
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+        value:
+          format: double
+          type: number
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DataPoints:
+      description: Data points
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataPoints'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/DataPoints'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: /default/admin/oauth2/token

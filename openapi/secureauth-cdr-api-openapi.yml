@@ -1,0 +1,582 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth CDR APIs
+
+    conform with Consumer Data Right requirements for the banking and energy sectors.'
+  title: SecureAuth Consumer Data Right CDR API
+  version: latest
+servers:
+- url: https://localhost:8443/default/default
+tags:
+- name: CDR
+paths:
+  /admin/register/metadata:
+    post:
+      description: 'Indicate that a critical update to the metadata for Accredited Data Recipients has been made
+
+        and should be obtained. This endpoint is used by the CDR Register.
+
+
+        Supported version(s) of this endpoint: [1]'
+      operationId: refreshMetadata
+      responses:
+        '200':
+          description: ' Register refreshed'
+        '400':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '401':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '406':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '424':
+          $ref: '#/components/responses/CDRErrorResponse'
+      security:
+      - defaultcc:
+        - admin:metadata:update
+      summary: Refresh ADR Metadata
+      tags:
+      - CDR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CDRAdminRequestMetaDataUpdate'
+  /arrangements/revoke:
+    post:
+      description: 'Withdraw a consent for an arrangement in compliance with the revocation endpoint defined by the Consumer
+
+        Data Standards specification. The operation is performed per client application.
+
+
+        This endpoint requires inline
+
+        Private Key JWT authentication.'
+      operationId: revokeCDRArrangement
+      parameters:
+      - description: Stores the channel that was used to revoke the arrangement
+        in: query
+        name: revocation_channel
+        schema:
+          type: string
+          enum:
+          - online
+          - writing
+          - over_the_phone
+          - data_holder
+          - data_recipient
+          default: online
+      - description: Stores the reason why the arrangement was revoked
+        in: query
+        name: revocation_reason
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' CDR arrangement revoked'
+        '400':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '401':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '403':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '404':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '422':
+          $ref: '#/components/responses/CDRErrorResponse'
+        '429':
+          $ref: '#/components/responses/CDRErrorResponse'
+      summary: Revoke CDR Arrangement
+      tags:
+      - CDR
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                cdr_arrangement_id:
+                  type: string
+                client_assertion_type:
+                  type: string
+                  enum:
+                  - urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+                  default: urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+                client_assertion:
+                  type: string
+                client_id:
+                  type: string
+  /cdr/consents/introspect:
+    post:
+      description: 'Accepts a refresh token and returns meta information surrounding the OAuth 2.0 refresh token along with the
+
+        CDR arrangement.
+
+
+        As per CDR regulations, Access Tokens and ID Tokens are unavailable for introspection.
+
+
+        The response includes:
+
+
+        `exp` a token expiration timestamp.
+
+
+        `scope` a space-separated list of scopes associated with the token.
+
+
+        `cdr_arrangement_id` a unique identifier of the arrangement.
+
+
+        `cdr_arrangement` an object holding the arrangement details.
+
+
+        `cdr_register_client_metadata` metadata from the CDR Register, including the Data Recipient and Software Product
+
+
+        statuses.'
+      operationId: cdrConsentIntrospect
+      responses:
+        '200':
+          $ref: '#/components/responses/IntrospectCDRConsentResponse'
+        '401':
+          $ref: '#/components/responses/genericError'
+        '404':
+          $ref: '#/components/responses/genericError'
+        '429':
+          $ref: '#/components/responses/genericError'
+      security:
+      - default:
+        - introspect_openbanking_tokens
+      summary: Introspect CDR Arrangement
+      tags:
+      - CDR
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+components:
+  schemas:
+    ScopeGrant:
+      properties:
+        client_id:
+          description: Identifier of a client application that is granted with the scope.
+          example: bugkgm23g9kregtu051g
+          format: clientID
+          type: string
+        given_at:
+          description: Time when the scope was granted
+          format: date-time
+          type: string
+        granted_scope_name:
+          description: The scope name with its actual value
+          example: accounts.read.own
+          format: scopeName
+          type: string
+        language:
+          description: Language
+          format: language
+          type: string
+        pool_id:
+          description: pool id of a user who granted the scope
+          format: poolID
+          type: string
+        scope_name:
+          description: 'The scope name as it''s set initially. This parameter supports dynamic scope syntax, thus can include a scope
+
+            root—a fixed core of the dynamic scope name supplemented with a wildcard—a symbol representing
+
+            an adjustable extension to the scope root allowing to retrieve a specific requested scope.
+
+
+            The basic dynamic scope template is as follows: `[scope-root.*]` where `*` is a wildcard.'
+          example: accounts.read.*
+          format: scopeName
+          type: string
+        server_id:
+          description: Identifier of a server where the client app is hosted.
+          example: my-server
+          format: serverID
+          type: string
+        subject:
+          description: Identifier of a user who granted the scope.
+          format: subject
+          type: string
+        tenant_id:
+          description: Identifier of the tenant where the client app is hosted.
+          example: my-company
+          format: tenantID
+          type: string
+        user_id:
+          description: user id of a user who granted the scope
+          format: userID
+          type: string
+      type: object
+    RevocationChannel:
+      type: string
+    CDRArrangement:
+      properties:
+        account_ids:
+          description: 'List of accounts.
+
+
+            It can refer to user''s bank accounts that can be accessed by your client application in order to provide consumer
+
+            services.'
+          items:
+            type: string
+          type: array
+        amending_arrangement_id:
+          $ref: '#/components/schemas/CDRArrangementID'
+        authorization_server_id:
+          description: Workspace identifier
+          example: server
+          format: serverID
+          type: string
+        cdr_arrangement_id:
+          $ref: '#/components/schemas/CDRArrangementID'
+        cdr_arrangement_metadata:
+          $ref: '#/components/schemas/CDRArrangementMetadata'
+        client_id:
+          description: Client application identifier
+          example: bugkgm23g9kregtu051g
+          format: clientID
+          type: string
+        created_at:
+          description: Arrangement creation date
+          example: '2022-07-01T08:52:27.127932Z'
+          format: date-time
+          type: string
+        customer_id:
+          $ref: '#/components/schemas/CDRCustomerID'
+        expiry:
+          description: Arrangement expiration date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        scope_grants:
+          description: The detailed list of scopes voluntarily granted by the user for the client application to access user data.
+          items:
+            $ref: '#/components/schemas/ScopeGrant'
+          type: array
+        sharing_type:
+          description: 'The rule on how a user shares their data: reuse with a token or without it, or the user allows one-time access.'
+          enum:
+          - one_time
+          - one_time_with_refresh_token
+          - reusable
+          example: one_time
+          type: string
+        spec_version:
+          default: v1
+          description: 'Arrangement version.
+
+            Currently, the version parameter is not used.'
+          enum:
+          - v1
+          example: v1
+          type: string
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        subject:
+          description: 'Subject identifies an authenticated user.
+
+            Depending on the workspace configuration, the value can be hashed.'
+          example: 377eb000a87a471291b5a9869930a2422c670b7b6a06f74143eb74a01ed2fbe1
+          format: subject
+          type: string
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        updated_at:
+          description: Arrangement last update date
+          example: '2022-10-01T08:52:27.127932Z'
+          format: date-time
+          type: string
+      type: object
+    CDRArrangementMetadata:
+      properties:
+        personal_details:
+          $ref: '#/components/schemas/PersonalDetails'
+        revocation_channel:
+          $ref: '#/components/schemas/RevocationChannel'
+        revocation_reason:
+          $ref: '#/components/schemas/RevocationReason'
+      type: object
+    genericError:
+      description: Error response
+      properties:
+        error:
+          example: The requested resource could not be found
+          type: string
+        error_code:
+          description: Code represents the error status code (404, 403, 401, ...).
+          example: 404
+          format: int64
+          type: integer
+        error_hint:
+          example: Object with ID 12345 does not exist
+          type: string
+      required:
+      - error
+      type: object
+    CDRAdminRequestMetaDataUpdate_data:
+      description: 'CDRAdminRequestMetaDataUpdateData RequestMetaDataUpdate_data
+
+        Example: {"action":"REFRESH"}'
+      properties:
+        action:
+          description: The action to take for the meta data. At the moment the only option is REFRESH which requires the data holder to call the ACCC to refresh meta data as soon as practicable
+          example: REFRESH
+          type: string
+      required:
+      - action
+      type: object
+    PersonalDetails:
+      properties:
+        user_id:
+          type: string
+      type: object
+    CDRAdminRequestMetaDataUpdate:
+      description: CDRAdminRequestMetaDataUpdate RequestMetaDataUpdate
+      properties:
+        data:
+          $ref: '#/components/schemas/CDRAdminRequestMetaDataUpdate_data'
+        meta:
+          description: meta
+          type: object
+      required:
+      - data
+      type: object
+    Confirmation:
+      properties:
+        jkt:
+          type: string
+        x5t#S256:
+          type: string
+      type: object
+    CDRCustomerID:
+      type: string
+    RevocationReason:
+      type: string
+    CDRRegisterClientMetadata:
+      properties:
+        data_recipient_status:
+          description: Data recipient status
+          type: string
+        software_product_status:
+          description: Software product status
+          type: string
+      type: object
+    CDRErrorResponse:
+      properties:
+        errors:
+          items:
+            $ref: '#/components/schemas/CDRError'
+          type: array
+      type: object
+    CDRError:
+      properties:
+        code:
+          type: string
+        detail:
+          type: string
+        title:
+          type: string
+      type: object
+    CDRArrangementID:
+      type: string
+    IntrospectResponse:
+      properties:
+        acr:
+          description: Authentication context class reference
+          type: string
+        act:
+          additionalProperties:
+            type: object
+          description: Actor claims used in the Token Exchange flow.
+          type: object
+        active:
+          description: 'Active is a boolean indicator of whether or not the presented token
+
+            is currently active. The specifics of a token''s `active` state
+
+            varies depending on the implementation of an authorization
+
+            server and the information it keeps about its token. Still, the `true`
+
+            value returned for the `active` property generally indicates
+
+            that a given token has been issued by this authorization server,
+
+            has not been revoked by the resource owner, and is within its
+
+            given time window of validity (e.g., between its issuance and
+
+            expiration time).'
+          type: boolean
+        amr:
+          description: Authentication method references
+          items:
+            type: string
+          type: array
+        aud:
+          description: Audience contains the list of the audiences the token is intended for.
+          items:
+            type: string
+          type: array
+        authorization_details:
+          description: Granted authorization details
+          items:
+            additionalProperties:
+              type: object
+            type: object
+          type: array
+        client_id:
+          description: 'A client application identifier for the OAuth 2.0 client that
+
+            requested this token.'
+          type: string
+        cnf:
+          $ref: '#/components/schemas/Confirmation'
+        exp:
+          description: 'ExpiredAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC (1970-01-01T00:00:00Z). It indicates when this token will expire.'
+          format: int64
+          type: integer
+        ext:
+          additionalProperties:
+            type: object
+          description: Extra is arbitrary data set by the session.
+          type: object
+        iat:
+          description: 'IssuedAt is the integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates when this token was
+
+            originally issued.'
+          format: int64
+          type: integer
+        idp:
+          description: The identifier of an identity provider that user authenticated with.
+          type: string
+        idp_sub:
+          description: IDP subject
+          type: string
+        iss:
+          description: Issuer URL is a string representing the issuer of this token.
+          type: string
+        may_act:
+          additionalProperties:
+            type: object
+          description: May act claims used in the Token Exchange flow.s
+          type: object
+        nbf:
+          description: 'NotBefore is an integer timestamp measured in the number of seconds
+
+            since January 1 1970 UTC. It indicates this token was not
+
+            used before the specified time.'
+          format: int64
+          type: integer
+        scope:
+          description: 'Scope is a JSON string containing a space-separated list of
+
+            scopes associated with this token.'
+          type: string
+        server_id:
+          description: 'The OAuth 2.0 authorization server identifier that
+
+            issued this token.'
+          type: string
+        sub:
+          description: 'Subject of the token, as defined in JWT [RFC7519].
+
+            Usually a machine-readable identifier of the resource owner who
+
+            authorized this token.'
+          type: string
+        tenant_id:
+          description: 'TenantID identifies a tenant holding the authorization server that
+
+            issued this token.'
+          type: string
+        token_type:
+          description: TokenType is the type of the introspected token. For example, `access_token` or `refresh_token`.
+          type: string
+        username:
+          description: 'Username is a human-readable identifier for the resource owner who
+
+            authorized this token.'
+          type: string
+      type: object
+    ConsentStatus:
+      type: string
+  responses:
+    genericError:
+      description: ErrorResponse
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/genericError'
+    IntrospectCDRConsentResponse:
+      description: Introspect CDR Consent Response
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/IntrospectResponse'
+            - properties:
+                AccountIDs:
+                  description: Deprecated list of account ids, use `account_ids` from `cdr_arrangement`
+                  items:
+                    type: string
+                  type: array
+                cdr_arrangement:
+                  $ref: '#/components/schemas/CDRArrangement'
+                cdr_arrangement_id:
+                  description: CDR arrangement ID
+                  type: string
+                cdr_register_client_metadata:
+                  $ref: '#/components/schemas/CDRRegisterClientMetadata'
+              type: object
+    CDRErrorResponse:
+      description: CDR Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CDRErrorResponse'
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            dcr_register: dcr_register
+            introspect_openbanking_tokens: introspect_openbanking_tokens
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token
+    defaultcc:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            accounts: accounts
+            consents: consents
+            payments: payments
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_openbanking_consents: manage_openbanking_consents
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

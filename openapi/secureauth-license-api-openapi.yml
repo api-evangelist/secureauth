@@ -1,0 +1,128 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Licensing Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth License API
+  version: latest
+servers:
+- url: https://localhost:8443/api/licensing/default
+tags:
+- name: License
+paths:
+  /admin/license:
+    get:
+      description: Get license.
+      operationId: getAdminLicense
+      responses:
+        '200':
+          $ref: '#/components/responses/LicenseResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get license
+      tags:
+      - License
+components:
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    LicenseResponse:
+      description: License
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/License'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    License:
+      properties:
+        end_date:
+          description: License end date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        enforcement_enabled:
+          description: Is enforcement enabled
+          type: boolean
+        has_enterprise_idps_capability:
+          description: Is enterprise IDPs capability enabled
+          type: boolean
+        has_risk_engine_capability:
+          description: Is risk engine capability enabled
+          type: boolean
+        start_date:
+          description: License start date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        type:
+          description: license type
+          enum:
+          - trial
+          - enterprise
+          type: string
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

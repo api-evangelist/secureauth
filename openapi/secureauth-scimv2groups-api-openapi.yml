@@ -1,0 +1,658 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Identity System API
+
+
+    It is important for clients to note that system APIs return the `ETag` response header.'
+  title: SecureAuth SCI Mv2 Groups API
+  version: latest
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: SCIMv2Groups
+paths:
+  /system/pools/{ipID}/scim/v2/Groups:
+    get:
+      description: 'Returns a list of groups in SCIM format from the specified identity pool.
+
+
+        The only supported filter is ` eq ` which returns a single group or empty set.
+
+        Allowed field names (case-insensitive) are `id`, `name` and `externalId`.
+
+        Please note that filtering by `name` is case-insensitive and may return multiple groups - totalResults may be invalid
+
+        in such case as it returns number of entries returned - not overall count.
+
+
+        Results are sorted ascending by group ID. No other sorting is supported, and the `sortBy` and `sortOrder` parameter is ignored.'
+      operationId: systemSCIMv2ListGroups
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: SCIM filter expression
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to include
+        in: query
+        name: attributes
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to exclude
+        in: query
+        name: excludedAttributes
+        schema:
+          type: string
+      - description: Attribute to sort by
+        in: query
+        name: sortBy
+        schema:
+          type: string
+      - description: Sort order (ascending or descending)
+        in: query
+        name: sortOrder
+        schema:
+          type: string
+      - description: Start index for pagination (1-based)
+        in: query
+        name: startIndex
+        schema:
+          type: integer
+          format: int64
+      - description: Number of results to return
+        in: query
+        name: count
+        schema:
+          type: integer
+          format: int64
+          default: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/SCIMv2GroupsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: List SCIM Groups
+      tags:
+      - SCIMv2Groups
+    post:
+      description: Creates a new group in SCIM format in the specified identity pool.
+      operationId: systemSCIMv2CreateGroup
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/SystemSCIMv2GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntitySCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Create SCIM Group
+      tags:
+      - SCIMv2Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpsertRequest'
+  /system/pools/{ipID}/scim/v2/Groups/{groupID}:
+    delete:
+      description: Deletes a group using SCIM DELETE operations in the specified identity pool.
+      operationId: systemSCIMv2DeleteGroup
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/SystemDeleteGroupResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Delete SCIM Group
+      tags:
+      - SCIMv2Groups
+    get:
+      description: Returns a specific group in SCIM format from the specified identity pool.
+      operationId: systemSCIMv2GetGroup
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to include
+        in: query
+        name: attributes
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to exclude
+        in: query
+        name: excludedAttributes
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemSCIMv2GroupResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntitySCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Get SCIM Group
+      tags:
+      - SCIMv2Groups
+    patch:
+      description: Updates a group using SCIM PATCH operations in the specified identity pool.
+      operationId: systemSCIMv2PatchGroup
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Patch SCIM Group
+      tags:
+      - SCIMv2Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SCIMv2Patch'
+    put:
+      description: Updates a group using SCIM format in the specified identity pool (full replacement).
+      operationId: systemSCIMv2UpdateGroup
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemSCIMv2GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Update SCIM Group
+      tags:
+      - SCIMv2Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpsertRequest'
+components:
+  schemas:
+    SCIMv2ErrorResponse:
+      properties:
+        detail:
+          type: string
+        schemas:
+          items:
+            type: string
+          type: array
+        scimType:
+          type: string
+        status:
+          type: string
+      type: object
+    Rfc6902PatchOperations:
+      items:
+        $ref: '#/components/schemas/Rfc6902PatchOperation'
+      type: array
+    GroupUpsertRequest:
+      description: GroupUpsertRequest
+      properties:
+        displayName:
+          example: Some Group Name
+          type: string
+        externalId:
+          example: some-external-id
+          type: string
+        members:
+          items:
+            $ref: '#/components/schemas/Member'
+          type: array
+        schemas:
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:Group
+          items:
+            type: string
+          type: array
+      type: object
+    SCIMv2Patch:
+      properties:
+        Operations:
+          $ref: '#/components/schemas/Rfc6902PatchOperations'
+        schemas:
+          description: example ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+          items:
+            type: string
+          type: array
+      type: object
+    Member:
+      properties:
+        $ref:
+          type: string
+        type:
+          $ref: '#/components/schemas/MemberType'
+        value:
+          type: string
+      type: object
+    Rfc6902PatchOperation:
+      properties:
+        op:
+          description: 'Each operation must have at least one `op` member, which value indicates
+
+            the actual operation to be performed against the target (current) configuration.
+
+            For a detailed description of available operations,
+
+            see the [Operations #4 section of the RFC6902 specification](https://datatracker.ietf.org/doc/html/rfc6902#section-4).'
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          type: string
+        path:
+          description: 'String containing a JSON-Pointer value ([RFC6901](https://datatracker.ietf.org/doc/html/rfc6901))
+
+            that references a location within the target configuration where the operation is performed.
+
+
+            For available paths, reference the exported configuration.'
+          type: string
+        value:
+          description: New object value applied to the patched (target) configuration.
+          type: object
+      type: object
+    MemberType:
+      type: string
+    GroupGetResponse:
+      description: GroupGetResponse
+      properties:
+        displayName:
+          example: Some Group Name
+          type: string
+        externalId:
+          example: some-external-id
+          type: string
+        id:
+          type: string
+        members:
+          items:
+            $ref: '#/components/schemas/Member'
+          type: array
+        meta:
+          $ref: '#/components/schemas/SCIMv2Meta'
+        schemas:
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:Group
+          items:
+            type: string
+          type: array
+      type: object
+    ListGroupsResponse:
+      properties:
+        Resources:
+          items:
+            $ref: '#/components/schemas/GroupGetResponse'
+          type: array
+        itemsPerPage:
+          format: int64
+          type: integer
+        schemas:
+          items:
+            type: string
+          type: array
+        startIndex:
+          format: int64
+          type: integer
+        totalResults:
+          format: int64
+          type: integer
+      type: object
+    SCIMv2Meta:
+      properties:
+        created:
+          type: string
+        lastModified:
+          type: string
+        location:
+          type: string
+        resourceType:
+          type: string
+        version:
+          type: string
+      type: object
+  responses:
+    SystemDeleteGroupResponse:
+      description: Group has been deleted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    SCIMv2GroupsResponse:
+      description: SCIMv2 Groups
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListGroupsResponse'
+    notFoundSCIMv2HTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    badRequestSCIMv2HTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    unprocessableEntitySCIMv2HTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    forbiddenSCIMv2HTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    payloadTooLargeSCIMv2HTTPError:
+      description: Payload too large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    SystemSCIMv2GroupResponse:
+      description: SCIMv2 Group
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GroupGetResponse'
+    tooManyRequestsSCIMv2HTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    unauthorizedSCIMv2HTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    conflictSCIMv2HTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+  securitySchemes:
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

@@ -1,0 +1,959 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Policies API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: Policies
+paths:
+  /policies:
+    post:
+      description: 'ACP supports creating SecureAuth policies (using a visual editor or defined using JSON or
+
+        YAML) and policies defined using REGO (language used by Open Policy Agent (OPA)).
+
+
+        In ACP, policies are created per tenant. It means that is not possible to create policies with
+
+        the same ID in two different workspaces within the same tenant. Additionally, when a policy is
+
+        created, a workspace prefix is added to your policy name on the UI side. It is not possible to
+
+        reuse policies between different authorization servers.
+
+
+        Sample validators which can be used to build policies: identity-context, consent, header, true, false.'
+      operationId: createPolicy
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Policy'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create policy
+      tags:
+      - Policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Policy'
+  /policies/{pid}:
+    delete:
+      description: It is not possible to delete policies that are currently in use.
+      operationId: deletePolicy
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: pid
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Policy has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete policy
+      tags:
+      - Policies
+    get:
+      description: Returns a policy and it's definition.
+      operationId: getPolicy
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your policy
+        in: path
+        name: pid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Policy'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get policy
+      tags:
+      - Policies
+    put:
+      description: Update existing authorization policies.
+      operationId: updatePolicy
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of the policy to be updated
+        in: path
+        name: pid
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Policy'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update policy
+      tags:
+      - Policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Policy'
+  /policies/test:
+    post:
+      description: 'You can test a policy and check if it works correctly using this endpoint. Provide your mock input and
+
+        pass it as the value of the `input` parameter. Define your policy. Then, fire a request to the
+
+        test policy endpoint. By doing so, you can test if a policy would fail or pass for a given request.'
+      operationId: testPolicy
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/TestPolicyResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Test policy
+      tags:
+      - Policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestPolicyRequest'
+  /servers/{wid}/policies:
+    get:
+      description: Lists authorization servers' (workspace) policies by type.
+      operationId: listPolicies
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Id of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: An array of policy types that are to be filtered out
+        in: query
+        name: policy_types
+        schema:
+          type: string
+          default: api
+      - description: 'An optional and case insensitive search phrase that contains either a policy ID or a policy
+
+          name substring
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'String represented policy ID
+
+
+          The `AfterPolicyID` parameter defines the ID of the last displayed policy on a page.
+
+          For example, if there are 20 policies and only 10 are displayed per page, in
+
+          order to jump to the next page, you need to provide the ID of the last policy on that page as
+
+          the value of the `AfterPolicyID` parameter.
+
+          AfterPolicyID'
+        in: query
+        name: after_policy_id
+        schema:
+          type: string
+      - description: 'String represented policy ID
+
+
+          The `BeforePolicyID` parameter defines the ID of the last displayed policy on a page.
+
+          For example, if there are 20 policies and only 10 are displayed per page, in
+
+          order to jump to the previous page, you need to provide the ID of the first policy on that page as
+
+          the value of the `Before PolicyID` parameter.
+
+          BeforePolicyID'
+        in: query
+        name: before_policy_id
+        schema:
+          type: string
+      - description: 'Defines the method of sorting the results by a given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'An ascending or descending order of sorting the policies
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'A limit of displayed results per page for listed policies
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Policies'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List policies
+      tags:
+      - Policies
+  /servers/{wid}/policy-execution-points:
+    get:
+      description: Returns a list of policy execution points for a given workspace.
+      operationId: listPolicyExecutionPoints
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/PolicyExecutionPoints'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List policy execution points
+      tags:
+      - Policies
+    put:
+      description: 'Available execution points: `scope_client_assignment`, `scope_user_grant`,
+
+        `server_client_assignment`, `server_user_token`, `client_user_token`, `api`'
+      operationId: setPolicyExecutionPoints
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/PolicyExecutionPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set policy execution points
+      tags:
+      - Policies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PolicyExecutionPoints'
+components:
+  schemas:
+    ValidateResponse_ValidatorFailure:
+      properties:
+        details:
+          type: string
+        message:
+          type: string
+        validator:
+          type: string
+      type: object
+    TestPolicyInputRequest:
+      properties:
+        body:
+          description: Body that is used in your request that you use to test your policy
+          type: string
+        headers:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Headers that are used in your request that you use to test your policy
+          type: object
+        method:
+          description: Method that is used in your request that you use to test your policy
+          type: string
+        path:
+          description: Path that is used in your request that you use to test your policy
+          type: string
+        path_params:
+          additionalProperties:
+            type: string
+          description: Path parameters that are used in your request that you use to test your policy
+          type: object
+        query_params:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          description: Query parameters that are used in your request that you use to test your policy
+          type: object
+      type: object
+    RecoveryConfig:
+      properties:
+        type:
+          type: string
+      type: object
+    TestPolicyResponse:
+      properties:
+        failures:
+          items:
+            $ref: '#/components/schemas/ValidateResponse_ValidatorFailure'
+          type: array
+        output:
+          additionalProperties:
+            type: object
+          type: object
+        recovery:
+          items: {}
+          type: array
+        result:
+          type: string
+        status:
+          type: boolean
+      type: object
+    AuthenticationContext:
+      additionalProperties:
+        type: object
+      type: object
+    Policies:
+      properties:
+        policies:
+          description: list of policies
+          items:
+            $ref: '#/components/schemas/Policy'
+          type: array
+      type: object
+    TestPolicyDefinition:
+      description: Definition of a policy that you wish to test
+      properties:
+        definition:
+          description: The definition of an Open Policy Agent (OPA) policy provided using the REGO language.
+          type: string
+        language:
+          description: 'Language of a policy
+
+
+            ACP supports creating SecureAuth policies (using a visual editor or defined using JSON or
+
+            YAML) and Open Policy Agent (OPA) policies (defined using REGO).
+
+
+            OPA is a policy engine that unifies policy enforcement and provides a high-level declarative
+
+            language (REGO) that lets you specify policies as code. REGO supports referencing nested
+
+            documents and ensures that your queries are correct and unambiguous.'
+          example: cloudentity
+          format: policyLanguage
+          type: string
+        validators:
+          description: An array of validators for a SecureAuth policy
+          items:
+            $ref: '#/components/schemas/ValidatorConfig'
+          type: array
+      type: object
+    TestPolicyInput:
+      properties:
+        authn_ctx:
+          $ref: '#/components/schemas/AuthenticationContext'
+        contexts:
+          additionalProperties:
+            type: object
+          description: Contexts for your policy validation
+          type: object
+        request:
+          $ref: '#/components/schemas/TestPolicyInputRequest'
+      title: Contains the input for the request that is used to test the policy.
+      type: object
+    ValidatorConfig:
+      description: Depending on the type of a policy different validators are available.
+      properties:
+        conf:
+          additionalProperties:
+            type: object
+          description: 'Configuration of the validator provided in the JSON format
+
+
+            Validators configuration is an array of fields where each node consists of a comparator used,
+
+            validated field, and a value for comparison. Configuration can be also branched, which means
+
+            that it is possible to create conditional validators. It allows to define complex
+
+            authorization scenarios based on the results from other policy validators.'
+          type: object
+        name:
+          description: The name of your validator
+          example: identity-context
+          type: string
+        recovery:
+          items:
+            $ref: '#/components/schemas/RecoveryConfig'
+          type: array
+      title: Configuration of a policy validator
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Policy:
+      properties:
+        definition:
+          description: The definition of an Open Policy Agent (OPA) policy provided using the REGO language.
+          type: string
+        env_version:
+          $ref: '#/components/schemas/FnEnvVersion'
+        id:
+          description: Unique ID of your policy
+          example: '1'
+          format: policyID
+          type: string
+        language:
+          description: 'Language of a policy
+
+
+            ACP supports creating SecureAuth policies (using a visual editor or defined using JSON or
+
+            YAML) and policies defined using REGO (language used by Open Policy Agent (OPA)).'
+          example: cloudentity
+          format: policyLanguage
+          type: string
+        policy_name:
+          description: Display name for your policy
+          example: check_consent
+          type: string
+        server_id:
+          description: ID of your authorization server (workspace)
+          example: default
+          format: serverID
+          type: string
+        tenant_id:
+          description: ID of your tenant
+          example: default
+          format: tenantID
+          type: string
+        type:
+          description: 'Define a type of your policy
+
+
+            ACP is provided with the following policy types: user, developer, machine, dcr, api.
+
+
+            Depending on the policy type the policy can be assigned to different policy
+
+            execution points.
+
+
+            A policy of the `user` type can be assigned only to the following scopes: `scope_user_grant`,
+
+            `server_user_token`, `client_user_token`.
+
+
+            A `developer` policy can be assigned only to the `scope_client_assignment` and
+
+            `server_client_assignment` scopes.
+
+
+            A policy of the `machine` type can be assigned only to the following scopes:
+
+            `scope_machine_grant`, `server_machine_token`, `client_machine_token`.
+
+
+            A `dcr` policy can be assigned only to the `scope_dynamic_client_registration` and the
+
+            `server_dynamic_client_registration` scopes.
+
+
+            An `api` policy can be assigned to all of the policy execution points.
+
+
+            Each of the policies type has its defined and provided out of the box policy validators.'
+          example: user
+          format: policyType
+          type: string
+        validators:
+          description: An array of validators for a SecureAuth policy
+          items:
+            $ref: '#/components/schemas/ValidatorConfig'
+          type: array
+      type: object
+    TestPolicyRequest:
+      properties:
+        input:
+          $ref: '#/components/schemas/TestPolicyInput'
+        policy:
+          $ref: '#/components/schemas/TestPolicyDefinition'
+        server_id:
+          description: Authorization server (workspace) ID
+          format: serverID
+          type: string
+      type: object
+    FnEnvVersion:
+      type: string
+    PolicyExecutionPoint:
+      properties:
+        policy_id:
+          description: Optional policy ID
+          example: '1'
+          format: policyID
+          type: string
+        server_id:
+          description: The ID of your authorization server (workspace)
+          example: default
+          format: serverID
+          type: string
+        target_fk:
+          description: String representation of the target's ID
+          example: '1'
+          type: string
+        tenant_id:
+          description: The ID of your tenant
+          example: default
+          format: tenantID
+          type: string
+        type:
+          description: 'String representation of the policy execution point type
+
+
+            Policies can be assigned to different policy execution points. For example, you can create a
+
+            policy that you want to trigger while calls are made to your APIs. In this
+
+            case, the type of the policy execution point is `api`. While
+
+            choosing the policies that are applied for API calls, only those with the
+
+            `api` type are available.'
+          example: scope_client_assignment
+          format: policyExecutionPoint
+          type: string
+      type: object
+    PolicyExecutionPoints:
+      properties:
+        execution_points:
+          description: list of policy executions
+          items:
+            $ref: '#/components/schemas/PolicyExecutionPoint'
+          type: array
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TestPolicyResponse:
+      description: Test policy result
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TestPolicyResponse'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Policies:
+      description: Policies
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Policies'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PolicyExecutionPoints:
+      description: Policy execution points
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PolicyExecutionPoints'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Policy:
+      description: Policy
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Policy'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

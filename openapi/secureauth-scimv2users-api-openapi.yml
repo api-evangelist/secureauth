@@ -1,0 +1,756 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Identity System API
+
+
+    It is important for clients to note that system APIs return the `ETag` response header.'
+  title: SecureAuth SCI Mv2 Users API
+  version: latest
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: SCIMv2Users
+paths:
+  /system/pools/{ipID}/scim/v2/Users:
+    get:
+      description: 'Returns a list of users in SCIM format from the specified identity pool.
+
+
+        The only supported filter is ` eq ` which returns a single user or empty set.
+
+        Allowed field names (case-insensitive) are `id`, `externalId`, `userName`, `emails.value`, and `phoneNumbers.value`.
+
+        For emails and phone number subfilter [.*] is allowed but ignored.
+
+
+        Only verified emails and phone numbers are searchable.
+
+
+        Results are sorted ascending by user ID. No other sorting is supported, and the `sortBy` and `sortOrder` parameter is ignored.'
+      operationId: systemSCIMv2ListUsers
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: SCIM filter expression
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to include
+        in: query
+        name: attributes
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to exclude
+        in: query
+        name: excludedAttributes
+        schema:
+          type: string
+      - description: Attribute to sort by
+        in: query
+        name: sortBy
+        schema:
+          type: string
+      - description: Sort order (ascending or descending)
+        in: query
+        name: sortOrder
+        schema:
+          type: string
+      - description: Start index for pagination (1-based)
+        in: query
+        name: startIndex
+        schema:
+          type: integer
+          format: int64
+      - description: Number of results to return
+        in: query
+        name: count
+        schema:
+          type: integer
+          format: int64
+          default: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/SCIMv2UsersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: List SCIM Users
+      tags:
+      - SCIMv2Users
+    post:
+      description: Creates a new user in SCIM format in the specified identity pool.
+      operationId: systemSCIMv2CreateUser
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/SystemSCIMv2UserResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntitySCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Create SCIM User
+      tags:
+      - SCIMv2Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpsertRequest'
+  /system/pools/{ipID}/scim/v2/Users/{userID}:
+    delete:
+      description: Deletes a user using SCIM DELETE operations in the specified identity pool.
+      operationId: systemSCIMv2DeleteUser
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/SystemDeleteUserResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Delete SCIM User
+      tags:
+      - SCIMv2Users
+    get:
+      description: Returns a specific user in SCIM format from the specified identity pool.
+      operationId: systemSCIMv2GetUser
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to include
+        in: query
+        name: attributes
+        schema:
+          type: string
+      - description: Comma-separated list of attributes to exclude
+        in: query
+        name: excludedAttributes
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemSCIMv2UserResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntitySCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Get SCIM User
+      tags:
+      - SCIMv2Users
+    patch:
+      description: Updates a user using SCIM PATCH operations in the specified identity pool.
+      operationId: systemSCIMv2PatchUser
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Patch SCIM User
+      tags:
+      - SCIMv2Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SCIMv2Patch'
+    put:
+      description: Updates a user using SCIM format in the specified identity pool (full replacement).
+      operationId: systemSCIMv2UpdateUser
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemSCIMv2UserResponse'
+        '400':
+          $ref: '#/components/responses/badRequestSCIMv2HTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedSCIMv2HTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenSCIMv2HTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundSCIMv2HTTPError'
+        '409':
+          $ref: '#/components/responses/conflictSCIMv2HTTPError'
+        '412':
+          $ref: '#/components/responses/payloadTooLargeSCIMv2HTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsSCIMv2HTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Update SCIM User
+      tags:
+      - SCIMv2Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpsertRequest'
+components:
+  schemas:
+    SCIMv2Identifier:
+      properties:
+        type:
+          $ref: '#/components/schemas/SCIMv2IdentifierType'
+        value:
+          example: testUsername
+          type: string
+      type: object
+    UserGetResponse:
+      properties:
+        active:
+          type: boolean
+        emails:
+          items:
+            $ref: '#/components/schemas/SCIMv2Email'
+          type: array
+        externalId:
+          example: someExternalID
+          type: string
+        groups:
+          items:
+            $ref: '#/components/schemas/SCIMv2UserGroup'
+          type: array
+        id:
+          type: string
+        meta:
+          $ref: '#/components/schemas/SCIMv2Meta'
+        password:
+          example: wIf@O&YWzdfFKSW
+          type: string
+        phoneNumbers:
+          items:
+            $ref: '#/components/schemas/SCIMv2PhoneNumber'
+          type: array
+        schemas:
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:User
+          - urn:ietf:params:scim:schemas:extension:secureauthciam:2.0:User
+          items:
+            type: string
+          type: array
+        urn:ietf:params:scim:schemas:extension:secureauthciam:2.0:User:
+          $ref: '#/components/schemas/ExtensionSchemaData'
+        userName:
+          example: test@test.com
+          type: string
+      type: object
+    SCIMv2ErrorResponse:
+      properties:
+        detail:
+          type: string
+        schemas:
+          items:
+            type: string
+          type: array
+        scimType:
+          type: string
+        status:
+          type: string
+      type: object
+    ListUsersResponse:
+      properties:
+        Resources:
+          items:
+            $ref: '#/components/schemas/UserGetResponse'
+          type: array
+        itemsPerPage:
+          format: int64
+          type: integer
+        schemas:
+          items:
+            type: string
+          type: array
+        startIndex:
+          format: int64
+          type: integer
+        totalResults:
+          format: int64
+          type: integer
+      type: object
+    UserUpsertRequest:
+      properties:
+        active:
+          type: boolean
+        emails:
+          items:
+            $ref: '#/components/schemas/SCIMv2Email'
+          type: array
+        externalId:
+          example: someExternalID
+          type: string
+        password:
+          example: wIf@O&YWzdfFKSW
+          type: string
+        phoneNumbers:
+          items:
+            $ref: '#/components/schemas/SCIMv2PhoneNumber'
+          type: array
+        schemas:
+          example:
+          - urn:ietf:params:scim:schemas:core:2.0:User
+          - urn:ietf:params:scim:schemas:extension:secureauthciam:2.0:User
+          items:
+            type: string
+          type: array
+        urn:ietf:params:scim:schemas:extension:secureauthciam:2.0:User:
+          $ref: '#/components/schemas/ExtensionSchemaData'
+        userName:
+          example: test@test.com
+          type: string
+      type: object
+    SCIMv2ExtensionPhoneNumber:
+      properties:
+        primary:
+          type: boolean
+        value:
+          type: string
+        verified:
+          type: boolean
+      type: object
+    SCIMv2ExtensionEmail:
+      properties:
+        primary:
+          type: boolean
+        value:
+          type: string
+        verified:
+          type: boolean
+      type: object
+    Rfc6902PatchOperations:
+      items:
+        $ref: '#/components/schemas/Rfc6902PatchOperation'
+      type: array
+    SCIMv2PhoneNumber:
+      properties:
+        primary:
+          type: boolean
+        type:
+          type: string
+        value:
+          type: string
+      type: object
+    SCIMv2Patch:
+      properties:
+        Operations:
+          $ref: '#/components/schemas/Rfc6902PatchOperations'
+        schemas:
+          description: example ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+          items:
+            type: string
+          type: array
+      type: object
+    SCIMv2Email:
+      properties:
+        primary:
+          type: boolean
+        type:
+          type: string
+        value:
+          type: string
+      type: object
+    Rfc6902PatchOperation:
+      properties:
+        op:
+          description: 'Each operation must have at least one `op` member, which value indicates
+
+            the actual operation to be performed against the target (current) configuration.
+
+            For a detailed description of available operations,
+
+            see the [Operations #4 section of the RFC6902 specification](https://datatracker.ietf.org/doc/html/rfc6902#section-4).'
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          type: string
+        path:
+          description: 'String containing a JSON-Pointer value ([RFC6901](https://datatracker.ietf.org/doc/html/rfc6901))
+
+            that references a location within the target configuration where the operation is performed.
+
+
+            For available paths, reference the exported configuration.'
+          type: string
+        value:
+          description: New object value applied to the patched (target) configuration.
+          type: object
+      type: object
+    ExtensionSchemaData:
+      properties:
+        additionalIdentifiers:
+          items:
+            $ref: '#/components/schemas/SCIMv2Identifier'
+          type: array
+        businessMetadata:
+          additionalProperties:
+            type: object
+          type: object
+        emails:
+          items:
+            $ref: '#/components/schemas/SCIMv2ExtensionEmail'
+          type: array
+        metadata:
+          additionalProperties:
+            type: object
+          type: object
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        phoneNumbers:
+          items:
+            $ref: '#/components/schemas/SCIMv2ExtensionPhoneNumber'
+          type: array
+      type: object
+    GroupMembershipType:
+      type: string
+    SCIMv2IdentifierType:
+      type: string
+    SCIMv2UserGroup:
+      properties:
+        $ref:
+          type: string
+        type:
+          $ref: '#/components/schemas/GroupMembershipType'
+        value:
+          type: string
+      type: object
+    SCIMv2Meta:
+      properties:
+        created:
+          type: string
+        lastModified:
+          type: string
+        location:
+          type: string
+        resourceType:
+          type: string
+        version:
+          type: string
+      type: object
+  responses:
+    SCIMv2UsersResponse:
+      description: SCIMv2 Users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListUsersResponse'
+    notFoundSCIMv2HTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    badRequestSCIMv2HTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    SystemSCIMv2UserResponse:
+      description: SCIMv2 User
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserGetResponse'
+    unprocessableEntitySCIMv2HTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    forbiddenSCIMv2HTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    SystemDeleteUserResponse:
+      description: User has been deleted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    tooManyRequestsSCIMv2HTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    payloadTooLargeSCIMv2HTTPError:
+      description: Payload too large
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    unauthorizedSCIMv2HTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+    conflictSCIMv2HTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2ErrorResponse'
+  securitySchemes:
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

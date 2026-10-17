@@ -1,0 +1,672 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Scopes API
+  version: latest
+  description: 'Operations tagged scopes across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/system/default
+tags:
+- name: Scopes
+paths:
+  /scopes:
+    post:
+      description: 'Scope name is required. If scope id is not provided, will be generated.
+
+        If you want to assign scope to a service, provide service id.'
+      operationId: createScope
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Scope'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create scope
+      tags:
+      - Scopes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScopeWithServiceID'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /scopes/{scp}:
+    delete:
+      description: Delete scope.
+      operationId: deleteScope
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: scp
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Scope has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete scope
+      tags:
+      - Scopes
+    get:
+      description: Get scope.
+      operationId: getScope
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: scp
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ScopeWithService'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get scope
+      tags:
+      - Scopes
+    put:
+      description: Update scope.
+      operationId: updateScope
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: scp
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Scope'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update scope
+      tags:
+      - Scopes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Scope'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/scopes:
+    get:
+      description: List scopes.
+      operationId: listScopes
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ScopesWithServices'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List scopes
+      tags:
+      - Scopes
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /scopes/{wid}:
+    get:
+      description: This API lists scopes for a given authorization server
+      operationId: listScopesSystem
+      parameters:
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: ScopesWithServices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScopesWithServices'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - view_scopes
+      summary: List scopes for authorization server
+      tags:
+      - Scopes
+    servers:
+    - url: https://localhost:8443/api/system/default
+components:
+  responses:
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ScopesWithServices:
+      description: Scopes with services
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScopesWithServices'
+    Scope:
+      description: Scope
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScopeWithServiceID'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ScopeWithService:
+      description: Scope with service
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScopeWithService'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    ScopeWithServiceID:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        service_id:
+          description: optional service id
+          example: '1'
+          format: serviceID
+          type: string
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+      type: object
+    Scope:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    ServiceCapability:
+      type: string
+    ScopeWithService:
+      properties:
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        description:
+          description: The scope description displayed as a hint on a consent page
+          example: This scope value requests offline access using refresh token
+          type: string
+        display_name:
+          description: The scope name displayed on a consent page
+          example: Offline Access
+          type: string
+        id:
+          description: Scope identifier
+          example: scope-1
+          format: scopeID
+          type: string
+        implicit:
+          description: Request this scope by default for all clients who subscribed to this scope
+          type: boolean
+        implicit_grant:
+          description: Do not ask for consent for this scope
+          type: boolean
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        name:
+          description: Scope name
+          example: offline_access
+          format: scopeName
+          type: string
+        service:
+          $ref: '#/components/schemas/Service'
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        transient:
+          description: Disable storage of scope grants
+          type: boolean
+        with_service:
+          type: boolean
+      type: object
+    ScopesWithServices:
+      properties:
+        scopes:
+          items:
+            $ref: '#/components/schemas/ScopeWithService'
+          type: array
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-system-openapi.yml

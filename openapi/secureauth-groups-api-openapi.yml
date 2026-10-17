@@ -1,0 +1,1377 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Groups API
+  version: latest
+  description: 'Operations tagged Groups across 2 of this provider''s published API definitions: secureauth-identity-openapi.yml, secureauth-identitysystem-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: Groups
+paths:
+  /admin/pools/{ipID}/groups:
+    get:
+      description: 'Retrieve the top level list of groups from the specified identity pool.
+
+
+        If query param parent_id is set, the response will contain top level list of groups that are children of the specified group.
+
+
+        If query param with_nested_groups is set to true, the response will contain a list of groups with all nested groups (also nested groups of nested groups etc.)
+
+
+        Results are sorted by group `name`. No other sorting is supported.'
+      operationId: listGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: parent_id
+        schema:
+          type: string
+      - description: 'optional list groups after given id
+
+          AfterGroupID'
+        in: query
+        name: after_group_id
+        schema:
+          type: string
+      - description: 'optional list groups before given id
+
+          BeforeGroupID'
+        in: query
+        name: before_group_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional query filter
+
+          query is in json format - parameter must be url-encoded
+
+          supported parameters:
+
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)'
+        in: query
+        name: query
+        schema:
+          type: string
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List groups
+      tags:
+      - Groups
+    post:
+      operationId: createGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create group
+      tags:
+      - Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseGroup'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/groups/{groupID}:
+    delete:
+      description: Delete a group.
+      operationId: deleteGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Group has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete group
+      tags:
+      - Groups
+    get:
+      description: Retrieve a group details.
+      operationId: getGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get group details
+      tags:
+      - Groups
+    put:
+      operationId: updateGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update group
+      tags:
+      - Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseGroup'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/groups/{groupID}/users:
+    get:
+      description: 'Retrieve the list of users under specific group.
+
+
+        If query param with_nested_groups is set to true, the response will contain a list of users in that group and all nested groups
+
+
+        Results are sorted by user ID. No other sorting is supported.
+
+
+        This endpoint follows eventual consistency and may temporarily omit newly created users under high load.'
+      operationId: listUsersInGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - description: 'optional list users after given id
+
+          AfterUserID'
+        in: query
+        name: after_user_id
+        schema:
+          type: string
+      - description: 'optional list users before given id
+
+          BeforeUserID'
+        in: query
+        name: before_user_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/UsersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List users in group
+      tags:
+      - Groups
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/groups/{groupID}/users/{userID}:
+    delete:
+      operationId: removeUserFromGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Removes user from group
+      tags:
+      - Groups
+    put:
+      operationId: addUserToGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Add user to a specific group
+      tags:
+      - Groups
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/users/{userID}/groups:
+    get:
+      description: 'Retrieve the list of groups that user belongs to.
+
+        If query param with_parent_groups is set to true, the response will contain a list of groups and all parent groups
+
+
+        Results are sorted by group `name`. No other sorting is supported.'
+      operationId: listUserGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: 'optional list groups after given id
+
+          AfterUserID'
+        in: query
+        name: after_group_id
+        schema:
+          type: string
+      - description: 'optional list groups before given id
+
+          BeforeUserID'
+        in: query
+        name: before_group_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional query filter
+
+          query is in json format like {"name":"admin"} - parameter must be url-encoded
+
+          supported parameters:
+
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)'
+        in: query
+        name: query
+        schema:
+          type: string
+      - in: query
+        name: with_parent_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List user groups
+      tags:
+      - Groups
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}/users/{userID}/groups/{groupID}:
+    get:
+      description: 'Checks if user is in the group.
+
+        Fails with 404 if user is not in the group.
+
+        If query param with_nested_groups is set to true, it will check if user is in requested group or any nested group.'
+      operationId: isUserInGroup
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ' User is in group'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check if user is in group
+      tags:
+      - Groups
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/groups:
+    get:
+      description: 'Retrieve the top level list of groups from the specified identity pool.
+
+
+        If query param parent_id is set, the response will contain top level list of groups that are children of the specified group.
+
+
+        If query param with_nested_groups is set to true, the response will contain a list of groups with all nested groups (also nested groups of nested groups etc.)
+
+
+        Results are sorted by group `name`. No other sorting is supported.'
+      operationId: getSystemPoolsByIpIDGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: parent_id
+        schema:
+          type: string
+      - description: 'optional list groups after given id
+
+          AfterGroupID'
+        in: query
+        name: after_group_id
+        schema:
+          type: string
+      - description: 'optional list groups before given id
+
+          BeforeGroupID'
+        in: query
+        name: before_group_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional query filter
+
+          query is in json format - parameter must be url-encoded
+
+          supported parameters:
+
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)'
+        in: query
+        name: query
+        schema:
+          type: string
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List groups
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: listGroups
+    post:
+      operationId: postSystemPoolsByIpIDGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Create group
+      tags:
+      - Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseGroup'
+      x-operation-id-source: normalized
+      x-operation-id-original: createGroup
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/groups/{groupID}:
+    delete:
+      description: Delete a group.
+      operationId: deleteSystemPoolsByIpIDGroupsByGroupID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Group has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Delete group
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: deleteGroup
+    get:
+      description: Retrieve a group details.
+      operationId: getSystemPoolsByIpIDGroupsByGroupID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Get group details
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: getGroup
+    put:
+      operationId: putSystemPoolsByIpIDGroupsByGroupID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Update group
+      tags:
+      - Groups
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseGroup'
+      x-operation-id-source: normalized
+      x-operation-id-original: updateGroup
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/groups/{groupID}/users:
+    get:
+      description: 'Retrieve the list of users under specific group.
+
+
+        If query param with_nested_groups is set to true, the response will contain a list of users in that group and all nested groups
+
+
+        Results are sorted by user ID. No other sorting is supported.
+
+
+        This endpoint follows eventual consistency and may temporarily omit newly created users under high load.'
+      operationId: getSystemPoolsByIpIDGroupsByGroupIDUsers
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - description: 'optional list users after given id
+
+          AfterUserID'
+        in: query
+        name: after_user_id
+        schema:
+          type: string
+      - description: 'optional list users before given id
+
+          BeforeUserID'
+        in: query
+        name: before_user_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/UsersResponse_2'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List users in group
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: listUsersInGroup
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/groups/{groupID}/users/{userID}:
+    delete:
+      operationId: deleteSystemPoolsByIpIDGroupsByGroupIDUsersByUserID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Removes user from group
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: removeUserFromGroup
+    put:
+      operationId: putSystemPoolsByIpIDGroupsByGroupIDUsersByUserID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' OK'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Add user to a specific group
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: addUserToGroup
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/users/{userID}/groups:
+    get:
+      description: 'Retrieve the list of groups that user belongs to.
+
+        If query param with_parent_groups is set to true, the response will contain a list of groups and all parent groups
+
+
+        Results are sorted by group `name`. No other sorting is supported.'
+      operationId: getSystemPoolsByIpIDUsersByUserIDGroups
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: 'optional list groups after given id
+
+          AfterUserID'
+        in: query
+        name: after_group_id
+        schema:
+          type: string
+      - description: 'optional list groups before given id
+
+          BeforeUserID'
+        in: query
+        name: before_group_id
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional query filter
+
+          query is in json format like {"name":"admin"} - parameter must be url-encoded
+
+          supported parameters:
+
+          `name` - limits group set to groups that have name starting or ending with provided value (case insensitive)'
+        in: query
+        name: query
+        schema:
+          type: string
+      - in: query
+        name: with_parent_groups
+        schema:
+          type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/GroupsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List user groups
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: listUserGroups
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}/users/{userID}/groups/{groupID}:
+    get:
+      description: 'Checks if user is in the group.
+
+        Fails with 404 if user is not in the group.
+
+        If query param with_nested_groups is set to true, it will check if user is in requested group or any nested group.'
+      operationId: getSystemPoolsByIpIDUsersByUserIDGroupsByGroupID
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: groupID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: with_nested_groups
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ' User is in group'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Check if user is in group
+      tags:
+      - Groups
+      x-operation-id-source: normalized
+      x-operation-id-original: isUserInGroup
+    servers:
+    - url: https://localhost:8443/api/identity/default
+components:
+  responses:
+    GroupResponse:
+      description: Group
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Group'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UsersResponse:
+      description: Identity Users
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Users'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GroupsResponse:
+      description: Groups
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Groups'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UsersResponse_2:
+      description: Identity Users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Users'
+  schemas:
+    MFAPreferences:
+      properties:
+        preferred_2fa:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          type: string
+      type: object
+    Address:
+      properties:
+        address:
+          type: string
+        verified:
+          type: boolean
+      type: object
+    UserPreferences:
+      properties:
+        locales:
+          description: Locale is the list of user's preferred languages/locales for UI and communications
+          example: en-US, es-ES
+          items:
+            format: locale
+            type: string
+          type: array
+        mfa:
+          $ref: '#/components/schemas/MFAPreferences'
+      type: object
+    Groups:
+      items:
+        $ref: '#/components/schemas/Group'
+      type: array
+    ExtendedUser:
+      properties:
+        addresses:
+          items:
+            $ref: '#/components/schemas/Address'
+          type: array
+        business_metadata:
+          additionalProperties:
+            type: object
+          type: object
+        business_metadata_schema_id:
+          format: schemaID
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: userID
+          type: string
+        identifiers:
+          items:
+            type: string
+          type: array
+        identifiers_with_details:
+          items:
+            $ref: '#/components/schemas/IdentifierDetails'
+          type: array
+        metadata:
+          additionalProperties:
+            type: object
+          type: object
+        metadata_schema_id:
+          format: schemaID
+          type: string
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        payload_schema_id:
+          format: schemaID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        status:
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          example: active
+          type: string
+        status_updated_at:
+          format: date-time
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+        user_type:
+          enum:
+          - jit
+          - standard
+          - scim
+          type: string
+        verified addresses:
+          items:
+            type: string
+          type: array
+      required:
+      - tenant_id
+      - user_pool_id
+      - status
+      type: object
+    BaseGroup:
+      properties:
+        description:
+          type: string
+        id:
+          format: groupID
+          type: string
+        name:
+          type: string
+        parent_id:
+          format: groupID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+      required:
+      - user_pool_id
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Users:
+      description: Identity Users
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/ExtendedUser'
+          type: array
+      type: object
+    Group:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        id:
+          format: groupID
+          type: string
+        name:
+          type: string
+        parent_id:
+          format: groupID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+      required:
+      - user_pool_id
+      type: object
+    IdentifierDetails:
+      properties:
+        type:
+          enum:
+          - email
+          - mobile
+          - uid
+          - external
+          - federated
+          type: string
+        value:
+          format: userIdentifierValue
+          type: string
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-identity-openapi.yml
+- secureauth-identitysystem-openapi.yml

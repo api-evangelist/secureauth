@@ -1,0 +1,410 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Audit Events API
+  version: latest
+servers:
+- url: https://localhost:8443/
+tags:
+- name: Audit Events
+paths:
+  /api/system/audit-events:
+    post:
+      operationId: pushAuditEvents
+      responses:
+        '204':
+          description: ' audit events accepted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup:
+        - push_audit_events
+      summary: Push audit events
+      tags:
+      - Audit Events
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushAuditEventsRequest'
+components:
+  schemas:
+    PushAuditEventsRequest:
+      properties:
+        audit_events:
+          items:
+            $ref: '#/components/schemas/NewAuditEvent'
+          type: array
+      type: object
+    NewAuditEvent:
+      properties:
+        action:
+          description: Name of an action that was performed for a given event subject.
+          enum:
+          - authenticated
+          - challenged
+          - authorized
+          - unauthorized
+          - created
+          - updated
+          - deleted
+          - generated
+          - requested
+          - confirmed
+          - accepted
+          - rejected
+          - revoked
+          - notified
+          - issued
+          - denied
+          - granted
+          - attempted
+          - failed
+          - succeeded
+          - sent
+          - not_sent
+          - received
+          - executed
+          - calculated
+          - reset_requested
+          - reset_completed
+          - add_requested
+          - add_completed
+          - added_to_group
+          - removed_from_group
+          example: created
+          type: string
+        event_subject:
+          description: Resource or entity that is a subject of a given audit event.
+          enum:
+          - request
+          - gateway_request
+          - gateway_policy
+          - policy
+          - client
+          - credential
+          - login
+          - risk
+          - post_authn
+          - recovery
+          - consent
+          - client_consents
+          - customer_consents
+          - authorization_code
+          - authorization_details
+          - access_token
+          - saml_assertion
+          - scopes
+          - claims
+          - otp
+          - user
+          - schema
+          - pool
+          - password
+          - bruteforce
+          - dcr
+          - script
+          - role
+          - task
+          - jit
+          - tokens
+          - service
+          - server
+          - import
+          - organization
+          - otp_inspect
+          - totp
+          - device
+          - webauthn
+          - group
+          - phone_delivery
+          - application_assignment
+          - application_membership
+          example: client
+          type: string
+        metadata:
+          $ref: '#/components/schemas/AuditEventMetadata'
+        payload:
+          description: Event payload.
+          type: object
+        server_id:
+          description: Server ID.
+          format: serverID
+          type: string
+        tenant_id:
+          description: Tenant ID.
+          format: tenantID
+          type: string
+        timestamp:
+          description: Time when the event took place.
+          format: date-time
+          type: string
+      type: object
+    AuditEventMetadata:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: 'Access request actor claims.
+
+
+            It''s only populated if the token has been issued in token exchange delegation flow.'
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        application_id:
+          description: 'ID of the application (OAuth client) an action targets.
+
+
+            Distinct from ClientID, which identifies the client of the access request itself.'
+          format: clientID
+          type: string
+        authorization_correlation_id:
+          description: 'Authorization correlation ID
+
+
+            Represents the correlation ID used for the OAuth2 authorization code grant flow.'
+          format: authorizationCorrelationID
+          type: string
+        city:
+          description: City
+          type: string
+        client_id:
+          description: 'Access request client ID related to an audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: clientID
+          type: string
+        country_code:
+          description: Country code
+          type: string
+        dbfp_fingerprint:
+          description: DBFP jwt fingerprint
+          type: string
+        device_browser:
+          description: Device browser based on the user agent
+          type: string
+        device_os:
+          description: Device OS based on the user agent
+          type: string
+        device_type:
+          description: Device type based on the user agent (computer, tablet, phone, console, wearable, tv)
+          type: string
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        high_risk:
+          description: High risk
+          type: boolean
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: 'Access request subject value from IDP related to a given audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: subject
+          type: string
+        ip:
+          description: 'IP address.
+
+
+            It''s first not empty value from: X-Forwaded-For, X-Real-IP or network socket IP address'
+          type: string
+        is_first_time_login:
+          description: True when the risk engine found no sign-in baseline for the user; absent when not evaluated
+          type: boolean
+        latitude:
+          description: Latitude
+          format: double
+          type: number
+        longitude:
+          description: Longitude
+          format: double
+          type: number
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: 'Access request may act claims.
+
+
+            It''s only populated if the token has been issued token with may_act claim.'
+          type: object
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        request_correlation_id:
+          description: 'Request correlation ID
+
+
+            Represents the correlation ID passed as X-Correlation-ID header to a HTTP request'
+          format: requestCorrelationID
+          type: string
+        result:
+          description: action result (success, failure)
+          type: string
+        risk_id:
+          $ref: '#/components/schemas/RiskID'
+        risk_loa:
+          $ref: '#/components/schemas/RiskLOA'
+        session_id:
+          description: 'Session id
+
+
+            Correlation ID in a login process. Returns events related to a particular login process.
+
+            It''s empty for audit events that have been created outside login process.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Access request subject ID related to a given audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: subject
+          type: string
+        token_signature:
+          description: 'Token signature
+
+
+            Signature of a token that was used to perform an action that has published an audit event.'
+          type: string
+        top_level_parent_id:
+          description: ID of the top-level parent organization for organization workspaces
+          format: serverID
+          type: string
+        trace_id:
+          description: Trace ID
+          type: string
+        user_agent:
+          description: User-agent that describes a device name that generated the audit event.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+      type: object
+    RiskLOA:
+      description: Risk engine level of assurance
+      format: double
+      type: number
+    RiskID:
+      description: Risk engine transaction id
+      type: string
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+            push_audit_events: push_audit_events
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token

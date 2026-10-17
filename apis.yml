@@ -96,375 +96,970 @@ common:
   url: https://github.com/SecureAuthCorp/ciam-client-go
 
 apis:
-- aid: secureauth:admin
-  name: SecureAuth CIAM Admin API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Admin API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-acrs-api
+  name: SecureAuth (incl. Cloudentity) ACRs API
+  description: The ACRs API from SecureAuth (incl. Cloudentity) — 2 operation(s) for acrs.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - ACRs
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-admin-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/admin.yaml
-    x-method: searched
+    url: openapi/secureauth-acrs-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:analytics
-  name: SecureAuth CIAM Analytics API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Analytics API, from the OpenAPI published in
-    the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-apis-api
+  name: SecureAuth (incl. Cloudentity) APIs API
+  description: The apis API from SecureAuth (incl. Cloudentity) — 5 operation(s) for apis.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - apis
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-analytics-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/analytics.yaml
-    x-method: searched
+    url: openapi/secureauth-apis-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:cdr
-  name: SecureAuth CIAM Consumer Data Right API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Consumer Data Right API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-applications-api
+  name: SecureAuth (incl. Cloudentity) Applications API
+  description: >-
+    The applications API from SecureAuth (incl. Cloudentity) — 1 operation(s) for applications.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - applications
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-cdr-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/cdr.yaml
-    x-method: searched
+    url: openapi/secureauth-applications-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:developer
-  name: SecureAuth CIAM Developer API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Developer API, from the OpenAPI published in
-    the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-audit-events-api
+  name: SecureAuth (incl. Cloudentity) Audit Events API
+  description: >-
+    The audit-events API from SecureAuth (incl. Cloudentity) — 1 operation(s) for audit-events.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - audit-events
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-developer-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/developer.yaml
-    x-method: searched
+    url: openapi/secureauth-audit-events-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:fdx
-  name: SecureAuth CIAM Financial Data Exchange API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Financial Data Exchange API, from the OpenAPI
-    published in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-auditevents-api
+  name: SecureAuth (incl. Cloudentity) Audit Events API
+  description: >-
+    The auditEvents API from SecureAuth (incl. Cloudentity) — 1 operation(s) for auditevents.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - auditEvents
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-fdx-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/fdx.yaml
-    x-method: searched
+    url: openapi/secureauth-auditevents-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:hub
-  name: SecureAuth CIAM Hub API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Hub API, from the OpenAPI published in the SecureAuthCorp/ciam-client-go
-    repository.
+- aid: secureauth:secureauth-authorizationdetails-api
+  name: SecureAuth (incl. Cloudentity) Authorization Details API
+  description: >-
+    The authorizationDetails API from SecureAuth (incl. Cloudentity) — 3 operation(s) for authorizationdetails.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - authorizationDetails
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-hub-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/hub.yaml
-    x-method: searched
+    url: openapi/secureauth-authorizationdetails-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:identity
-  name: SecureAuth CIAM Identity API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity API, from the OpenAPI published in
-    the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-b2busers-api
+  name: SecureAuth (incl. Cloudentity) B2B Users API
+  description: The B2BUsers API from SecureAuth (incl. Cloudentity) — 2 operation(s) for b2busers.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - B2BUsers
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-identity-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identity.yaml
-    x-method: searched
+    url: openapi/secureauth-b2busers-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:identityroot
-  name: SecureAuth CIAM Identity Root API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity Root API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-bruteforcelimits-api
+  name: SecureAuth (incl. Cloudentity) Brute Force Limits API
+  description: >-
+    The bruteForceLimits API from SecureAuth (incl. Cloudentity) — 2 operation(s) for bruteforcelimits.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - bruteForceLimits
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-identityroot-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identityroot.yaml
-    x-method: searched
+    url: openapi/secureauth-bruteforcelimits-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:identityself
-  name: SecureAuth CIAM Identity Self-Service API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity Self-Service API, from the OpenAPI
-    published in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-captcha-api
+  name: SecureAuth (incl. Cloudentity) Captcha API
+  description: The captcha API from SecureAuth (incl. Cloudentity) — 2 operation(s) for captcha.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - captcha
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-identityself-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identityself.yaml
-    x-method: searched
+    url: openapi/secureauth-captcha-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:identitysystem
-  name: SecureAuth CIAM Identity System API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Identity System API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-cdr-api
+  name: SecureAuth (incl. Cloudentity) CDR API
+  description: The CDR API from SecureAuth (incl. Cloudentity) — 3 operation(s) for cdr.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - CDR
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-identitysystem-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/identitysystem.yaml
-    x-method: searched
+    url: openapi/secureauth-cdr-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:ksa
-  name: SecureAuth CIAM KSA Open Banking API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) KSA Open Banking API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-claims-api
+  name: SecureAuth (incl. Cloudentity) Claims API
+  description: The claims API from SecureAuth (incl. Cloudentity) — 3 operation(s) for claims.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - claims
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-ksa-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/ksa.yaml
-    x-method: searched
+    url: openapi/secureauth-claims-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:licensingadmin
-  name: SecureAuth CIAM Licensing Admin API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Licensing Admin API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-clients-api
+  name: SecureAuth (incl. Cloudentity) Clients API
+  description: The clients API from SecureAuth (incl. Cloudentity) — 16 operation(s) for clients.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - clients
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-licensingadmin-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/licensingadmin.yaml
-    x-method: searched
+    url: openapi/secureauth-clients-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:licensingroot
-  name: SecureAuth CIAM Licensing Root API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Licensing Root API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-configuration-api
+  name: SecureAuth (incl. Cloudentity) Configuration API
+  description: >-
+    The configuration API from SecureAuth (incl. Cloudentity) — 3 operation(s) for configuration.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - configuration
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-licensingroot-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/licensingroot.yaml
-    x-method: searched
+    url: openapi/secureauth-configuration-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:oauth2
-  name: SecureAuth CIAM OAuth2 API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) OAuth2 API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-consent-page-api
+  name: SecureAuth (incl. Cloudentity) CONSENT PAGE API
+  description: >-
+    The CONSENT_PAGE API from SecureAuth (incl. Cloudentity) — 41 operation(s) for consent_page.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - CONSENT_PAGE
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-oauth2-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/oauth2.yaml
-    x-method: searched
+    url: openapi/secureauth-consent-page-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:obbr
-  name: SecureAuth CIAM Open Banking Brasil API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Banking Brasil API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-consents-api
+  name: SecureAuth (incl. Cloudentity) Consents API
+  description: The consents API from SecureAuth (incl. Cloudentity) — 11 operation(s) for consents.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - consents
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-obbr-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/obbr.yaml
-    x-method: searched
+    url: openapi/secureauth-consents-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:obuk
-  name: SecureAuth CIAM Open Banking UK API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Banking UK API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-customapps-api
+  name: SecureAuth (incl. Cloudentity) Custom Apps API
+  description: The customApps API from SecureAuth (incl. Cloudentity) — 2 operation(s) for customapps.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - customApps
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-obuk-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/obuk.yaml
-    x-method: searched
+    url: openapi/secureauth-customapps-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:opin
-  name: SecureAuth CIAM Open Insurance Brasil API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Open Insurance Brasil API, from the OpenAPI
-    published in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-dcr-api
+  name: SecureAuth (incl. Cloudentity) DCR API
+  description: The DCR API from SecureAuth (incl. Cloudentity) — 7 operation(s) for dcr.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - DCR
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-opin-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/opin.yaml
-    x-method: searched
+    url: openapi/secureauth-dcr-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:permissions
-  name: SecureAuth CIAM Permissions API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Permissions API, from the OpenAPI published
-    in the SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-environment-api
+  name: SecureAuth (incl. Cloudentity) Environment API
+  description: >-
+    The environment API from SecureAuth (incl. Cloudentity) — 2 operation(s) for environment.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - environment
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-permissions-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/permissions.yaml
-    x-method: searched
+    url: openapi/secureauth-environment-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:public
-  name: SecureAuth CIAM Public API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Public API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-fdx-api
+  name: SecureAuth (incl. Cloudentity) FDX API
+  description: The FDX API from SecureAuth (incl. Cloudentity) — 3 operation(s) for fdx.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - FDX
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-public-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/public.yaml
-    x-method: searched
+    url: openapi/secureauth-fdx-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:root
-  name: SecureAuth CIAM Root API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Root API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-features-api
+  name: SecureAuth (incl. Cloudentity) Features API
+  description: The features API from SecureAuth (incl. Cloudentity) — 4 operation(s) for features.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - features
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-root-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/root.yaml
-    x-method: searched
+    url: openapi/secureauth-features-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:saml
-  name: SecureAuth CIAM SAML API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) SAML API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-gateways-api
+  name: SecureAuth (incl. Cloudentity) Gateways API
+  description: The gateways API from SecureAuth (incl. Cloudentity) — 9 operation(s) for gateways.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - gateways
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-saml-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/saml.yaml
-    x-method: searched
+    url: openapi/secureauth-gateways-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:system
-  name: SecureAuth CIAM System API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) System API, from the OpenAPI published in the
-    SecureAuthCorp/ciam-client-go repository.
+- aid: secureauth:secureauth-groups-api
+  name: SecureAuth (incl. Cloudentity) Groups API
+  description: The Groups API from SecureAuth (incl. Cloudentity) — 12 operation(s) for groups.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - Groups
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-system-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/system.yaml
-    x-method: searched
+    url: openapi/secureauth-groups-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-- aid: secureauth:web
-  name: SecureAuth CIAM Web API
-  description: SecureAuth CIAM (formerly Cloudentity ACP) Web API, from the OpenAPI published in the SecureAuthCorp/ciam-client-go
-    repository.
+- aid: secureauth:secureauth-idps-api
+  name: SecureAuth (incl. Cloudentity) Idps API
+  description: The idps API from SecureAuth (incl. Cloudentity) — 89 operation(s) for idps.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
-  - Identity
-  - Authorization
-  - OAuth
+  - idps
   properties:
   - type: OpenAPI
-    url: openapi/secureauth-web-openapi.yml
-    x-source: https://raw.githubusercontent.com/SecureAuthCorp/ciam-client-go/master/spec/web.yaml
-    x-method: searched
+    url: openapi/secureauth-idps-api-openapi.yml
   - type: Documentation
     url: https://docs.secureauth.com/iam/docs/api
-
+- aid: secureauth:secureauth-images-api
+  name: SecureAuth (incl. Cloudentity) Images API
+  description: The images API from SecureAuth (incl. Cloudentity) — 1 operation(s) for images.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - images
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-images-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-keys-api
+  name: SecureAuth (incl. Cloudentity) Keys API
+  description: The keys API from SecureAuth (incl. Cloudentity) — 5 operation(s) for keys.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - keys
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-keys-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-license-api
+  name: SecureAuth (incl. Cloudentity) License API
+  description: The license API from SecureAuth (incl. Cloudentity) — 1 operation(s) for license.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - license
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-license-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-licenses-api
+  name: SecureAuth (incl. Cloudentity) Licenses API
+  description: The licenses API from SecureAuth (incl. Cloudentity) — 3 operation(s) for licenses.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - licenses
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-licenses-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-limits-api
+  name: SecureAuth (incl. Cloudentity) Limits API
+  description: The limits API from SecureAuth (incl. Cloudentity) — 2 operation(s) for limits.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - limits
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-limits-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-logins-api
+  name: SecureAuth (incl. Cloudentity) Logins API
+  description: The logins API from SecureAuth (incl. Cloudentity) — 6 operation(s) for logins.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - logins
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-logins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-management-api
+  name: SecureAuth (incl. Cloudentity) MANAGEMENT API
+  description: The MANAGEMENT API from SecureAuth (incl. Cloudentity) — 12 operation(s) for management.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - MANAGEMENT
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-management-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-mfa-api
+  name: SecureAuth (incl. Cloudentity) Mfa API
+  description: The mfa API from SecureAuth (incl. Cloudentity) — 2 operation(s) for mfa.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - mfa
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-mfa-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-mfamethods-api
+  name: SecureAuth (incl. Cloudentity) Mfa Methods API
+  description: The mfaMethods API from SecureAuth (incl. Cloudentity) — 3 operation(s) for mfamethods.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - mfaMethods
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-mfamethods-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-oauth2-api
+  name: SecureAuth (incl. Cloudentity) Oauth2 API
+  description: The oauth2 API from SecureAuth (incl. Cloudentity) — 13 operation(s) for oauth2.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - oauth2
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-oauth2-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-obbr-api
+  name: SecureAuth (incl. Cloudentity) OBBR API
+  description: The OBBR API from SecureAuth (incl. Cloudentity) — 26 operation(s) for obbr.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - OBBR
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-obbr-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-obuk-api
+  name: SecureAuth (incl. Cloudentity) OBUK API
+  description: The OBUK API from SecureAuth (incl. Cloudentity) — 25 operation(s) for obuk.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - OBUK
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-obuk-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-openbanking-api
+  name: SecureAuth (incl. Cloudentity) Openbanking API
+  description: >-
+    The openbanking API from SecureAuth (incl. Cloudentity) — 1 operation(s) for openbanking.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - openbanking
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-openbanking-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-opin-api
+  name: SecureAuth (incl. Cloudentity) OPIN API
+  description: The OPIN API from SecureAuth (incl. Cloudentity) — 2 operation(s) for opin.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - OPIN
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-opin-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-organizations-api
+  name: SecureAuth (incl. Cloudentity) Organizations API
+  description: >-
+    The organizations API from SecureAuth (incl. Cloudentity) — 4 operation(s) for organizations.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - organizations
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-organizations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-otp-api
+  name: SecureAuth (incl. Cloudentity) OTP API
+  description: The OTP API from SecureAuth (incl. Cloudentity) — 9 operation(s) for otp.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - OTP
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-otp-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-permissions-api
+  name: SecureAuth (incl. Cloudentity) Permissions API
+  description: >-
+    The permissions API from SecureAuth (incl. Cloudentity) — 6 operation(s) for permissions.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - permissions
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-permissions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-phoneproviderconfig-api
+  name: SecureAuth (incl. Cloudentity) Phone Provider Config API
+  description: >-
+    The phoneProviderConfig API from SecureAuth (incl. Cloudentity) — 1 operation(s) for phoneproviderconfig.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - phoneProviderConfig
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-phoneproviderconfig-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-policies-api
+  name: SecureAuth (incl. Cloudentity) Policies API
+  description: The policies API from SecureAuth (incl. Cloudentity) — 5 operation(s) for policies.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - policies
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-policies-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-poolmetrics-api
+  name: SecureAuth (incl. Cloudentity) Pool Metrics API
+  description: >-
+    The PoolMetrics API from SecureAuth (incl. Cloudentity) — 1 operation(s) for poolmetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - PoolMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-poolmetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-pools-api
+  name: SecureAuth (incl. Cloudentity) Pools API
+  description: The Pools API from SecureAuth (incl. Cloudentity) — 8 operation(s) for pools.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Pools
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-pools-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-post-authn-api
+  name: SecureAuth (incl. Cloudentity) Post Authn API
+  description: The post-authn API from SecureAuth (incl. Cloudentity) — 3 operation(s) for post-authn.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - post-authn
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-post-authn-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-recentactivities-api
+  name: SecureAuth (incl. Cloudentity) Recent Activities API
+  description: >-
+    The recentActivities API from SecureAuth (incl. Cloudentity) — 1 operation(s) for recentactivities.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - recentActivities
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-recentactivities-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-recovery-api
+  name: SecureAuth (incl. Cloudentity) Recovery API
+  description: The recovery API from SecureAuth (incl. Cloudentity) — 3 operation(s) for recovery.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - recovery
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-recovery-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-relationships-api
+  name: SecureAuth (incl. Cloudentity) Relationships API
+  description: >-
+    The Relationships API from SecureAuth (incl. Cloudentity) — 1 operation(s) for relationships.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Relationships
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-relationships-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-roles-api
+  name: SecureAuth (incl. Cloudentity) Roles API
+  description: The roles API from SecureAuth (incl. Cloudentity) — 10 operation(s) for roles.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - roles
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-roles-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-rootconfiguration-api
+  name: SecureAuth (incl. Cloudentity) Root Configuration API
+  description: >-
+    The RootConfiguration API from SecureAuth (incl. Cloudentity) — 3 operation(s) for rootconfiguration.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - RootConfiguration
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-rootconfiguration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-saml-api
+  name: SecureAuth (incl. Cloudentity) SAML API
+  description: The saml API from SecureAuth (incl. Cloudentity) — 5 operation(s) for saml.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - saml
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-saml-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-schemas-api
+  name: SecureAuth (incl. Cloudentity) Schemas API
+  description: The Schemas API from SecureAuth (incl. Cloudentity) — 6 operation(s) for schemas.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Schemas
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-schemas-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-scimv2configuration-api
+  name: SecureAuth (incl. Cloudentity) SCI Mv2 Configuration API
+  description: >-
+    The SCIMv2Configuration API from SecureAuth (incl. Cloudentity) — 5 operation(s) for scimv2configuration.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - SCIMv2Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-scimv2configuration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-scimv2groups-api
+  name: SecureAuth (incl. Cloudentity) SCI Mv2 Groups API
+  description: >-
+    The SCIMv2Groups API from SecureAuth (incl. Cloudentity) — 2 operation(s) for scimv2groups.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - SCIMv2Groups
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-scimv2groups-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-scimv2users-api
+  name: SecureAuth (incl. Cloudentity) SCI Mv2 Users API
+  description: >-
+    The SCIMv2Users API from SecureAuth (incl. Cloudentity) — 2 operation(s) for scimv2users.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - SCIMv2Users
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-scimv2users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-scopes-api
+  name: SecureAuth (incl. Cloudentity) Scopes API
+  description: The scopes API from SecureAuth (incl. Cloudentity) — 4 operation(s) for scopes.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - scopes
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-scopes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-scripts-api
+  name: SecureAuth (incl. Cloudentity) Scripts API
+  description: The scripts API from SecureAuth (incl. Cloudentity) — 6 operation(s) for scripts.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - scripts
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-scripts-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-secrets-api
+  name: SecureAuth (incl. Cloudentity) Secrets API
+  description: The secrets API from SecureAuth (incl. Cloudentity) — 2 operation(s) for secrets.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - secrets
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-secrets-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-security-api
+  name: SecureAuth (incl. Cloudentity) Security API
+  description: The security API from SecureAuth (incl. Cloudentity) — 2 operation(s) for security.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - security
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-security-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-servers-api
+  name: SecureAuth (incl. Cloudentity) Servers API
+  description: The servers API from SecureAuth (incl. Cloudentity) — 13 operation(s) for servers.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - servers
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-servers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-services-api
+  name: SecureAuth (incl. Cloudentity) Services API
+  description: The services API from SecureAuth (incl. Cloudentity) — 7 operation(s) for services.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - services
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-services-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-sessions-api
+  name: SecureAuth (incl. Cloudentity) Sessions API
+  description: The sessions API from SecureAuth (incl. Cloudentity) — 2 operation(s) for sessions.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - sessions
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-sessions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-system-api
+  name: SecureAuth (incl. Cloudentity) System API
+  description: The system API from SecureAuth (incl. Cloudentity) — 9 operation(s) for system.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - system
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-system-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-systems-api
+  name: SecureAuth (incl. Cloudentity) Systems API
+  description: The Systems API from SecureAuth (incl. Cloudentity) — 2 operation(s) for systems.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Systems
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-systems-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-systemtenantmetrics-api
+  name: SecureAuth (incl. Cloudentity) System Tenant Metrics API
+  description: >-
+    The SystemTenantMetrics API from SecureAuth (incl. Cloudentity) — 9 operation(s) for systemtenantmetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - SystemTenantMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-systemtenantmetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-systemworkspacemetrics-api
+  name: SecureAuth (incl. Cloudentity) System Workspace Metrics API
+  description: >-
+    The SystemWorkspaceMetrics API from SecureAuth (incl. Cloudentity) — 2 operation(s) for systemworkspacemetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - SystemWorkspaceMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-systemworkspacemetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-templates-api
+  name: SecureAuth (incl. Cloudentity) Templates API
+  description: The templates API from SecureAuth (incl. Cloudentity) — 5 operation(s) for templates.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - templates
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-templates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-tenantconfiguration-api
+  name: SecureAuth (incl. Cloudentity) Tenant Configuration API
+  description: >-
+    The TenantConfiguration API from SecureAuth (incl. Cloudentity) — 3 operation(s) for tenantconfiguration.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - TenantConfiguration
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-tenantconfiguration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-tenantmetrics-api
+  name: SecureAuth (incl. Cloudentity) Tenant Metrics API
+  description: >-
+    The TenantMetrics API from SecureAuth (incl. Cloudentity) — 15 operation(s) for tenantmetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - TenantMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-tenantmetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-tenants-api
+  name: SecureAuth (incl. Cloudentity) Tenants API
+  description: The tenants API from SecureAuth (incl. Cloudentity) — 9 operation(s) for tenants.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - tenants
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-tenants-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-themes-api
+  name: SecureAuth (incl. Cloudentity) Themes API
+  description: The themes API from SecureAuth (incl. Cloudentity) — 3 operation(s) for themes.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - themes
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-themes-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-tokens-api
+  name: SecureAuth (incl. Cloudentity) Tokens API
+  description: The tokens API from SecureAuth (incl. Cloudentity) — 5 operation(s) for tokens.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-tokens-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-transientotp-api
+  name: SecureAuth (incl. Cloudentity) Transient Otp API
+  description: >-
+    The transientOtp API from SecureAuth (incl. Cloudentity) — 2 operation(s) for transientotp.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - transientOtp
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-transientotp-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-translations-api
+  name: SecureAuth (incl. Cloudentity) Translations API
+  description: >-
+    The translations API from SecureAuth (incl. Cloudentity) — 2 operation(s) for translations.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - translations
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-translations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-usage-api
+  name: SecureAuth (incl. Cloudentity) Usage API
+  description: The usage API from SecureAuth (incl. Cloudentity) — 2 operation(s) for usage.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - usage
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-usage-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-usermetrics-api
+  name: SecureAuth (incl. Cloudentity) User Metrics API
+  description: >-
+    The UserMetrics API from SecureAuth (incl. Cloudentity) — 4 operation(s) for usermetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - UserMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-usermetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-users-api
+  name: SecureAuth (incl. Cloudentity) Users API
+  description: The Users API from SecureAuth (incl. Cloudentity) — 68 operation(s) for users.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - Users
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-users-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-vanitydomains-api
+  name: SecureAuth (incl. Cloudentity) Vanity Domains API
+  description: >-
+    The vanityDomains API from SecureAuth (incl. Cloudentity) — 1 operation(s) for vanitydomains.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - vanityDomains
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-vanitydomains-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-web-api
+  name: SecureAuth (incl. Cloudentity) Web API
+  description: The web API from SecureAuth (incl. Cloudentity) — 2 operation(s) for web.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - web
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-web-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-webhooks-api
+  name: SecureAuth (incl. Cloudentity) Webhooks API
+  description: The webhooks API from SecureAuth (incl. Cloudentity) — 3 operation(s) for webhooks.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-webhooks-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-workforce-api
+  name: SecureAuth (incl. Cloudentity) Workforce API
+  description: The workforce API from SecureAuth (incl. Cloudentity) — 1 operation(s) for workforce.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - workforce
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-workforce-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-workspaceconfiguration-api
+  name: SecureAuth (incl. Cloudentity) Workspace Configuration API
+  description: >-
+    The WorkspaceConfiguration API from SecureAuth (incl. Cloudentity) — 4 operation(s) for workspaceconfiguration.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - WorkspaceConfiguration
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-workspaceconfiguration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-workspacemetrics-api
+  name: SecureAuth (incl. Cloudentity) Workspace Metrics API
+  description: >-
+    The WorkspaceMetrics API from SecureAuth (incl. Cloudentity) — 20 operation(s) for workspacemetrics.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - WorkspaceMetrics
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-workspacemetrics-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-workspaces-api
+  name: SecureAuth (incl. Cloudentity) Workspaces API
+  description: The workspaces API from SecureAuth (incl. Cloudentity) — 5 operation(s) for workspaces.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - workspaces
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-workspaces-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
+- aid: secureauth:secureauth-api-keys-api
+  name: SecureAuth (incl. Cloudentity) API Keys API
+  description: The API Keys API from SecureAuth (incl. Cloudentity) — 2 operation(s) for api keys.
+  humanURL: https://docs.secureauth.com/iam/docs/api
+  tags:
+  - API Keys
+  properties:
+  - type: OpenAPI
+    url: openapi/secureauth-api-keys-api-openapi.yml
+  - type: Documentation
+    url: https://docs.secureauth.com/iam/docs/api
 x-aliases:
 - cloudentity
 

@@ -1,0 +1,478 @@
+openapi: 3.2.0
+info:
+  description: SecureAuth Permissions API
+  title: SecureAuth Relationships API
+  version: latest
+servers:
+- url: https://localhost:8443/api/permissions/default
+tags:
+- name: Relationships
+paths:
+  /system/systems/{psID}/relationships:
+    delete:
+      description: Delete relationships.
+      operationId: deleteRelationships
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/DeleteRelationshipsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Delete relationships
+      tags:
+      - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteRelationshipsRequest'
+    get:
+      description: Read relationships.
+      operationId: readRelationships
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ReadRelationshipsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Read relationships
+      tags:
+      - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReadRelationshipsRequest'
+    post:
+      description: Write relationships.
+      operationId: writeRelationships
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/WriteRelationshipsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Write relationships
+      tags:
+      - Relationships
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WriteRelationshipsRequest'
+components:
+  schemas:
+    ReadRelationshipsResponse:
+      properties:
+        relation:
+          description: how the resource and subject are related
+          type: string
+        resource_id:
+          description: resource id
+          example: '1'
+          type: string
+        resource_type:
+          description: resource type
+          example: post
+          type: string
+        subject_id:
+          description: subject id
+          example: emilia
+          type: string
+        subject_relation:
+          description: optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: subject type
+          example: user
+          type: string
+      required:
+      - resource_type
+      - resource_id
+      - subject_type
+      - subject_id
+      type: object
+    ReadRelationshipsRequest:
+      properties:
+        relation:
+          description: Optional relation that provides information on how a resource is related to a subject
+          example: user
+          type: string
+        resource_id:
+          description: Optional resource identifier to which the subject is related
+          example: '1'
+          type: string
+        resource_type:
+          description: Resource type to which the subject is related
+          example: post
+          type: string
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+        subject_id:
+          description: Optional subject identifier to which the resource is related
+          example: John
+          type: string
+        subject_relation:
+          description: Optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: Optional subject type to which the resource is related
+          example: user
+          type: string
+      required:
+      - resource_type
+      type: object
+    DeleteRelationshipsResponse:
+      properties:
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+      type: object
+    WriteRelationshipsResponse:
+      properties:
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+      type: object
+    WriteRelationshipsRequest:
+      properties:
+        updates:
+          description: list of mutations
+          items:
+            $ref: '#/components/schemas/RelationshipUpdate'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    RelationshipUpdate:
+      properties:
+        operation:
+          description: 'operation type: insert, upsert (create or update) or delete'
+          enum:
+          - insert
+          - upsert
+          - delete
+          example: upsert
+          type: string
+        relation:
+          description: relation is how the resource and subject are related
+          example: reader
+          type: string
+        resource_id:
+          description: resource id to which the subject is related
+          example: '1'
+          type: string
+        resource_type:
+          description: resource type to which the subject is related
+          example: post
+          type: string
+        subject_id:
+          description: subject id to which the resource is related
+          example: emilia
+          type: string
+        subject_relation:
+          description: optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: subject type to which the resource is related
+          example: user
+          type: string
+      required:
+      - operation
+      - relation
+      - resource_type
+      - resource_id
+      - subject_type
+      - subject_id
+      type: object
+    DeleteRelationshipsRequest:
+      properties:
+        relation:
+          description: Optional relation that provides information on how a resource is related to a subject
+          example: user
+          type: string
+        resource_id:
+          description: Optional resource identifier to which the subject is related
+          example: '1'
+          type: string
+        resource_type:
+          description: Resource type to which the subject is related
+          example: post
+          type: string
+        subject_id:
+          description: Optional subject identifier to which the resource is related
+          example: John
+          type: string
+        subject_relation:
+          description: Optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: Optional subject type to which the resource is related
+          example: user
+          type: string
+      required:
+      - resource_type
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DeleteRelationshipsResponse:
+      description: DeleteRelationshipsResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteRelationshipsResponse'
+    ReadRelationshipsResponse:
+      description: ReadRelationshipsResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            properties:
+              values:
+                items:
+                  $ref: '#/components/schemas/ReadRelationshipsResponse'
+                type: array
+            type: object
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    WriteRelationshipsResponse:
+      description: WriteRelationshipsResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WriteRelationshipsResponse'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: /default/admin/oauth2/token
+    token:
+      in: header
+      name: X-API-KEY
+      type: apiKey

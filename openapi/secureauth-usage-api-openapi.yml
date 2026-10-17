@@ -1,0 +1,158 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Usage API
+  version: latest
+  description: 'Operations tagged usage across 2 of this provider''s published API definitions: secureauth-licensingadmin-openapi.yml, secureauth-licensingroot-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/licensing/default
+- url: https://localhost:8443/api/licensing
+tags:
+- name: Usage
+paths:
+  /admin/usage:
+    get:
+      description: Get usage.
+      operationId: getUsage
+      responses:
+        '200':
+          $ref: '#/components/responses/UsageResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get usage
+      tags:
+      - Usage
+    servers:
+    - url: https://localhost:8443/api/licensing/default
+  /system/tenants/{tenantID}/usage:
+    get:
+      description: Get usage.
+      operationId: systemGetTenantUsage
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/SystemUsageResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup:
+        - manage_configuration
+      summary: Get usage
+      tags:
+      - Usage
+    servers:
+    - url: https://localhost:8443/api/licensing
+components:
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    UsageResponse:
+      description: Usage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Usage'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SystemUsageResponse:
+      description: Usage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Usage'
+  schemas:
+    Usage:
+      properties:
+        enterprise_idps:
+          $ref: '#/components/schemas/MetricUsage'
+        monthly_tokens_issued:
+          $ref: '#/components/schemas/MetricUsage'
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    MetricUsage:
+      properties:
+        limit:
+          format: int64
+          type: integer
+        used:
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token
+x-refined-from:
+- secureauth-licensingadmin-openapi.yml
+- secureauth-licensingroot-openapi.yml

@@ -1,0 +1,902 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Permissions API
+  version: latest
+  description: 'Operations tagged permissions across 3 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-identity-openapi.yml, secureauth-permissions-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/identity/default
+- url: https://localhost:8443/api/permissions/default
+tags:
+- name: Permissions
+paths:
+  /servers/{wid}/permissions:
+    get:
+      description: Check my permissions for this workspace.
+      operationId: checkWorkspacePermissions
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspacePermissionsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check workspace permissions
+      tags:
+      - Permissions
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /tenant/permissions:
+    get:
+      description: Check my permissions for this tenant.
+      operationId: checkTenantPermissions
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/TenantPermissionsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check tenant permissions
+      tags:
+      - Permissions
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /admin/pools/{ipID}/permissions:
+    get:
+      description: 'Check permissions granted to the current administrator relating to the identity pool specified.
+
+
+        Pass the required identity pool identifier as the value of the `ipID` path parameter.
+
+
+        For authorization, include the `if-match` header with the ETag value.'
+      operationId: checkPoolPermissions
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PoolPermissionsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Check Identity Pool Permissions
+      tags:
+      - Permissions
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/systems/{psID}/check:
+    post:
+      description: Check permission.
+      operationId: checkPermission
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/CheckPermissionResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Check permission
+      tags:
+      - Permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckPermissionRequest'
+    servers:
+    - url: https://localhost:8443/api/permissions/default
+  /system/systems/{psID}/lookup/resources:
+    post:
+      description: Lookup resources.
+      operationId: lookupResources
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/LookupResourcesResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Lookup resources
+      tags:
+      - Permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LookupResourcesRequest'
+    servers:
+    - url: https://localhost:8443/api/permissions/default
+  /system/systems/{psID}/lookup/subjects:
+    post:
+      description: Lookup subjects.
+      operationId: lookupSubjects
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: psID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/LookupSubjectsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - token: []
+      summary: Lookup subjects
+      tags:
+      - Permissions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LookupSubjectsRequest'
+    servers:
+    - url: https://localhost:8443/api/permissions/default
+components:
+  schemas:
+    WorkspacePermissionsResponse:
+      properties:
+        create_identity_pool:
+          type: boolean
+        delete_organization:
+          type: boolean
+        delete_workspace:
+          type: boolean
+        discover_workspace:
+          type: boolean
+        get_organization:
+          type: boolean
+        get_workspace:
+          type: boolean
+        list_identity_pools:
+          type: boolean
+        manage_acrs:
+          type: boolean
+        manage_admin_role:
+          type: boolean
+        manage_apis:
+          type: boolean
+        manage_application_assignment:
+          type: boolean
+        manage_application_membership:
+          type: boolean
+        manage_auditor_role:
+          type: boolean
+        manage_authorization_details:
+          type: boolean
+        manage_claims:
+          type: boolean
+        manage_clients:
+          type: boolean
+        manage_custom_apps:
+          type: boolean
+        manage_gateways:
+          type: boolean
+        manage_idps:
+          type: boolean
+        manage_manager_role:
+          type: boolean
+        manage_member_role:
+          type: boolean
+        manage_policies:
+          type: boolean
+        manage_scripts:
+          type: boolean
+        manage_secrets:
+          type: boolean
+        manage_services:
+          type: boolean
+        manage_tokens:
+          type: boolean
+        manage_user_manager_role:
+          type: boolean
+        manage_webhooks:
+          type: boolean
+        read_acrs:
+          type: boolean
+        read_analytics:
+          type: boolean
+        read_apis:
+          type: boolean
+        read_application_assignment:
+          type: boolean
+        read_application_membership:
+          type: boolean
+        read_audit_events:
+          type: boolean
+        read_authorization_details:
+          type: boolean
+        read_claims:
+          type: boolean
+        read_clients:
+          type: boolean
+        read_custom_apps:
+          type: boolean
+        read_gateways:
+          type: boolean
+        read_idps:
+          type: boolean
+        read_policies:
+          type: boolean
+        read_roles:
+          type: boolean
+        read_scripts:
+          type: boolean
+        read_secrets:
+          type: boolean
+        read_services:
+          type: boolean
+        read_webhooks:
+          type: boolean
+        update_organization:
+          type: boolean
+        update_organization_metadata:
+          type: boolean
+        update_workspace:
+          type: boolean
+        update_workspace_metadata:
+          type: boolean
+      type: object
+    TenantPermissionsResponse:
+      properties:
+        create_identity_pool:
+          type: boolean
+        create_organization:
+          type: boolean
+        create_workspace:
+          type: boolean
+        get_tenant:
+          type: boolean
+        list_identity_pools:
+          type: boolean
+        list_organizations:
+          type: boolean
+        list_workspaces:
+          type: boolean
+        manage_admin_role:
+          type: boolean
+        manage_auditor_role:
+          type: boolean
+        manage_brute_force_protection:
+          type: boolean
+        manage_business_admin_role:
+          type: boolean
+        manage_member_role:
+          type: boolean
+        manage_mfa_methods:
+          type: boolean
+        manage_permission_systems:
+          type: boolean
+        manage_privacy:
+          type: boolean
+        manage_server_bindings:
+          type: boolean
+        manage_themes:
+          type: boolean
+        manage_vanity_domains:
+          type: boolean
+        read_brute_force_protection:
+          type: boolean
+        read_mfa_methods:
+          type: boolean
+        read_permission_systems:
+          type: boolean
+        read_privacy:
+          type: boolean
+        read_roles:
+          type: boolean
+        read_server_bindings:
+          type: boolean
+        read_system_apis:
+          type: boolean
+        read_system_environment:
+          type: boolean
+        read_system_notifications:
+          type: boolean
+        read_system_services:
+          type: boolean
+        read_system_templates:
+          type: boolean
+        read_themes:
+          type: boolean
+        read_vanity_domains:
+          type: boolean
+        tenant_read_analytics:
+          type: boolean
+        update_tenant:
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    PoolPermissionsResponse:
+      properties:
+        b2b_manage_admin_metadata:
+          type: boolean
+        b2b_manage_business_metadata:
+          type: boolean
+        b2b_manage_users:
+          type: boolean
+        b2b_read_admin_metadata:
+          type: boolean
+        b2b_read_business_metadata:
+          type: boolean
+        b2b_read_users:
+          type: boolean
+        delete_identity_pool:
+          type: boolean
+        get_identity_pool:
+          type: boolean
+        manage_identity_pool_groups:
+          type: boolean
+        manage_identity_pool_users:
+          type: boolean
+        manage_user_addresses:
+          type: boolean
+        manage_user_identifiers:
+          type: boolean
+        manage_user_manager_role:
+          type: boolean
+        manage_user_otps:
+          type: boolean
+        manage_user_passwords:
+          type: boolean
+        read_identity_pool_groups:
+          type: boolean
+        read_identity_pool_users:
+          type: boolean
+        read_roles:
+          type: boolean
+        send_user_activation:
+          type: boolean
+        send_user_verification:
+          type: boolean
+        update_identity_pool:
+          type: boolean
+      type: object
+    CheckPermissionResponse:
+      properties:
+        has_permission:
+          description: true if subject has permission for the given resource
+          type: boolean
+      type: object
+    CheckPermissionRequest:
+      properties:
+        permission:
+          description: the name of the permission on which to execute the check
+          type: string
+        resource_id:
+          description: resource id
+          example: '1'
+          type: string
+        resource_type:
+          description: resource type
+          example: post
+          type: string
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+        subject_id:
+          description: subject id
+          example: emilia
+          type: string
+        subject_relation:
+          description: optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: subject type
+          example: user
+          type: string
+      required:
+      - subject_type
+      - subject_id
+      - resource_type
+      - resource_id
+      - permission
+      type: object
+    LookupSubjectsResponse:
+      properties:
+        excluded_subject_ids:
+          description: excluded subject ids
+          items:
+            type: string
+          type: array
+        subject_id:
+          description: subject that has a permission for a given resource
+          type: string
+      type: object
+    LookupResourcesRequest:
+      properties:
+        permission:
+          description: the name of the permission that the subject must have
+          type: string
+        resource_type:
+          description: resource type for which to lookup
+          example: post
+          type: string
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+        subject_id:
+          description: subject id
+          example: emilia
+          type: string
+        subject_relation:
+          description: optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: subject type
+          example: user
+          type: string
+      required:
+      - subject_type
+      - subject_id
+      - resource_type
+      - permission
+      type: object
+    LookupSubjectsRequest:
+      properties:
+        permission:
+          description: the name of the permission that the subject must have
+          type: string
+        resource_id:
+          description: resource id
+          example: '1'
+          type: string
+        resource_type:
+          description: resource type
+          example: post
+          type: string
+        revision:
+          description: the data must be at least as fresh as that revision
+          type: string
+        subject_relation:
+          description: optional sub-relation on the subject
+          type: string
+        subject_type:
+          description: subject type for which to lookup
+          example: emilia
+          type: string
+      required:
+      - resource_type
+      - resource_id
+      - subject_type
+      - permission
+      type: object
+    LookupResourcesResponse:
+      properties:
+        resource_id:
+          description: resource id that a subject has a permission for
+          type: string
+      type: object
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    WorkspacePermissionsResponse:
+      description: WorkspacePermissions
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkspacePermissionsResponse'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TenantPermissionsResponse:
+      description: TenantPermissions
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TenantPermissionsResponse'
+    PoolPermissionsResponse:
+      description: PoolPermissions
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PoolPermissionsResponse'
+    LookupSubjectsResponse:
+      description: LookupSubjectsResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            properties:
+              values:
+                items:
+                  $ref: '#/components/schemas/LookupSubjectsResponse'
+                type: array
+            type: object
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    LookupResourcesResponse:
+      description: LookupResourcesResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            properties:
+              values:
+                items:
+                  $ref: '#/components/schemas/LookupResourcesResponse'
+                type: array
+            type: object
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    CheckPermissionResponse:
+      description: CheckPermissionResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CheckPermissionResponse'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    token:
+      in: header
+      name: X-API-KEY
+      type: apiKey
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-identity-openapi.yml
+- secureauth-permissions-openapi.yml

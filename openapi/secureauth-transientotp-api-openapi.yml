@@ -1,0 +1,264 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Public API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Transient Otp API
+  version: latest
+servers:
+- url: https://localhost:8443/default/default
+tags:
+- name: transientOtp
+paths:
+  /authn/otp/transient:
+    post:
+      description: Initiate a new transient OTP verification.
+      operationId: initiateTransientOTP
+      responses:
+        '200':
+          $ref: '#/components/responses/TransientOTPResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - default:
+        - transient_otp
+      summary: Send a transient One-Time Password (OTP)
+      tags:
+      - transientOtp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransientOTPRequest'
+  /authn/otp/transient/{otpID}:
+    get:
+      description: Determine whether this OTP has been verified already.
+      operationId: getTransientOTP
+      parameters:
+      - in: path
+        name: otpID
+        required: true
+        schema:
+          type: string
+      - in: query
+        name: state
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/TransientOTPResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+      security:
+      - default:
+        - transient_otp
+      summary: Get the One-Time Password (OTP) object
+      tags:
+      - transientOtp
+    post:
+      description: Compare the OTP submitted by the user to the OTP that was sent.
+      operationId: verifyTransientOTP
+      parameters:
+      - in: path
+        name: otpID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' one-time password verified'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+      security:
+      - default:
+        - transient_otp
+      summary: Verify the One-Time Password (OTP)
+      tags:
+      - transientOtp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransientOTPRequest'
+components:
+  schemas:
+    TransientOTPResponse:
+      properties:
+        address:
+          example: '8675409'
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        expires_in:
+          format: duration
+          type: string
+        id:
+          format: otpSessionID
+          type: string
+        mechanism:
+          enum:
+          - sms
+          - email
+          - voice
+          example: email
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        verified:
+          type: boolean
+      required:
+      - tenant_id
+      - mechanism
+      - address
+      type: object
+    RedactionPolicy:
+      properties:
+        address:
+          description: Controls whether phone numbers are retained or obfuscated by the provider.
+          example: retain
+          type: string
+        content:
+          description: Controls whether message body content is retained by the provider.
+          example: retain
+          type: string
+      title: RedactionPolicy controls message redaction at the SMS provider level.
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    TransientOTPRequest:
+      properties:
+        address:
+          example: '1235555609'
+          type: string
+        mechanism:
+          enum:
+          - sms
+          - email
+          - voice
+          example: email
+          type: string
+        otp:
+          description: one-time password
+          example: '111111'
+          format: OTP
+          type: string
+        redaction:
+          $ref: '#/components/schemas/RedactionPolicy'
+        state:
+          description: Optional XSRF state
+          example: c44sqtco4g2legl15m2g
+          type: string
+      required:
+      - mechanism
+      - address
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    TransientOTPResponse:
+      description: Transient OTP
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransientOTPResponse'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    default:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            list_clients_with_access: list_clients_with_access
+            manage_consents: manage_consents
+            manage_post_authn: manage_post_authn
+            manage_sessions: manage_sessions
+            revoke_client_access: revoke_client_access
+            transient_otp: transient_otp
+            view_consents: view_consents
+            view_sessions: view_sessions
+          authorizationUrl: /default/default/oauth2/authorize
+          tokenUrl: /default/default/oauth2/token

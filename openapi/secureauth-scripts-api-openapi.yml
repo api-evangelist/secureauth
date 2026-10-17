@@ -1,0 +1,1186 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Scripts API
+  version: latest
+  description: 'Operations tagged scripts across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/system/default
+tags:
+- name: Scripts
+paths:
+  /servers/{wid}/script-debugs:
+    get:
+      description: Returns a list of script debug triggers for a given workspace.
+      operationId: listScriptDebugs
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptDebugs'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List script debug triggers
+      tags:
+      - Scripts
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/script-execution-points:
+    get:
+      description: Returns a list of script execution points for a given workspace.
+      operationId: listScriptExecutionPoints
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptExecutionPoints'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List script execution points
+      tags:
+      - Scripts
+    put:
+      description: 'Available execution points: `post_authn_ctx allowed_idp_ids`'
+      operationId: setScriptExecutionPoints
+      parameters:
+      - description: The ETag HTTP header is an identifier for a specific version of a resource
+        in: header
+        name: etag
+        schema:
+          type: string
+          format: etag
+      - description: Indicates that a 5xx error was caused by tenant-provided code
+        in: header
+        name: x-external-error
+        schema:
+          type: string
+      - description: OpenTelemetry trace identifier
+        in: header
+        name: x-trace-id
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptExecutionPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set script execution points
+      tags:
+      - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptExecutionPoints'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/scripts:
+    get:
+      description: Lists tenant's scripts.
+      operationId: listScripts
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: 'Optional search phrase: script id OR script name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'optional list scripts after given id
+
+          AfterScriptID'
+        in: query
+        name: after_script_id
+        schema:
+          type: string
+      - description: 'optional list scripts before given id
+
+          BeforeScriptID'
+        in: query
+        name: before_script_id
+        schema:
+          type: string
+      - description: 'optional sort scripts by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order scripts by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Scripts'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List scripts
+      tags:
+      - Scripts
+    post:
+      description: 'Creates a script that is used for enriching authentication context.
+
+        You can, for example, define additional authentication context attributes for mock
+
+        users defined for a static identity provider. Your script should be written in JavaScript.'
+      operationId: createScript
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '201':
+          $ref: '#/components/responses/Script'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create script
+      tags:
+      - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Script'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/scripts/{script}:
+    delete:
+      description: Deleting a script is permanent and it cannot be undone.
+      operationId: deleteScript
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of the script to be deleted
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Script has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Deletes given script
+      tags:
+      - Scripts
+    get:
+      description: Returns a script and it's content.
+      operationId: getScript
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of your script
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Script'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get script
+      tags:
+      - Scripts
+    patch:
+      description: Patch existing script.
+      operationId: patchScript
+      parameters:
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of the script to be updated
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Script'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Patch script
+      tags:
+      - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Rfc6902PatchOperations'
+        description: Patch spec in RFC6902 JSON format
+    put:
+      description: Update existing script.
+      operationId: updateScript
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of the script to be updated
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Script'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update script
+      tags:
+      - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Script'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/scripts/{script}/debug:
+    delete:
+      description: Disables detailed logging of the script execution results.
+      operationId: disableScriptDebug
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of the script to be deleted
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' debug logging has been disabled'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Disable script debug logging
+      tags:
+      - Scripts
+    get:
+      description: Returns the trigger for detailed script execution logging, if any.
+      operationId: getScriptDebug
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of your script
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptDebug'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get script debug trigger
+      tags:
+      - Scripts
+    put:
+      description: Enables detailed logging of the script execution results.
+      operationId: enableScriptDebug
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: ID of your authorization server (workspace)
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: ID of the script to be debugged
+        in: path
+        name: script
+        required: true
+        schema:
+          type: string
+      - description: Duration of the debug logging trigger
+        in: query
+        name: duration
+        schema:
+          type: string
+          default: 60s
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptDebug'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Enable script debug logging
+      tags:
+      - Scripts
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/scripts/test:
+    post:
+      description: 'You can test a script and check if it works correctly using this endpoint. Provide your mock input and
+
+        pass it as the value of the `input` parameter. Define your script. Then, fire a request to the
+
+        test script endpoint. By doing so, you can test if a script would fail or pass for a given request.'
+      operationId: testScript
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ScriptExecutionResult'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Test script
+      tags:
+      - Scripts
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestScriptRequest'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+components:
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Scripts:
+      description: Scripts
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Scripts'
+    Script:
+      description: Script
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Script'
+    ScriptDebug:
+      description: ScriptDebug
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScriptDebug'
+    ScriptDebugs:
+      description: Script debug triggers
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScriptDebugs'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ScriptExecutionResult:
+      description: Script execution result
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScriptExecutionResult'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ScriptExecutionPoints:
+      description: Script execution points
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ScriptExecutionPoints'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    ScriptExecutionPoint:
+      properties:
+        script_id:
+          description: Optional script ID
+          example: '1'
+          format: scriptID
+          type: string
+        server_id:
+          description: The ID of your authorization server (workspace)
+          example: default
+          format: serverID
+          type: string
+        target_fk:
+          description: String representation of the target's ID
+          example: '1'
+          type: string
+        tenant_id:
+          description: The ID of your tenant
+          example: default
+          format: tenantID
+          type: string
+        type:
+          description: String representation of the script execution point type
+          enum:
+          - post_authn_ctx
+          - allowed_idp_ids
+          - identifier_idp_selection
+          - token_minting
+          - client_token_minting
+          example: post_authn_ctx
+          type: string
+      required:
+      - tenant_id
+      - server_id
+      - type
+      - target_fk
+      type: object
+    ScriptDebugs:
+      properties:
+        script_debugs:
+          description: list of script debug triggers
+          items:
+            $ref: '#/components/schemas/ScriptDebug'
+          type: array
+      type: object
+    Rfc6902PatchOperations:
+      items:
+        $ref: '#/components/schemas/Rfc6902PatchOperation'
+      type: array
+    ScriptDebug:
+      properties:
+        authorization_server_id:
+          description: ID of the authorization server (workspace) where the script is created
+          format: serverID
+          type: string
+        duration:
+          default: 1m
+          description: Expiration interval
+          example: 60s
+          format: duration
+          type: string
+        script_id:
+          description: ID of the script to be debugged
+          format: scriptID
+          type: string
+        started_at:
+          description: Time that script debugging was enabled
+          format: date-time
+          type: string
+        tenant_id:
+          description: ID of the tenant where the script is created
+          format: tenantID
+          type: string
+      required:
+      - tenant_id
+      - authorization_server_id
+      - script_id
+      type: object
+    Rfc6902PatchOperation:
+      properties:
+        op:
+          description: 'Each operation must have at least one `op` member, which value indicates
+
+            the actual operation to be performed against the target (current) configuration.
+
+            For a detailed description of available operations,
+
+            see the [Operations #4 section of the RFC6902 specification](https://datatracker.ietf.org/doc/html/rfc6902#section-4).'
+          enum:
+          - add
+          - remove
+          - replace
+          - move
+          - copy
+          - test
+          type: string
+        path:
+          description: 'String containing a JSON-Pointer value ([RFC6901](https://datatracker.ietf.org/doc/html/rfc6901))
+
+            that references a location within the target configuration where the operation is performed.
+
+
+            For available paths, reference the exported configuration.'
+          type: string
+        value:
+          description: New object value applied to the patched (target) configuration.
+          type: object
+      type: object
+    ScriptExecutionPoints:
+      properties:
+        execution_points:
+          description: list of script executions
+          items:
+            $ref: '#/components/schemas/ScriptExecutionPoint'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    ScriptExecutionResult:
+      properties:
+        caught_err:
+          description: name of the error
+          type: string
+        duration:
+          description: script execution time
+          format: duration
+          type: string
+        id:
+          description: script id
+          format: scriptID
+          type: string
+        input:
+          additionalProperties:
+            type: object
+          description: script input
+          type: object
+        output:
+          additionalProperties:
+            type: object
+          description: script output
+          type: object
+        stderr:
+          description: script standard error, e.g. console.error()
+          type: string
+        stdout:
+          description: script standard output, e.g. console.log()
+          type: string
+      type: object
+    Scripts:
+      properties:
+        scripts:
+          description: list of scripts
+          items:
+            $ref: '#/components/schemas/Script'
+          type: array
+      type: object
+    Script:
+      properties:
+        authorization_server_id:
+          description: ID of the authorization server (workspace) where the script is created
+          format: serverID
+          type: string
+        body:
+          description: Script body
+          format: scriptBody
+          type: string
+        env_version:
+          $ref: '#/components/schemas/FnEnvVersion'
+        id:
+          description: 'Unique ID of your script
+
+
+            If not provided, a random ID is generated.'
+          format: scriptID
+          type: string
+        name:
+          description: Display name of your script
+          type: string
+        tenant_id:
+          description: ID of the tenant where the script is created
+          format: tenantID
+          type: string
+        test_input:
+          description: Input data for testing this script
+          type: string
+      required:
+      - tenant_id
+      - authorization_server_id
+      type: object
+    FnEnvVersion:
+      type: string
+    TestScriptRequest:
+      properties:
+        body:
+          description: Contains the script source for testing
+          format: scriptBody
+          type: string
+        env_version:
+          $ref: '#/components/schemas/FnEnvVersion'
+        input:
+          additionalProperties:
+            type: object
+          description: Contains the input for the script
+          type: object
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-system-openapi.yml

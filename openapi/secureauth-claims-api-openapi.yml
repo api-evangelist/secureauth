@@ -1,0 +1,423 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Claims API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: Claims
+paths:
+  /claims:
+    post:
+      description: 'Claim allows to add custom attribute to outgoing id / access token.
+
+
+        Authorization Server, Name, Mapping and Type are required fields.
+
+
+        ID if not provided will be generated.'
+      operationId: createClaim
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/ClaimResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create claim
+      tags:
+      - Claims
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Claim'
+  /claims/{claim}:
+    delete:
+      description: Delete claim.
+      operationId: deleteClaim
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: claim
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' Claim has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete claim
+      tags:
+      - Claims
+    put:
+      description: Update claim.
+      operationId: updateClaim
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: claim
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ClaimResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update claim
+      tags:
+      - Claims
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Claim'
+  /servers/{wid}/claims:
+    get:
+      description: List claims.
+      operationId: listClaims
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ClaimsResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List claims
+      tags:
+      - Claims
+components:
+  schemas:
+    ClaimMetadata:
+      properties:
+        group_membership_mode:
+          $ref: '#/components/schemas/ClaimGroupMembershipMode'
+        pool_id:
+          format: poolID
+          type: string
+      type: object
+    ClaimType:
+      description: 'claim type, one of: id_token, access_token, saml_assertion
+
+        example: id_token'
+      type: string
+    Claim:
+      properties:
+        authorization_server_id:
+          description: authorization server id
+          example: default
+          format: serverID
+          type: string
+        description:
+          description: description
+          type: string
+        id:
+          description: unique claim id
+          example: '1'
+          format: claimID
+          type: string
+        mapping:
+          description: 'DeprecatedMapping use SourceType and SourcePath instead
+
+            claim mapping - path to attribute in authentication context from where claim value should be picked'
+          example: email
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ClaimMetadata'
+        name:
+          description: claim name in outgoing id / access token
+          example: email
+          type: string
+        opaque:
+          description: included in userinfo/introspect endpoints only
+          type: boolean
+        saml_name:
+          example: email
+          type: string
+        saml_name_format:
+          example: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          type: string
+        scopes:
+          description: 'list of scopes - when at least one of listed scopes has been granted to a client, then claim will be added to id / access token.
+
+            In case of empty array claim is always added.'
+          example:
+          - email
+          - email_verified
+          items:
+            type: string
+          type: array
+        source_path:
+          description: path to the attribute in source type context where claim value should be picked from
+          type: string
+        source_type:
+          $ref: '#/components/schemas/ClaimSourceType'
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+        type:
+          $ref: '#/components/schemas/ClaimType'
+        verified:
+          description: mark claim as verified (required by identity assurance spec)
+          type: boolean
+      type: object
+    ClaimGroupMembershipMode:
+      type: string
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    ClaimSourceType:
+      type: string
+    Claims:
+      properties:
+        claims:
+          description: list of claims
+          items:
+            $ref: '#/components/schemas/Claim'
+          type: array
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ClaimsResponse:
+      description: Claims
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Claims'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ClaimResponse:
+      description: Claim
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Claim'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

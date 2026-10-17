@@ -1,0 +1,185 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Recent Activities API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: recentActivities
+paths:
+  /stats/{wid}/recent-activities:
+    get:
+      operationId: getRecentActivities
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Limit
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 10
+      responses:
+        '200':
+          $ref: '#/components/responses/RecentActivities'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get recent activities
+      tags:
+      - recentActivities
+components:
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RecentActivities:
+      description: Recent activities
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecentActivities'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    RecentActivities:
+      properties:
+        activities:
+          items:
+            $ref: '#/components/schemas/RecentActivity'
+          type: array
+      type: object
+    RecentActivity:
+      properties:
+        date:
+          format: date-time
+          type: string
+        id:
+          format: recentActivityID
+          type: string
+        payload:
+          $ref: '#/components/schemas/RecentActivityPayload'
+        server_id:
+          format: serverID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+      type: object
+    RecentActivityPayload:
+      properties:
+        action:
+          type: string
+        count:
+          format: int64
+          type: integer
+        primary_name:
+          type: string
+        secondary_name:
+          type: string
+        subject:
+          type: string
+        subject_id:
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

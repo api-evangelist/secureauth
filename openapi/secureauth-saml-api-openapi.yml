@@ -1,0 +1,799 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth SAML API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth SAML API
+  version: latest
+servers:
+- url: https://localhost:8443/default/default
+tags:
+- name: SAML
+paths:
+  /saml/certificate:
+    get:
+      description: Returns SAML IDP certificate in PEM format.
+      operationId: idpCertificate
+      responses:
+        '200':
+          $ref: '#/components/responses/samlIDPCertificateResponse'
+        '404':
+          $ref: '#/components/responses/genericError'
+      summary: SAML IDP certificate endpoint
+      tags:
+      - SAML
+  /saml/initiate:
+    get:
+      description: SAML IDP initiated SSO endpoint.
+      operationId: idpInitiatedSso
+      parameters:
+      - description: Service Provider ID
+        in: query
+        name: service_provider_id
+        schema:
+          type: string
+      responses:
+        '302':
+          $ref: '#/components/responses/emptyResponse'
+        '404':
+          $ref: '#/components/responses/genericError'
+      summary: SAML IDP initiated SSO endpoint
+      tags:
+      - SAML
+  /saml/metadata:
+    get:
+      description: Returns SAML metadata.
+      operationId: idpMetadata
+      parameters:
+      - description: Optional Service Provider ID
+        in: query
+        name: service_provider_id
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/samlIDPMetadataResponse'
+        '404':
+          $ref: '#/components/responses/genericError'
+      summary: SAML metadata endpoint
+      tags:
+      - SAML
+  /saml/sp/{iid}/metadata:
+    get:
+      description: Returns SAML SP metadata.
+      operationId: spMetadata
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: IDP ID
+        in: path
+        name: iid
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/samlSPMetadataResponse'
+        '404':
+          $ref: '#/components/responses/genericError'
+      summary: SAML SP metadata endpoint
+      tags:
+      - SAML
+  /saml/sso:
+    get:
+      description: SAML sso endpoint.
+      operationId: sso
+      parameters:
+      - in: query
+        name: SAMLRequest
+        schema:
+          type: string
+      - in: query
+        name: RelayState
+        schema:
+          type: string
+      responses:
+        '302':
+          $ref: '#/components/responses/emptyResponse'
+        '404':
+          $ref: '#/components/responses/genericError'
+      summary: SAML sso endpoint
+      tags:
+      - SAML
+components:
+  schemas:
+    Attr:
+      properties:
+        Space:
+          type: string
+        Value:
+          type: string
+      title: An Attr represents a key-value attribute within an XML element.
+      type: object
+    ContactPerson:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2.2
+      properties:
+        Company:
+          type: string
+        ContactType:
+          type: string
+        EmailAddresses:
+          items:
+            type: string
+          type: array
+        GivenName:
+          type: string
+        SurName:
+          type: string
+        TelephoneNumbers:
+          items:
+            type: string
+          type: array
+      title: ContactPerson represents the SAML element ContactPerson.
+      type: object
+    LocalizedURI:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.5
+      properties:
+        Lang:
+          type: string
+        Value:
+          type: string
+      title: LocalizedURI represents the SAML type localizedURIType.
+      type: object
+    RoleDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.1
+      properties:
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: RoleDescriptor represents the SAML element RoleDescriptor.
+      type: object
+    Duration:
+      description: 'A Duration represents the elapsed time between two instants
+
+        as an int64 nanosecond count. The representation limits the
+
+        largest representable duration to approximately 290 years.'
+      format: int64
+      type: integer
+    NameIDFormat:
+      description: NameIDFormat is the format of the id
+      type: string
+    AttributeAuthorityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.7
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AttributeProfiles:
+          items:
+            type: string
+          type: array
+        AttributeServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        Attributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AttributeAuthorityDescriptor represents the SAML AttributeAuthorityDescriptor object.
+      type: object
+    genericError:
+      description: Error response
+      properties:
+        error:
+          example: The requested resource could not be found
+          type: string
+        error_code:
+          description: Code represents the error status code (404, 403, 401, ...).
+          example: 404
+          format: int64
+          type: integer
+        error_hint:
+          example: Object with ID 12345 does not exist
+          type: string
+      required:
+      - error
+      type: object
+    Endpoint:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.2
+      properties:
+        Binding:
+          type: string
+        Location:
+          type: string
+        ResponseLocation:
+          type: string
+      title: Endpoint represents the SAML EndpointType object.
+      type: object
+    AttributeValue:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.7.3.1.1
+      properties:
+        NameID:
+          $ref: '#/components/schemas/NameID'
+        Type:
+          type: string
+        Value:
+          type: string
+      title: AttributeValue represents the SAML element AttributeValue.
+      type: object
+    Name:
+      description: 'A Name represents an XML name (Local) annotated
+
+        with a name space identifier (Space).
+
+        In tokens returned by [Decoder.Token], the Space identifier
+
+        is given as a canonical URL, not the short prefix used
+
+        in the document being parsed.'
+      properties:
+        Space:
+          type: string
+      type: object
+    IDPSSODescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.3
+      properties:
+        ArtifactResolutionServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AttributeProfiles:
+          items:
+            type: string
+          type: array
+        Attributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        ManageNameIDServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        NameIDMappingServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        SingleLogoutServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        SingleSignOnServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        ValidUntil:
+          format: date-time
+          type: string
+        WantAuthnRequestsSigned:
+          type: boolean
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: IDPSSODescriptor represents the SAML IDPSSODescriptorType object.
+      type: object
+    AuthnAuthorityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.5
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AuthnQueryServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AuthnAuthorityDescriptor represents the SAML AuthnAuthorityDescriptor object.
+      type: object
+    X509Certificate:
+      description: X509Certificate represents the XMLSEC object of the same name
+      properties:
+        Data:
+          type: string
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    Element:
+      properties:
+        Attr:
+          items:
+            $ref: '#/components/schemas/Attr'
+          type: array
+        Child:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+        Space:
+          type: string
+      title: An Element represents an XML element, its attributes, and its child tokens.
+      type: object
+    PDPDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.6
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AuthzServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: PDPDescriptor represents the SAML PDPDescriptor object.
+      type: object
+    Organization:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2.1
+      properties:
+        OrganizationDisplayNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        OrganizationNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        OrganizationURLs:
+          items:
+            $ref: '#/components/schemas/LocalizedURI'
+          type: array
+      title: Organization represents the SAML Organization object.
+      type: object
+    KeyInfo:
+      description: KeyInfo represents the XMLSEC object of the same name
+      properties:
+        X509Data:
+          $ref: '#/components/schemas/X509Data'
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    IndexedEndpoint:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.3
+      properties:
+        Binding:
+          type: string
+        Index:
+          format: int64
+          type: integer
+        IsDefault:
+          type: boolean
+        Location:
+          type: string
+        ResponseLocation:
+          type: string
+      title: IndexedEndpoint represents the SAML IndexedEndpointType object.
+      type: object
+    EntityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2
+      properties:
+        AdditionalMetadataLocations:
+          items:
+            type: string
+          type: array
+        AffiliationDescriptor:
+          $ref: '#/components/schemas/AffiliationDescriptor'
+        AttributeAuthorityDescriptors:
+          items:
+            $ref: '#/components/schemas/AttributeAuthorityDescriptor'
+          type: array
+        AuthnAuthorityDescriptors:
+          items:
+            $ref: '#/components/schemas/AuthnAuthorityDescriptor'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPerson:
+          $ref: '#/components/schemas/ContactPerson'
+        EntityID:
+          type: string
+        ID:
+          type: string
+        IDPSSODescriptors:
+          items:
+            $ref: '#/components/schemas/IDPSSODescriptor'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        PDPDescriptors:
+          items:
+            $ref: '#/components/schemas/PDPDescriptor'
+          type: array
+        RoleDescriptors:
+          items:
+            $ref: '#/components/schemas/RoleDescriptor'
+          type: array
+        SPSSODescriptors:
+          items:
+            $ref: '#/components/schemas/SPSSODescriptor'
+          type: array
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: EntityDescriptor represents the SAML EntityDescriptor object.
+      type: object
+    KeyDescriptor:
+      description: KeyDescriptor represents the XMLSEC object of the same name
+      properties:
+        EncryptionMethods:
+          items:
+            $ref: '#/components/schemas/EncryptionMethod'
+          type: array
+        KeyInfo:
+          $ref: '#/components/schemas/KeyInfo'
+        Use:
+          type: string
+      type: object
+    LocalizedName:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.4
+      properties:
+        Lang:
+          type: string
+        Value:
+          type: string
+      title: LocalizedName represents the SAML type localizedNameType.
+      type: object
+    Token:
+      description: 'A Token is an interface type used to represent XML elements, character
+
+        data, CDATA sections, XML comments, XML directives, and XML processing
+
+        instructions.'
+      properties:
+        Index:
+          format: int64
+          type: integer
+        Parent:
+          $ref: '#/components/schemas/Element'
+        Remove:
+          type: boolean
+      type: object
+    AffiliationDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.5
+      properties:
+        AffiliateMembers:
+          items:
+            type: string
+          type: array
+        AffiliationOwnerID:
+          type: string
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AffiliationDescriptor represents the SAML AffiliationDescriptor object.
+      type: object
+    RequestedAttribute:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.4.2
+      properties:
+        FriendlyName:
+          type: string
+        IsRequired:
+          type: boolean
+        Name:
+          type: string
+        NameFormat:
+          type: string
+        Values:
+          items:
+            $ref: '#/components/schemas/AttributeValue'
+          type: array
+      title: RequestedAttribute represents the SAML RequestedAttribute object.
+      type: object
+    EncryptionMethod:
+      description: EncryptionMethod represents the XMLSEC object of the same name
+      properties:
+        Algorithm:
+          type: string
+      type: object
+    Attribute:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.7.3.1
+      properties:
+        FriendlyName:
+          type: string
+        Name:
+          type: string
+        NameFormat:
+          type: string
+        Values:
+          items:
+            $ref: '#/components/schemas/AttributeValue'
+          type: array
+      title: Attribute represents the SAML element Attribute.
+      type: object
+    X509Data:
+      description: X509Data represents the XMLSEC object of the same name
+      properties:
+        X509Certificates:
+          items:
+            $ref: '#/components/schemas/X509Certificate'
+          type: array
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    AttributeConsumingService:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.4.1
+      properties:
+        Index:
+          format: int64
+          type: integer
+        IsDefault:
+          type: boolean
+        RequestedAttributes:
+          items:
+            $ref: '#/components/schemas/RequestedAttribute'
+          type: array
+        ServiceDescriptions:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        ServiceNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+      title: AttributeConsumingService represents the SAML AttributeConsumingService object.
+      type: object
+    NameID:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.2.3
+      properties:
+        Format:
+          type: string
+        NameQualifier:
+          type: string
+        SPNameQualifier:
+          type: string
+        SPProvidedID:
+          type: string
+        Value:
+          type: string
+      title: NameID represents the SAML element NameID.
+      type: object
+    SPSSODescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.2
+      properties:
+        ArtifactResolutionServices:
+          items:
+            $ref: '#/components/schemas/IndexedEndpoint'
+          type: array
+        AssertionConsumerServices:
+          items:
+            $ref: '#/components/schemas/IndexedEndpoint'
+          type: array
+        AttributeConsumingServices:
+          items:
+            $ref: '#/components/schemas/AttributeConsumingService'
+          type: array
+        AuthnRequestsSigned:
+          type: boolean
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        ManageNameIDServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        SingleLogoutServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        ValidUntil:
+          format: date-time
+          type: string
+        WantAssertionsSigned:
+          type: boolean
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: SPSSODescriptor represents the SAML SPSSODescriptorType object.
+      type: object
+  responses:
+    samlIDPMetadataResponse:
+      description: IDP Metadata
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/EntityDescriptor'
+    genericError:
+      description: ErrorResponse
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/genericError'
+    emptyResponse:
+      description: Empty response
+    samlSPMetadataResponse:
+      description: SP Metadata
+      content:
+        application/xml:
+          schema:
+            $ref: '#/components/schemas/EntityDescriptor'
+    samlIDPCertificateResponse:
+      description: IDP Certificate

@@ -1,0 +1,2203 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Analytics API
+
+
+    The SecureAuth Analytics APIs provide a robust solution for capturing and analyzing metrics related to various operational aspects including access token minting, policy validations, OTP validations, authorizer validations, and HTTP metrics, among others.'
+  title: SecureAuth Workspace Metrics API
+  version: latest
+servers:
+- url: https://localhost:8443/api/analytics/default
+tags:
+- name: WorkspaceMetrics
+paths:
+  /servers/{wid}/access-tokens:
+    get:
+      description: Query access token data points.
+      operationId: workspaceSingleAccessTokenMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - count_recovery
+          - recovery_friction
+          - unique
+          - unique_clients
+          - unique_users
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query access tokens
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/access-tokens/{group}:
+    get:
+      description: Query access token data points by group.
+      operationId: workspaceAggregatedAccessTokenMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - count_recovery
+          - recovery_friction
+          - unique
+          - unique_clients
+          - unique_users
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - grant_type
+          default: grant_type
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query access tokens by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/authentications:
+    get:
+      description: Query authentication data points.
+      operationId: workspaceSingleAuthenticationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query authentications
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/authentications/{group}:
+    get:
+      description: Query authentication data points by group.
+      operationId: workspaceAggregatedAuthenticationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: 'BBox (format: minLat,minLon,maxLat,maxLon)'
+        in: query
+        name: bbox
+        schema:
+          type: string
+      - description: Filter by result (works only for grouping by method)
+        in: query
+        name: result
+        schema:
+          type: string
+      - description: Filter by method (works only for grouping by result)
+        in: query
+        name: method
+        schema:
+          type: string
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - result
+          - method
+          - device_type
+          - device_os
+          - device_browser
+          - grid_1_0
+          - grid_5_0
+          default: result
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query authentications by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/gateway-requests:
+    get:
+      description: Query gateway request data points.
+      operationId: workspaceSingleGatewayRequestMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - sum
+          - p50
+          - p75
+          - p95
+          - p99
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query gateway requests
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/gateway-requests/{group}:
+    get:
+      description: Query gateway request data points by group.
+      operationId: workspaceAggregatedGatewayRequestMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - sum
+          - p50
+          - p75
+          - p95
+          - p99
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - result
+          default: result
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query gateway requests by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/http-requests:
+    get:
+      description: Query http request data points.
+      operationId: workspaceSingleHttpRequestMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - count_external_errors
+          - sum
+          - p50
+          - p75
+          - p95
+          - p99
+          - le1
+          - le10
+          - le50
+          - le100
+          - le500
+          - le1000
+          - leinf
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query http requests
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/http-requests/{group}:
+    get:
+      description: Query http request data points by group.
+      operationId: workspaceAggregatedHttpRequestMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          - count_external_errors
+          - sum
+          - p50
+          - p75
+          - p95
+          - p99
+          - le1
+          - le10
+          - le50
+          - le100
+          - le500
+          - le1000
+          - leinf
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - api
+          - code
+          - category
+          default: api
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query http requests by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/leaked-credentials:
+    get:
+      description: Query restricted countries.
+      operationId: workspaceSingleLeakedCredentialsMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query leaked credentials
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/leaked-credentials/{group}:
+    get:
+      description: Query leaked credentials data points by group.
+      operationId: workspaceAggregatedLeakedCredentialsMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - category
+          default: category
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query leaked credentials by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/loa:
+    get:
+      description: Query level of assurance.
+      operationId: workspaceSingleLOAMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - average
+          default: average
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query level of assurance
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/logins:
+    get:
+      description: Query login data points.
+      operationId: workspaceSingleLoginMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: Filter by idp id
+        in: query
+        name: idp_id
+        schema:
+          type: string
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count_attempts
+          - count_successes
+          - count_users
+          default: count_successes
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query logins
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/logins/{group}:
+    get:
+      description: Query login data points by group.
+      operationId: workspaceAggregatedLoginMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: 'BBox (format: minLat,minLon,maxLat,maxLon)'
+        in: query
+        name: bbox
+        schema:
+          type: string
+      - description: Filter by idp id
+        in: query
+        name: idp_id
+        schema:
+          type: string
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count_attempts
+          - count_successes
+          - count_users
+          default: count_successes
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - method
+          - idp
+          - country
+          - city
+          - device_type
+          - device_os
+          - device_browser
+          - grid_1_0
+          - grid_5_0
+          default: idp
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query logins by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/otp-operations:
+    get:
+      description: Query otp operation data points.
+      operationId: workspaceSingleOTPOperationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query otp operations
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/otp-operations/{group}:
+    get:
+      description: Query otp operation data points by group.
+      operationId: workspaceAggregatedOTPOperationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - operation
+          default: operation
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query otp operations by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/policy-validations:
+    get:
+      description: Query policy validation data points.
+      operationId: workspaceSinglePolicyValidationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query policy validations
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/policy-validations/{group}:
+    get:
+      description: Query policy validation data points by group.
+      operationId: workspaceAggregatedPolicyValidationMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - result
+          default: result
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query policy validations by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/restricted-countries:
+    get:
+      description: Query restricted countries.
+      operationId: workspaceSingleRestrictedCountriesMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      responses:
+        '200':
+          $ref: '#/components/responses/DataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query restricted countries
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/restricted-countries/{group}:
+    get:
+      description: Query restricted countries data points by group.
+      operationId: workspaceAggregatedRestrictedCountriesMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Bucket
+        in: query
+        name: bucket
+        schema:
+          type: string
+          enum:
+          - auto
+          - all
+          - 1m
+          - 5m
+          - 15m
+          - 30m
+          - 1h
+          - 3h
+          - 6h
+          - 12h
+          - 1d
+          - 1w
+          - 1M
+          - 3M
+          - 6M
+          - 1Y
+          default: auto
+      - description: Origin
+        in: query
+        name: origin
+        schema:
+          type: string
+          format: date-time
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Function
+        in: query
+        name: function
+        schema:
+          type: string
+          enum:
+          - count
+          default: count
+      - description: Group by
+        in: path
+        name: group
+        required: true
+        schema:
+          type: string
+          enum:
+          - country
+          default: country
+      responses:
+        '200':
+          $ref: '#/components/responses/AggregatedDataPoints'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query restricted countries by group
+      tags:
+      - WorkspaceMetrics
+  /servers/{wid}/top:
+    get:
+      operationId: workspaceTopMetrics
+      parameters:
+      - description: Workspace ID
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: From
+        in: query
+        name: from
+        schema:
+          type: string
+      - description: To
+        in: query
+        name: to
+        schema:
+          type: string
+      - description: Filter by idp id
+        in: query
+        name: idp_id
+        schema:
+          type: string
+      - description: Filter by identity pool id
+        in: query
+        name: pool_id
+        schema:
+          type: string
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Aggregate
+        in: query
+        name: aggregate
+        schema:
+          type: string
+          enum:
+          - clients
+          - countries
+          - cities
+          - users_with_authentication_failures
+          - users_with_password_resets
+          - users_with_high_risk
+          default: clients
+      responses:
+        '200':
+          $ref: '#/components/responses/TopN'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Query top aggregates
+      tags:
+      - WorkspaceMetrics
+components:
+  schemas:
+    DataPoints:
+      properties:
+        bucket:
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/SingleDataPoint'
+          type: array
+      type: object
+    AggregatedDataPoints:
+      properties:
+        bucket:
+          type: string
+        data:
+          items:
+            $ref: '#/components/schemas/AggregatedDataPoint'
+          type: array
+      type: object
+    TopDataPoint:
+      properties:
+        frequency:
+          format: double
+          type: number
+        value:
+          type: string
+      type: object
+    SingleDataPoint:
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+        value:
+          format: double
+          type: number
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    AggregatedDataPoint:
+      properties:
+        timestamp:
+          format: date-time
+          type: string
+        values:
+          additionalProperties:
+            format: double
+            type: number
+          type: object
+      type: object
+    TopDataPoints:
+      properties:
+        data:
+          items:
+            $ref: '#/components/schemas/TopDataPoint'
+          type: array
+      type: object
+  responses:
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    DataPoints:
+      description: Data points
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DataPoints'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/DataPoints'
+    TopN:
+      description: TopN
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TopDataPoints'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/TopDataPoints'
+    AggregatedDataPoints:
+      description: Aggregated data points
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AggregatedDataPoints'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/AggregatedDataPoints'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        clientCredentials:
+          scopes: {}
+          tokenUrl: /default/admin/oauth2/token

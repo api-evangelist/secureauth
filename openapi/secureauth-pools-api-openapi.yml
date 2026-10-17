@@ -1,0 +1,1628 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Pools API
+  version: latest
+  description: 'Operations tagged Pools across 2 of this provider''s published API definitions: secureauth-identity-openapi.yml, secureauth-identitysystem-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: Pools
+paths:
+  /admin/pools:
+    get:
+      description: 'Retrieve the list of identity pools available under the current administrator.
+
+
+        You can filter the response with the query parameters to narrow the pool list down.'
+      operationId: listPools
+      parameters:
+      - description: 'A search substring. Use the identity pool identifier or name as its value.
+
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for results in the response.
+
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+
+          AfterPoolID'
+        in: query
+        name: after_pool_id
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for the results in the response.
+
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+
+          identity pool isn''t included. Also, the response depends on the `sort` and `order` parameters, if any are
+
+          passed.
+
+
+          BeforePoolID'
+        in: query
+        name: before_pool_id
+        schema:
+          type: string
+      - description: 'Sort results returned in the response by `name` or `id`.
+
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'Set the order of results returned in the response. Input: `acs`, `desc`.
+
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'Limit the number of results returned in the response.
+
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Pools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pools'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Identity Pools
+      tags:
+      - Pools
+    post:
+      description: 'Create an identity pool.
+
+
+        When no `metadata_schema_id` and/or `payload_schema_id` are provided in the request body, the identity pool
+
+        is created with the following defaults accordingly:
+
+
+        `default_metadata=metadata_v0`
+
+
+        `default_payload=user_v0`'
+      operationId: createPool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/PoolResponseParams'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Identity Pool
+      tags:
+      - Pools
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pool'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/pools/{ipID}:
+    delete:
+      description: 'Delete an identity pool. For this, provide the required identity pool identifier in the path.
+
+
+        To retrieve the identity pool ID, log in to the Admin workspace. Then go to Identity Providers >
+
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.'
+      operationId: deletePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: With idp
+        in: query
+        name: with_idp
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ' Identity Pool Deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Identity Pool
+      tags:
+      - Pools
+    get:
+      description: 'Retrieve detailed information about an identity pool. Pass the identifier of the required identity pool with the
+
+        `ipID` path parameter.
+
+
+        To retrieve the pool identifier, log in to the Admin workspace. Then go to Identity Providers >
+
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.'
+      operationId: getPool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PoolResponseParams'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get Identity Pool
+      tags:
+      - Pools
+    put:
+      description: 'Update the identity pool details. Pass the identifier of the required identity pool with the `ipID` path parameter.
+
+
+        To retrieve the identity pool ID, log in to the Admin workspace. Then go to Identity Providers >
+
+        [*click the connected identity provider name*] > Identity Pool > Manage Pool.'
+      operationId: updatePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PoolResponseParams'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update Identity Pool
+      tags:
+      - Pools
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pool'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/workspace/{wid}/pools:
+    get:
+      description: 'Retrieve the list of identity pools available for a workspace. Pass the required workspace identifier with the
+
+        `wid` path parameter.
+
+
+        You can filter the response with the query parameters to narrow the pool list down.'
+      operationId: listWorkspacePools
+      parameters:
+      - description: 'A search substring. Use the identity pool identifier or name as its value.
+
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for results in the response.
+
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+
+          AfterPoolID'
+        in: query
+        name: after_pool_id
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for the results in the response.
+
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+
+          identity pool isn''t included. Also, the response depends on the `sort` and `order` parameters, if any are
+
+          passed.
+
+
+          BeforePoolID'
+        in: query
+        name: before_pool_id
+        schema:
+          type: string
+      - description: 'Sort results returned in the response by `name` or `id`.
+
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'Set the order of results returned in the response. Input: `acs`, `desc`.
+
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'Limit the number of results returned in the response.
+
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: Pools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pools'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List Identity Pools Per Workspace
+      tags:
+      - Pools
+    post:
+      description: 'Create an identity pool under the required workspace.
+
+
+        When no `metadata_schema_id` and/or `payload_schema_id` are provided in the request body, the identity pool
+
+        is created with the following defaults accordingly:
+
+
+        `default_metadata=metadata_v0`
+
+
+        `default_payload=user_v0`'
+      operationId: createWorkspacePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: With idp
+        in: query
+        name: with_idp
+        schema:
+          type: boolean
+      responses:
+        '201':
+          $ref: '#/components/responses/PoolResponseParams'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create Identity Pool For Workspace
+      tags:
+      - Pools
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pool'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/workspace/{wid}/pools/{ipID}:
+    delete:
+      description: Delete a workspace identity pool.
+      operationId: deleteWorkspacePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: With idp
+        in: query
+        name: with_idp
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ' Identity Pool Deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete Workspace Identity Pool
+      tags:
+      - Pools
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /admin/workspace/{wid}/user/pools:
+    get:
+      description: 'Retrieve the detailed information about identity pools connected to the workspace and available for the current
+
+        administrator.
+
+
+        Pass the required workspace identifier with the `wid` path parameter.
+
+
+        For administrator identification, pass the `if-match` header with the ETag as its value.'
+      operationId: listUserWorkspacePools
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Cursor
+        in: query
+        name: cursor
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          description: UserPools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPools'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List User Workspace Pools
+      tags:
+      - Pools
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools:
+    get:
+      description: 'Retrieve the list of all identity pools.
+
+
+        You can filter the response with the query parameters to narrow the pool list down.'
+      operationId: systemListPools
+      parameters:
+      - description: 'A search substring. Use the identity pool identifier or name as its value.
+
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for results in the response.
+
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+
+          AfterPoolID'
+        in: query
+        name: after_pool_id
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for the results in the response.
+
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+
+          identity pool isn''t included. Also, the response depends on the `sort` and `order` parameters, if any are
+
+          passed.
+
+
+          BeforePoolID'
+        in: query
+        name: before_pool_id
+        schema:
+          type: string
+      - description: 'Sort results returned in the response by `name` or `id`.
+
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'Set the order of results returned in the response. Input: `acs`, `desc`.
+
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'Limit the number of results returned in the response.
+
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Pools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pools'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List Identity Pools
+      tags:
+      - Pools
+    post:
+      description: 'Create an identity pool.
+
+
+        When no `metadata_schema_id` and/or `payload_schema_id` are provided in the request body, the identity pool
+
+        is created with the following defaults accordingly:
+
+
+        `default_metadata=metadata_v0`
+
+
+        `default_payload=user_v0`'
+      operationId: systemCreatePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/PoolResponseParams'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Create Identity Pool
+      tags:
+      - Pools
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pool'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/pools/{ipID}:
+    delete:
+      description: Delete an identity pool. For this, provide the required identity pool identifier in the path.
+      operationId: systemDeletePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: With idp
+        in: query
+        name: with_idp
+        schema:
+          type: boolean
+      responses:
+        '204':
+          description: ' Identity Pool Deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Delete Identity Pool
+      tags:
+      - Pools
+    get:
+      description: Gets pool.
+      operationId: systemGetPool
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PoolResponseParams'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Get Pool
+      tags:
+      - Pools
+    put:
+      description: Update the identity pool details. Pass the identifier of the required identity pool with the `ipID` path parameter.
+      operationId: systemUpdatePool
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/PoolResponseParams'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: Update Identity Pool
+      tags:
+      - Pools
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pool'
+    servers:
+    - url: https://localhost:8443/api/identity/default
+  /system/workspace/{wid}/pools:
+    get:
+      description: 'Retrieve the list of identity pools available for a workspace. Pass the required workspace identifier with the
+
+        `wid` path parameter.
+
+
+        You can filter the response with the query parameters to narrow the pool list down.'
+      operationId: getSystemWorkspaceByWidPools
+      parameters:
+      - description: 'A search substring. Use the identity pool identifier or name as its value.
+
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for results in the response.
+
+
+          With `after_pool_id`, the list you obtain starts from the subsequent identity pool after the specified one. Also,
+
+          the response depends on the `sort` and `order` parameters, if any are passed.
+
+
+          AfterPoolID'
+        in: query
+        name: after_pool_id
+        schema:
+          type: string
+      - description: 'An identity pool identifier.
+
+
+          Use it to navigate through the request pagination when the number of identity pools is greater than the
+
+          `limit` set for the results in the response.
+
+
+          With `before_pool_id`, the list you obtain comprises identity pools up to the specified one. The specified
+
+          identity pool isn''t included. Also, the response depends on the `sort` and `order` parameters, if any are
+
+          passed.
+
+
+          BeforePoolID'
+        in: query
+        name: before_pool_id
+        schema:
+          type: string
+      - description: 'Sort results returned in the response by `name` or `id`.
+
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'Set the order of results returned in the response. Input: `acs`, `desc`.
+
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'Limit the number of results returned in the response.
+
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: Pools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pools'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - identity
+      summary: List Identity Pools Per Workspace
+      tags:
+      - Pools
+      x-operation-id-source: normalized
+      x-operation-id-original: listWorkspacePools
+    servers:
+    - url: https://localhost:8443/api/identity/default
+components:
+  schemas:
+    OtpSettings:
+      properties:
+        activation:
+          $ref: '#/components/schemas/OtpConfig'
+        authentication:
+          $ref: '#/components/schemas/OtpConfig'
+        challenge:
+          $ref: '#/components/schemas/OtpConfig'
+        enroll_webauthn:
+          $ref: '#/components/schemas/OtpConfig'
+        pair_device:
+          $ref: '#/components/schemas/OtpConfig'
+        require_user_confirmation_before_send:
+          description: 'RequireUserConfirmationBeforeSend is a flow-level toggle (it does not
+
+            correspond to any of the per-purpose OtpConfig fields above) that affects
+
+            only the hosted web login UI. When true, the OTP is not auto-sent: the user
+
+            lands on the OTP send view and must click Continue to trigger delivery.
+
+            Applies to primary login (LoginFlow) and forced re-authentication / MFA
+
+            challenge (ForcedAuthnFlow). API-driven OTP triggers (the OTP send
+
+            endpoints) are unaffected.'
+          type: boolean
+        reset_password:
+          $ref: '#/components/schemas/OtpConfig'
+        reset_totp:
+          $ref: '#/components/schemas/OtpConfig'
+        verify_address:
+          $ref: '#/components/schemas/OtpConfig'
+      type: object
+    WebAuthnSettings:
+      properties:
+        require_user_interaction_before_prompt:
+          description: 'RequireUserInteractionBeforePrompt, when true, stops the hosted web login,
+
+            activation, and self-registration UIs from auto-initiating the browser passkey
+
+            prompt on page load; the user must click Continue. Default false preserves
+
+            auto-prompt behavior. API-driven WebAuthn flows are unaffected.'
+          type: boolean
+        rp_id:
+          type: string
+        rp_origins:
+          items:
+            type: string
+          type: array
+      type: object
+    PoolLimits:
+      description: All values are clamped to the range [1, 100] with sensible defaults.
+      properties:
+        max_addresses:
+          format: int64
+          type: integer
+        max_codes:
+          format: int64
+          type: integer
+        max_credentials:
+          format: int64
+          type: integer
+        max_identifiers:
+          format: int64
+          type: integer
+        webauthn_credentials_capacity:
+          format: int64
+          type: integer
+      title: PoolLimits defines limits for user sub-entries within a pool.
+      type: object
+    AuthenticationMechanisms:
+      items:
+        enum:
+        - totp
+        - password
+        - otp
+        - email_otp
+        - sms_otp
+        - voice_otp
+        - webauthn
+        - usernameless_webauthn
+        - push
+        - symbol
+        - qr_code
+        type: string
+      type: array
+    SCIMSettings:
+      properties:
+        inboundInputMapping:
+          items:
+            $ref: '#/components/schemas/FieldMapping'
+          type: array
+      type: object
+    PoolResponse:
+      properties:
+        activation_settings:
+          $ref: '#/components/schemas/ActivationSettings'
+        allow_skip_2fa:
+          type: boolean
+        authentication_mechanisms:
+          $ref: '#/components/schemas/AuthenticationMechanisms'
+        badge_color:
+          type: string
+        business_metadata_schema_id:
+          format: schemaID
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type: string
+        id:
+          format: poolID
+          type: string
+        identifier_case_insensitive:
+          type: boolean
+        metadata:
+          additionalProperties:
+            type: object
+          type: object
+        metadata_schema_id:
+          format: schemaID
+          type: string
+        mfa_session_ttl:
+          format: duration
+          type: string
+        name:
+          type: string
+        number_of_jit_users:
+          format: int64
+          type: integer
+        number_of_standard_users:
+          format: int64
+          type: integer
+        number_of_users:
+          format: int64
+          type: integer
+        otp_settings:
+          $ref: '#/components/schemas/OtpSettings'
+        password_policy:
+          $ref: '#/components/schemas/PasswordPolicy'
+        password_settings:
+          $ref: '#/components/schemas/PasswordSettings'
+        payload_schema_id:
+          format: schemaID
+          type: string
+        pool_limits:
+          $ref: '#/components/schemas/PoolLimits'
+        preferred_authentication_mechanism:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          example: password
+          type: string
+        public_registration_allowed:
+          type: boolean
+        reset_credentials_settings:
+          $ref: '#/components/schemas/ResetCredentialsSettings'
+        scim_settings:
+          $ref: '#/components/schemas/SCIMSettings'
+        second_factor_authentication_mechanisms:
+          $ref: '#/components/schemas/AuthenticationMechanisms'
+        second_factor_preferred_authentication_mechanism:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          example: password
+          type: string
+        second_factor_threshold:
+          description: The minimal risk engine loa score value to skip the 2FA
+          format: double
+          type: number
+        system:
+          type: boolean
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        totp_settings:
+          $ref: '#/components/schemas/TotpSettings'
+        webauthn_settings:
+          $ref: '#/components/schemas/WebAuthnSettings'
+        workspace_id:
+          format: serverID
+          type: string
+      required:
+      - tenant_id
+      - name
+      type: object
+    TotpSettings:
+      properties:
+        issuer:
+          type: string
+      type: object
+    OtpConfig:
+      properties:
+        length:
+          format: int64
+          type: integer
+        ttl:
+          format: duration
+          type: string
+      type: object
+    PasswordPolicy:
+      properties:
+        capital_letters:
+          format: uint64
+          type: integer
+        digits:
+          format: uint64
+          type: integer
+        lowercase_letters:
+          format: uint64
+          type: integer
+        min_length:
+          format: uint64
+          type: integer
+        not_used_since:
+          format: uint64
+          type: integer
+        special_characters:
+          format: uint64
+          type: integer
+        strength:
+          enum:
+          - any
+          - weak
+          - fair
+          - strong
+          - very_strong
+          type: string
+      type: object
+    PasswordSettings:
+      properties:
+        expires_after:
+          format: duration
+          type: string
+        hashing_method:
+          enum:
+          - bcrypt
+          - pbkdf2
+          - argon2
+          - sha
+          type: string
+      type: object
+    Cursor:
+      type: string
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    FieldMapping:
+      properties:
+        internal:
+          type: string
+        scim:
+          type: string
+      type: object
+    Pools:
+      properties:
+        pools:
+          items:
+            $ref: '#/components/schemas/PoolResponse'
+          type: array
+      type: object
+    Pool:
+      properties:
+        activation_settings:
+          $ref: '#/components/schemas/ActivationSettings'
+        allow_skip_2fa:
+          type: boolean
+        authentication_mechanisms:
+          $ref: '#/components/schemas/AuthenticationMechanisms'
+        badge_color:
+          type: string
+        business_metadata_schema_id:
+          format: schemaID
+          type: string
+        deleted:
+          type: boolean
+        description:
+          type: string
+        id:
+          format: poolID
+          type: string
+        identifier_case_insensitive:
+          type: boolean
+        metadata:
+          additionalProperties:
+            type: object
+          type: object
+        metadata_schema_id:
+          format: schemaID
+          type: string
+        mfa_session_ttl:
+          format: duration
+          type: string
+        name:
+          type: string
+        otp_settings:
+          $ref: '#/components/schemas/OtpSettings'
+        password_policy:
+          $ref: '#/components/schemas/PasswordPolicy'
+        password_settings:
+          $ref: '#/components/schemas/PasswordSettings'
+        payload_schema_id:
+          format: schemaID
+          type: string
+        pool_limits:
+          $ref: '#/components/schemas/PoolLimits'
+        preferred_authentication_mechanism:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          example: password
+          type: string
+        public_registration_allowed:
+          type: boolean
+        reset_credentials_settings:
+          $ref: '#/components/schemas/ResetCredentialsSettings'
+        scim_settings:
+          $ref: '#/components/schemas/SCIMSettings'
+        second_factor_authentication_mechanisms:
+          $ref: '#/components/schemas/AuthenticationMechanisms'
+        second_factor_preferred_authentication_mechanism:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          example: password
+          type: string
+        second_factor_threshold:
+          description: The minimal risk engine loa score value to skip the 2FA
+          format: double
+          type: number
+        system:
+          type: boolean
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        totp_settings:
+          $ref: '#/components/schemas/TotpSettings'
+        webauthn_settings:
+          $ref: '#/components/schemas/WebAuthnSettings'
+        workspace_id:
+          format: serverID
+          type: string
+      required:
+      - tenant_id
+      - name
+      type: object
+    UserPools:
+      properties:
+        cursor:
+          $ref: '#/components/schemas/Cursor'
+        pools:
+          items:
+            $ref: '#/components/schemas/PoolResponse'
+          type: array
+      type: object
+    ActivationSettings:
+      properties:
+        always_allow_preferred_method_setup:
+          type: boolean
+      type: object
+    ResetCredentialsSettings:
+      properties:
+        do_not_allow_users_to_self_reset_credentials:
+          type: boolean
+        reset_password_older_than:
+          format: date-time
+          type: string
+        reset_totp_older_than:
+          format: date-time
+          type: string
+        reset_webauthn_older_than:
+          format: date-time
+          type: string
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    PoolResponseParams:
+      description: Identity Pool
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PoolResponse'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-identity-openapi.yml
+- secureauth-identitysystem-openapi.yml

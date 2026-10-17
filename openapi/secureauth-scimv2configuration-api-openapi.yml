@@ -1,0 +1,656 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Identity System API
+
+
+    It is important for clients to note that system APIs return the `ETag` response header.'
+  title: SecureAuth SCI Mv2 Configuration API
+  version: latest
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: SCIMv2Configuration
+paths:
+  /system/pools/{ipID}/scim/v2/ResourceTypes:
+    get:
+      description: Returns the supported SCIM Resource Types for the specified identity pool.
+      operationId: systemSCIMv2GetResourceTypes
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceTypesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: List SCIM Resource Types
+      tags:
+      - SCIMv2Configuration
+  /system/pools/{ipID}/scim/v2/ResourceTypes/{resourceID}:
+    get:
+      description: Returns requested SCIM Resource Type for the specified identity pool.
+      operationId: systemSCIMv2GetResourceType
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: resourceID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ResourceTypeResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Get SCIM Resource Type
+      tags:
+      - SCIMv2Configuration
+  /system/pools/{ipID}/scim/v2/Schemas:
+    get:
+      description: Returns the supported SCIM Schemas for the specified identity pool.
+      operationId: systemSCIMv2GetSystemGetSCIMv2Schemas
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SCIMv2SchemasResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: List SCIM Schemas
+      tags:
+      - SCIMv2Configuration
+  /system/pools/{ipID}/scim/v2/Schemas/{schemaID}:
+    get:
+      description: Returns requested SCIM Schema for the specified identity pool.
+      operationId: systemSCIMv2GetSystemGetSCIMv2Schema
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: schemaID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/SCIMv2SchemaResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Get SCIM Schemas
+      tags:
+      - SCIMv2Configuration
+  /system/pools/{ipID}/scim/v2/ServiceProviderConfig:
+    get:
+      description: Returns the SCIM Service Provider Configuration for the specified identity pool.
+      operationId: systemSCIMv2GetServiceProviderConfig
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServiceProviderConfigResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '412':
+          $ref: '#/components/responses/preconditionFailedHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - system:
+        - scim_v2
+      summary: Get SCIM Service Provider Configuration
+      tags:
+      - SCIMv2Configuration
+components:
+  schemas:
+    ResourceType:
+      properties:
+        description:
+          type: string
+        endpoint:
+          type: string
+        id:
+          type: string
+        meta:
+          $ref: '#/components/schemas/SCIMv2Meta'
+        name:
+          type: string
+        schema:
+          type: string
+        schemaExtensions:
+          items:
+            $ref: '#/components/schemas/SchemaExtension'
+          type: array
+        schemas:
+          items:
+            type: string
+          type: array
+      type: object
+    FilterSupport:
+      properties:
+        maxResults:
+          format: int64
+          type: integer
+        supported:
+          type: boolean
+      type: object
+    SupportedFeature:
+      properties:
+        supported:
+          type: boolean
+      type: object
+    SCIMv2Schemas:
+      properties:
+        Resources:
+          items:
+            $ref: '#/components/schemas/SCIMv2Schema'
+          type: array
+        itemsPerPage:
+          format: int64
+          type: integer
+        schemas:
+          items:
+            type: string
+          type: array
+        startIndex:
+          format: int64
+          type: integer
+        totalResults:
+          format: int64
+          type: integer
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    SchemaExtension:
+      properties:
+        required:
+          type: boolean
+        schema:
+          type: string
+      type: object
+    SCIMv2AttributeType:
+      type: string
+    ResourceTypes:
+      properties:
+        Resources:
+          items:
+            $ref: '#/components/schemas/ResourceType'
+          type: array
+        itemsPerPage:
+          format: int64
+          type: integer
+        schemas:
+          items:
+            type: string
+          type: array
+        startIndex:
+          format: int64
+          type: integer
+        totalResults:
+          format: int64
+          type: integer
+      type: object
+    Attribute:
+      properties:
+        canonicalValues:
+          items:
+            type: string
+          type: array
+        caseExact:
+          type: boolean
+        description:
+          type: string
+        multiValued:
+          type: boolean
+        mutability:
+          type: string
+        name:
+          type: string
+        referenceTypes:
+          items:
+            type: string
+          type: array
+        required:
+          type: boolean
+        returned:
+          type: string
+        subAttributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        type:
+          $ref: '#/components/schemas/SCIMv2AttributeType'
+        uniqueness:
+          type: string
+      type: object
+    SCIMv2Schema:
+      properties:
+        attributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        description:
+          type: string
+        id:
+          type: string
+        meta:
+          $ref: '#/components/schemas/SCIMv2Meta'
+        name:
+          type: string
+        schemas:
+          items:
+            type: string
+          type: array
+      type: object
+    ServiceProviderConfig:
+      properties:
+        authenticationSchemes:
+          items:
+            $ref: '#/components/schemas/AuthenticationScheme'
+          type: array
+        bulk:
+          $ref: '#/components/schemas/BulkSupport'
+        changePassword:
+          $ref: '#/components/schemas/SupportedFeature'
+        documentationUri:
+          type: string
+        etag:
+          $ref: '#/components/schemas/SupportedFeature'
+        filter:
+          $ref: '#/components/schemas/FilterSupport'
+        meta:
+          $ref: '#/components/schemas/SCIMv2Meta'
+        patch:
+          $ref: '#/components/schemas/SupportedFeature'
+        schemas:
+          items:
+            type: string
+          type: array
+        sort:
+          $ref: '#/components/schemas/SupportedFeature'
+        xmlDataFormat:
+          $ref: '#/components/schemas/SupportedFeature'
+      type: object
+    BulkSupport:
+      properties:
+        maxOperations:
+          format: int64
+          type: integer
+        maxPayloadSize:
+          format: int64
+          type: integer
+        supported:
+          type: boolean
+      type: object
+    AuthenticationScheme:
+      properties:
+        description:
+          type: string
+        documentationUri:
+          type: string
+        name:
+          type: string
+        primary:
+          type: boolean
+        specUri:
+          type: string
+        type:
+          type: string
+      type: object
+    SCIMv2Meta:
+      properties:
+        created:
+          type: string
+        lastModified:
+          type: string
+        location:
+          type: string
+        resourceType:
+          type: string
+        version:
+          type: string
+      type: object
+  responses:
+    ResourceTypesResponse:
+      description: SCIMv2 ResourceTypes
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceTypes'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SCIMv2SchemaResponse:
+      description: SCIMv2 SCIMv2SchemaResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2Schema'
+    preconditionFailedHTTPError:
+      description: Precondition failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    SCIMv2SchemasResponse:
+      description: SCIMv2 SCIMv2SchemasResponse
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SCIMv2Schemas'
+    ResourceTypeResponse:
+      description: SCIMv2 ResourceType
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResourceType'
+    ServiceProviderConfigResponse:
+      description: SCIMv2 ServiceProviderConfig
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServiceProviderConfig'
+  securitySchemes:
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            identity: identity
+            identity_self_registration: identity_self_registration
+            manage_configuration: manage_configuration
+            scim_v2: scim_v2
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token

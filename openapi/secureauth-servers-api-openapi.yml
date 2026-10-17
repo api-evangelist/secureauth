@@ -1,0 +1,5691 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Servers API
+  version: latest
+  description: 'Operations tagged servers across 3 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-developer-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/developer/default/developer
+- url: https://localhost:8443/api/system/default
+tags:
+- name: Servers
+paths:
+  /servers:
+    get:
+      description: List authorization servers.
+      operationId: listAuthorizationServers
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: comma separated server types that are to be filtered out
+        in: query
+        name: server_types
+        schema:
+          type: string
+          default: admin,developer,system,regular,organization
+      - description: 'Optional search phrase: server id OR server name substring (case insensitive)
+
+          SearchPhrase'
+        in: query
+        name: search_phrase
+        schema:
+          type: string
+      - description: 'optional list servers after given id
+
+          AfterServerID'
+        in: query
+        name: after_server_id
+        schema:
+          type: string
+      - description: 'optional list servers before given id
+
+          BeforeServerID'
+        in: query
+        name: before_server_id
+        schema:
+          type: string
+      - description: 'optional sort servers by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order servers by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/Servers'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List authorization servers
+      tags:
+      - Servers
+    post:
+      description: 'Multiple authorization servers with unique id can be created within a tenant.
+
+        If id and secret are not provided, will be generated.
+
+        Secret if provided must have at least 32 characters.
+
+
+        You can set what grant types will be supported by authorization server. The defaults are:
+
+        `{"grant_types": ["authorization_code", "implicit", "client_credentials", "refresh_token"]}`
+
+
+        If jwks keys are not provided explicitly, will be generated based on provided `key_type` algorithm (rsa by default).
+
+
+        TTLs for tokens and authorization code can be customized. The defaults are:
+
+
+        `authorization_code_ttl` - 10 minutes
+
+        `access_token_ttl` - 1 hour
+
+        `id_token_ttl` - 1 hour
+
+        `refresh_token_ttl` - 30 days
+
+
+        If you want to enable dynamic client registration set `{"enable_dynamic_client_registration": true}`.
+
+
+        If you want to create FAPI read write compliant server set: `{"profiles"": ["fapi_rw"]}`.
+
+
+        If you want to enforce PKCE set `{"enforce_pkce": true}`.'
+      operationId: createAuthorizationServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: With demo client
+        in: query
+        name: with_demo_client
+        schema:
+          type: boolean
+      - description: With identity pool
+        in: query
+        name: with_identity_pool
+        schema:
+          type: boolean
+      - description: With identity pool idp
+        in: query
+        name: with_identity_pool_idp
+        schema:
+          type: boolean
+      responses:
+        '201':
+          $ref: '#/components/responses/Server'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create authorization server
+      tags:
+      - Servers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Server'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers-bindings:
+    get:
+      description: List servers bindings.
+      operationId: listServersBindings
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServersBindings'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List servers bindings
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}:
+    delete:
+      description: Delete authorization server.
+      operationId: deleteAuthorizationServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' Authorization server has been deleted'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete authorization server
+      tags:
+      - Servers
+    get:
+      description: Get authorization server.
+      operationId: getAuthorizationServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/Server'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get authorization server
+      tags:
+      - Servers
+    put:
+      description: Update authorization server.
+      operationId: updateAuthorizationServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/Server'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update authorization server
+      tags:
+      - Servers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Server'
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/bind-theme/{themeID}:
+    post:
+      description: Binds the workspace (authentication server) to the custom-branding theme.
+      operationId: bindServerTheme
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Theme ID
+        in: path
+        name: themeID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerToTheme'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Bind server to Theme
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/bind/{rid}:
+    post:
+      description: Bind server.
+      operationId: bindServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Dependent server id
+        in: path
+        name: rid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerToServer'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Bind server
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/ciba-authentication-service:
+    get:
+      description: This API returns details of CIBA authentication service.
+      operationId: getCIBAAuthenticationService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/CIBAAuthenticationServiceResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get CIBA authentication service
+      tags:
+      - Servers
+    put:
+      description: 'If you want to enable CIBA for the workspace, you need to provide url to external service that implements
+
+        rest api specified by ACP.'
+      operationId: setCIBAAuthenticationService
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/CIBAAuthenticationServiceResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set CIBA authentication service
+      tags:
+      - Servers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CIBAAuthenticationService'
+        description: CIBA authentication service
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/revokeRotatedSecrets:
+    post:
+      description: Revoke all rotated server's secrets.
+      operationId: revokeRotatedServerSecrets
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' all server''s rotated secrets has been revoked'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Revoke rotated secrets
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/rotateSecret:
+    post:
+      description: Generate a new server secret and move old secret to rotated secrets list.
+      operationId: rotateServerSecret
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' secret has been rotated'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Rotate server's secret
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/server-consent:
+    get:
+      description: Get server consent.
+      operationId: getServerConsent
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerConsentResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get server consent
+      tags:
+      - Servers
+    put:
+      description: Set server consent. For custom server consent a client in system server is created automatically.
+      operationId: setServerConsent
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          description: ServerConsent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerConsent'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Set server consent
+      tags:
+      - Servers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ServerConsent'
+        description: Server consent
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/theme:
+    get:
+      description: Returns the server-to-theme mapping, if any.
+      operationId: getServerTheme
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerToTheme'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get server theme
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/unbind-theme:
+    post:
+      description: Deletes the server's current binding to a customer-branding theme.
+      operationId: unbindServerTheme
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerToTheme'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Unbind server theme
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{wid}/unbind/{rid}:
+    delete:
+      description: Unbind server.
+      operationId: unbindServer
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: Dependent server id
+        in: path
+        name: rid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/ServerToServer'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Unbind server
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/admin/default
+  /servers/{rid}:
+    get:
+      description: Returns authorization server details with list of scopes.
+      operationId: getServerForDeveloper
+      parameters:
+      - description: Regular server id
+        in: path
+        name: rid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/GetServerWithScopesDeveloperAPIResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - developer: []
+      summary: Get authorization server
+      tags:
+      - Servers
+    servers:
+    - url: https://localhost:8443/api/developer/default/developer
+components:
+  schemas:
+    Attr:
+      properties:
+        Space:
+          type: string
+        Value:
+          type: string
+      title: An Attr represents a key-value attribute within an XML element.
+      type: object
+    DeprecatedOBBRConfiguration:
+      properties:
+        industry:
+          $ref: '#/components/schemas/DeprecatedOBBRIndustry'
+      type: object
+    CookiesConfiguration:
+      properties:
+        same_site:
+          $ref: '#/components/schemas/SameSite'
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    AuthnAuthorityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.5
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AuthnQueryServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AuthnAuthorityDescriptor represents the SAML AuthnAuthorityDescriptor object.
+      type: object
+    ServiceProviderDiscoveryMode:
+      type: string
+    Element:
+      properties:
+        Attr:
+          items:
+            $ref: '#/components/schemas/Attr'
+          type: array
+        Child:
+          items:
+            $ref: '#/components/schemas/Token'
+          type: array
+        Space:
+          type: string
+      title: An Element represents an XML element, its attributes, and its child tokens.
+      type: object
+    RegistryReference:
+      description: Used for registry references. In snake case to match IETF RFC 7591 naming formats
+      properties:
+        registered_entity_id:
+          description: An identifier of the intermediary that can be looked up from a legal identity registry source.
+          type: string
+        registered_entity_name:
+          description: The legal company name for the intermediary.
+          type: string
+        registry:
+          type: string
+      type: object
+    DynamicClientRegistrationSettings:
+      properties:
+        cert_bound_registration_token:
+          description: Binds registration token to the certificate used to register client
+          type: boolean
+        client_id_metadata_document:
+          default: false
+          description: 'Accepts an https client_id that points at the client''s own metadata document
+
+
+            Requires the `client_id_metadata_document` tenant feature.'
+          type: boolean
+        default_scopes:
+          description: 'An optional list of scopes that are always included in client registrations, merged with any scopes requested by the client
+
+
+            If not provided, the following default scopes are granted for the client application: openid, address, email, phone, profile.'
+          items:
+            type: string
+          type: array
+        disable_registration_access_token_expiry:
+          default: false
+          description: 'Disable registration access token expiry
+
+
+            If is flag is on, the registration access token will never expire.'
+          type: boolean
+        disable_registration_token_management:
+          description: 'Disables client management using registration token
+
+
+            If disabled, client can manage itself using access token issued by client credentials flow.'
+          type: boolean
+        disable_registration_token_rotation:
+          description: Disables registration token rotation
+          type: boolean
+        enabled:
+          description: Enables dynamic client registration
+          type: boolean
+        initial_access_token:
+          $ref: '#/components/schemas/InitialAccessTokenSettings'
+        payload:
+          $ref: '#/components/schemas/PayloadSettings'
+        registration_access_token_ttl:
+          default: 720h0m0s
+          description: 'Registration access token TTL
+
+
+            Time to live of the registration access token (default 30 days).
+
+            The minimum value is 24 hours.'
+          example: 720h0m0s
+          format: duration
+          type: string
+        software_statement:
+          $ref: '#/components/schemas/SoftwareStatementSettings'
+      type: object
+    DeviceAuthorizationConfiguration:
+      properties:
+        request_ttl:
+          description: 'Custom device authorization request TTL
+
+            If not provided, TTL is set to 30 minutes'
+          format: duration
+          type: string
+        user_code_character_set:
+          $ref: '#/components/schemas/UserCodeCharacterSet'
+        user_code_length:
+          description: user code length
+          format: int64
+          type: integer
+      type: object
+    Intermediary:
+      properties:
+        contacts:
+          description: Array of strings representing ways to contact people responsible for this intermediary
+          items:
+            type: string
+          type: array
+        description:
+          description: A short description of the intermediary
+          type: string
+        logo_uri:
+          description: A URL string that references a logo for this intermediary
+          type: string
+        name:
+          description: Name of intermediary party
+          type: string
+        registry_references:
+          description: Registry references for this intermediary
+          items:
+            $ref: '#/components/schemas/RegistryReference'
+          type: array
+        uri:
+          description: A URL string of a web page providing information about the intermediary
+          type: string
+      type: object
+    EntityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2
+      properties:
+        AdditionalMetadataLocations:
+          items:
+            type: string
+          type: array
+        AffiliationDescriptor:
+          $ref: '#/components/schemas/AffiliationDescriptor'
+        AttributeAuthorityDescriptors:
+          items:
+            $ref: '#/components/schemas/AttributeAuthorityDescriptor'
+          type: array
+        AuthnAuthorityDescriptors:
+          items:
+            $ref: '#/components/schemas/AuthnAuthorityDescriptor'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPerson:
+          $ref: '#/components/schemas/ContactPerson'
+        EntityID:
+          type: string
+        ID:
+          type: string
+        IDPSSODescriptors:
+          items:
+            $ref: '#/components/schemas/IDPSSODescriptor'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        PDPDescriptors:
+          items:
+            $ref: '#/components/schemas/PDPDescriptor'
+          type: array
+        RoleDescriptors:
+          items:
+            $ref: '#/components/schemas/RoleDescriptor'
+          type: array
+        SPSSODescriptors:
+          items:
+            $ref: '#/components/schemas/SPSSODescriptor'
+          type: array
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: EntityDescriptor represents the SAML EntityDescriptor object.
+      type: object
+    ClientIDJAGTarget:
+      properties:
+        aud_tenant:
+          description: Sets the ID-JAG aud_tenant claim for this audience. Multi-tenant resource servers require it.
+          type: string
+        audience:
+          description: Target authorization server issuer URL.
+          type: string
+        client_id:
+          description: Overrides the ID-JAG client_id claim for this audience. Empty uses the requesting client's ID.
+          type: string
+      required:
+      - audience
+      type: object
+    EncryptionMethod:
+      description: EncryptionMethod represents the XMLSEC object of the same name
+      properties:
+        Algorithm:
+          type: string
+      type: object
+    Attribute:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.7.3.1
+      properties:
+        FriendlyName:
+          type: string
+        Name:
+          type: string
+        NameFormat:
+          type: string
+        Values:
+          items:
+            $ref: '#/components/schemas/AttributeValue'
+          type: array
+      title: Attribute represents the SAML element Attribute.
+      type: object
+    AttributeConsumingService:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.4.1
+      properties:
+        Index:
+          format: int64
+          type: integer
+        IsDefault:
+          type: boolean
+        RequestedAttributes:
+          items:
+            $ref: '#/components/schemas/RequestedAttribute'
+          type: array
+        ServiceDescriptions:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        ServiceNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+      title: AttributeConsumingService represents the SAML AttributeConsumingService object.
+      type: object
+    LegalEntity:
+      properties:
+        party:
+          $ref: '#/components/schemas/FDXParty'
+      type: object
+    ResponseTypes:
+      description: 'The array may consist of the following arguments:
+
+
+        `code` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an authorization code
+
+
+        `code token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token, an access token type, and an authorization code
+
+
+        `id_token token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token, an access token type, and an ID token
+
+
+        `code id_token token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an authorization code, an ID token, an access token, and an access token
+
+        type.
+
+
+        `token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token and its type. This argument is used for the implicit grant
+
+        flow, but is not recommended. Instead, you should use either the authorization code grant
+
+        flow with PKCE or client authentication set to `none` and with the use of PKCE.
+
+
+        example: ["token", "id_token", "code"]
+
+        default: ["code"]'
+      items:
+        enum:
+        - token
+        - id_token
+        - code
+        - code id_token
+        - token id_token
+        - token code
+        - token id_token code
+        - none
+        type: string
+      title: An array of allowed response types
+      type: array
+    ClientPrivacy:
+      properties:
+        scopes:
+          additionalProperties:
+            $ref: '#/components/schemas/ScopePrivacyInformation'
+          description: optional privacy information mapping for scopes
+          type: object
+      type: object
+    CDRArrangementsAutoRemoval:
+      properties:
+        enabled:
+          description: enable auto removal
+          type: boolean
+        remove_after_days:
+          description: Period in days after which arrangements in Expired status will be removed
+          format: int64
+          type: integer
+      type: object
+    SSOConfiguration:
+      properties:
+        domain:
+          description: Domain for the SSO cookie
+          type: string
+        enabled:
+          description: If enabled, single-sign-on (SSO) is active for all IDPs in this workspace.
+          example: false
+          type: boolean
+        loa_threshold:
+          $ref: '#/components/schemas/RiskLOA'
+        logout_redirect_domains:
+          description: Additional domains permitted in the logout redirect_to parameter
+          items:
+            type: string
+          type: array
+        max_age:
+          description: Active TTL - Active SSO sessions expire after MaxAge nanoseconds.
+          format: duration
+          type: string
+        max_idle:
+          description: Idle TTL - Idle SSO sessions expire after MaxIdle nanoseconds.
+          format: duration
+          type: string
+        post_logout_url:
+          description: Admin-configured target URL after logout, if redirect_to omitted or invalid
+          type: string
+      type: object
+    CDRRegisterURL:
+      type: string
+    Styling:
+      properties:
+        colors:
+          properties:
+            background:
+              type: string
+            header:
+              type: string
+            primary:
+              type: string
+          type: object
+        font_url:
+          type: string
+        logo_size:
+          type: string
+        logo_url:
+          type: string
+      type: object
+    ServersBindingsResponse:
+      properties:
+        bindings:
+          items:
+            $ref: '#/components/schemas/ServerBindingResponse'
+          type: array
+      type: object
+    PIICategory:
+      properties:
+        name:
+          description: name
+          example: HIPAA
+          type: string
+      type: object
+    ContactPerson:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2.2
+      properties:
+        Company:
+          type: string
+        ContactType:
+          type: string
+        EmailAddresses:
+          items:
+            type: string
+          type: array
+        GivenName:
+          type: string
+        SurName:
+          type: string
+        TelephoneNumbers:
+          items:
+            type: string
+          type: array
+      title: ContactPerson represents the SAML element ContactPerson.
+      type: object
+    IdentityAssuranceConfiguration:
+      properties:
+        attachments:
+          description: JSON array containing all attachment types supported by the OP.  REQUIRED when OP supports attachments. Possible values are external and embedded.
+          items:
+            type: string
+          type: array
+        block_verified_claims_via_userinfo:
+          description: If enabled, verified claims request via userinfo will be blocked
+          type: boolean
+        digest_algorithms:
+          description: 'REQUIRED when OP supports external attachments. JSON array containing all supported digest algorithms which can be used as alg property within
+
+            the digest object of external attachments. If the OP supports external attachments, at least the algorithm sha-256 MUST be supported by the OP as well.'
+          items:
+            type: string
+          type: array
+        documents:
+          description: JSON array containing all identity document types utilized by the OP for identity verification. REQUIRED when evidence_supported contains "document".
+          items:
+            type: string
+          type: array
+        documents_check_methods:
+          description: JSON array containing the check methods the OP supports for evidences of type "document".
+          items:
+            type: string
+          type: array
+        documents_methods:
+          description: JSON array containing the methods the OP supports for evidences of type "document".
+          items:
+            type: string
+          type: array
+        electronic_records:
+          description: JSON array containing all electronic record types the OP supports. REQUIRED when evidence_supported contains "electronic_record".
+          items:
+            type: string
+          type: array
+        enable_verified_claims:
+          description: Boolean value indicating support for verified_claims, i.e., the OpenID Connect for Identity Assurance extension.
+          type: boolean
+        evidence:
+          description: JSON array containing all types of identity evidence the OP uses.
+          items:
+            type: string
+          type: array
+        trust_frameworks:
+          description: JSON array containing all supported trust frameworks.
+          items:
+            type: string
+          type: array
+      type: object
+    AuthorizationDetailType:
+      type: string
+    TrustAnchorConfiguration:
+      properties:
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: URI of the JWKs of the trusted party responsible for signing the Software Statement
+          type: string
+      type: object
+    IDPDiscovery:
+      properties:
+        discovery_mode:
+          enum:
+          - domain_matching
+          - script_execution
+          type: string
+        enabled:
+          description: 'If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+      type: object
+    WorkforceProvisioningStatus:
+      type: string
+    ServerInfo:
+      properties:
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        logo_uri:
+          description: Logo URI
+          type: string
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+      type: object
+    X509Certificate:
+      description: X509Certificate represents the XMLSEC object of the same name
+      properties:
+        Data:
+          type: string
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    SupportedJSONSchema:
+      properties:
+        additionalProperties:
+          type: boolean
+        allOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        anyOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        const:
+          type: string
+        contains:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        dependentRequired:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        dependentSchemas:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        description:
+          type: string
+        else:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        enum:
+          items:
+            type: string
+          type: array
+        exclusiveMaximum:
+          format: int64
+          type: integer
+        exclusiveMinimum:
+          format: int64
+          type: integer
+        hidden:
+          type: boolean
+        if:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        items:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        maxContains:
+          format: int64
+          type: integer
+        maxItems:
+          description: arrays
+          format: int64
+          type: integer
+        maxLength:
+          description: strings
+          format: int64
+          type: integer
+        maxProperties:
+          description: objects
+          format: int64
+          type: integer
+        maximum:
+          format: int64
+          type: integer
+        minContains:
+          format: int64
+          type: integer
+        minItems:
+          format: int64
+          type: integer
+        minLength:
+          format: int64
+          type: integer
+        minProperties:
+          format: int64
+          type: integer
+        minimum:
+          format: int64
+          type: integer
+        multipleOf:
+          description: numeric
+          format: int64
+          type: integer
+        not:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        oneOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        pattern:
+          type: string
+        patternProperties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        propertyNames:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        required:
+          items:
+            type: string
+          type: array
+        then:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        title:
+          type: string
+        type:
+          description: any
+          type: string
+        uniqueItems:
+          type: boolean
+      type: object
+    PDPDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.6
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AuthzServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: PDPDescriptor represents the SAML PDPDescriptor object.
+      type: object
+    ServerMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          description: metadata payload
+          type: object
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+      type: object
+    FDXMetadata:
+      properties:
+        contacts:
+          description: Contact information of individuals responsible for the Data Recipient application.
+          items:
+            type: string
+          type: array
+        duration_period:
+          default: 365
+          description: The time window the end-user grants the consent for. Used when `duration_type`=`TIME_BOUND`.
+          format: int64
+          type: integer
+        duration_type:
+          default:
+          - ONE_TIME
+          - PERSISTENT
+          - TIME_BOUND
+          description: 'The rule of consent granting by the end-user to indicate whether they must take action
+
+            to revoke access or the consent will be revoked automatically.
+
+
+            One of: `ONE_TIME`, `PERSISTENT`, `TIME_BOUND`'
+          example: ONE_TIME
+          items:
+            $ref: '#/components/schemas/DurationType'
+          type: array
+        intermediaries:
+          description: An array of the intermediaries for this Data Recipient.
+          items:
+            $ref: '#/components/schemas/Intermediary'
+          type: array
+        lookback_period:
+          default: 365
+          description: 'The maximum number of days allowed for Data Recipient consumers to obtain in transaction history, effective from
+
+            the current date'
+          format: int64
+          type: integer
+        registry_references:
+          description: 'The list of external registries where the Data Recipient is registered. It comprises the following details:
+
+            name, identifier, and the `registry` string with any additional info.'
+          items:
+            $ref: '#/components/schemas/RegistryReference'
+          type: array
+        status:
+          $ref: '#/components/schemas/FDXClientStatus'
+      type: object
+    KeyInfo:
+      description: KeyInfo represents the XMLSEC object of the same name
+      properties:
+        X509Data:
+          $ref: '#/components/schemas/X509Data'
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    ServerToServer:
+      properties:
+        dependent:
+          description: dependent server id
+          example: default
+          format: serverID
+          type: string
+        server_id:
+          description: authorization server id
+          example: developer
+          format: serverID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    ServerPreferences:
+      properties:
+        display_identity_pool_idp:
+          description: display identity pool IDP
+          type: boolean
+        display_organization_idp:
+          description: display organization IDP
+          type: boolean
+      type: object
+    AgentCapability:
+      type: string
+    ServerJWKs:
+      properties:
+        keys:
+          example: []
+          items:
+            $ref: '#/components/schemas/ServerJWK'
+          type: array
+        next_encryption_key:
+          $ref: '#/components/schemas/ServerJWK'
+        next_signing_key:
+          $ref: '#/components/schemas/ServerJWK'
+        revoked_encryption_keys:
+          description: 'An array of revoked encryption keys
+
+
+            Revoked encryption keys cannot be used to encrypt payloads between servers and client applications'
+          items:
+            $ref: '#/components/schemas/ServerJWK'
+          type: array
+        revoked_keys_limit:
+          description: The maximum number of revoked keys that ACP stores.
+          format: int64
+          type: integer
+        revoked_signing_keys:
+          description: 'An array of revoked sigining keys
+
+
+            Revoked signing keys cannot be used to sign any tokens.
+
+            Any attempt to authenticate using a token signed with a revoked signing key results
+
+            in failed authentication.'
+          items:
+            $ref: '#/components/schemas/ServerJWK'
+          type: array
+        rotated_keys_limit:
+          description: The maximum number of rotated keys that ACP stores.
+          format: int64
+          type: integer
+      type: object
+    SAMLAttribute:
+      properties:
+        name:
+          description: claim name
+          type: string
+        saml_name:
+          example: email
+          type: string
+        saml_name_format:
+          example: urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          type: string
+        source_path:
+          description: path to the attribute in source type context where claim value should be picked from
+          type: string
+        source_type:
+          $ref: '#/components/schemas/ClaimSourceType'
+      type: object
+    RequestedAttribute:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.4.2
+      properties:
+        FriendlyName:
+          type: string
+        IsRequired:
+          type: boolean
+        Name:
+          type: string
+        NameFormat:
+          type: string
+        Values:
+          items:
+            $ref: '#/components/schemas/AttributeValue'
+          type: array
+      title: RequestedAttribute represents the SAML RequestedAttribute object.
+      type: object
+    CIBAAuthenticationService:
+      properties:
+        client_id:
+          format: clientID
+          type: string
+        external:
+          $ref: '#/components/schemas/ExternalCIBAAuthenticationService'
+        server_id:
+          format: serverID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          format: cibaAuthenticationrServiceType
+          type: string
+      type: object
+    ServerToTheme:
+      properties:
+        server_id:
+          description: authorization server id
+          example: developer
+          format: serverID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+        theme_id:
+          description: theme id
+          example: acme
+          format: themeID
+          type: string
+      type: object
+    ScopePrivacyInformation:
+      properties:
+        pii_categories:
+          items:
+            $ref: '#/components/schemas/PIICategory'
+          type: array
+        purpose:
+          format: purposeName
+          type: string
+      type: object
+    SAMLResponseBindingMode:
+      type: string
+    NameID:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.2.3
+      properties:
+        Format:
+          type: string
+        NameQualifier:
+          type: string
+        SPNameQualifier:
+          type: string
+        SPProvidedID:
+          type: string
+        Value:
+          type: string
+      title: NameID represents the SAML element NameID.
+      type: object
+    ServersResponse:
+      properties:
+        servers:
+          items:
+            $ref: '#/components/schemas/ServerResponse'
+          type: array
+      type: object
+    SPSSODescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.2
+      properties:
+        ArtifactResolutionServices:
+          items:
+            $ref: '#/components/schemas/IndexedEndpoint'
+          type: array
+        AssertionConsumerServices:
+          items:
+            $ref: '#/components/schemas/IndexedEndpoint'
+          type: array
+        AttributeConsumingServices:
+          items:
+            $ref: '#/components/schemas/AttributeConsumingService'
+          type: array
+        AuthnRequestsSigned:
+          type: boolean
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        ManageNameIDServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        SingleLogoutServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        ValidUntil:
+          format: date-time
+          type: string
+        WantAssertionsSigned:
+          type: boolean
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: SPSSODescriptor represents the SAML SPSSODescriptorType object.
+      type: object
+    ClientJWK:
+      properties:
+        alg:
+          description: 'The "alg" (algorithm) parameter identifies the algorithm intended for
+
+            use with the key.  The values used should either be registered in the
+
+            IANA "JSON Web Signature and Encryption Algorithms" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.'
+          example: RS256
+          type: string
+        crv:
+          example: P-256
+          type: string
+        d:
+          example: T_N8I-6He3M8a7X1vWt6TGIx4xB_GP3Mb4SsZSA4v-orvJzzRiQhLlRR81naWYxfQAYt5isDI6_C2L9bdWo4FFPjGQFvNoRX-_sBJyBI_rl-TBgsZYoUlAj3J92WmY2inbA-PwyJfsaIIDceYBC-eX-xiCu6qMqkZi3MwQAFL6bMdPEM0z4JBcwFT3VdiWAIRUuACWQwrXMq672x7fMuaIaHi7XDGgt1ith23CLfaREmJku9PQcchbt_uEY-hqrFY6ntTtS4paWWQj86xLL94S-Tf6v6xkL918PfLSOTq6XCzxvlFwzBJqApnAhbwqLjpPhgUG04EDRrqrSBc5Y1BLevn6Ip5h1AhessBp3wLkQgz_roeckt-ybvzKTjESMuagnpqLvOT7Y9veIug2MwPJZI2VjczRc1vzMs25XrFQ8DpUy-bNdp89TmvAXwctUMiJdgHloJw23Cv03gIUAkDnsTqZmkpbIf-crpgNKFmQP_EDKoe8p_PXZZgfbRri3NoEVGP7Mk6yEu8LjJhClhZaBNjuWw2-KlBfOA3g79mhfBnkInee5KO9mGR50qPk1V-MorUYNTFMZIm0kFE6eYVWFBwJHLKYhHU34DoiK1VP-svZpC2uAMFNA_UJEwM9CQ2b8qe4-5e9aywMvwcuArRkAB5mBIfOaOJao3mfukKAE
+          type: string
+        dp:
+          example: G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oimYwxIi2emTAue0UOa5dpgFGyBJ4c8tQ2VF402XRugKDTP8akYhFo5tAA77Qe_NmtuYZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0
+          type: string
+        dq:
+          example: s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUUvMfBcMpn8lqeW6vzznYY5SSQF7pMdC_agI3nG8Ibp1BUb0JUiraRNqUfLhcQb_d9GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk
+          type: string
+        e:
+          example: AQAB
+          type: string
+        k:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        kid:
+          description: 'The "kid" (key ID) parameter is used to match a specific key.  This
+
+            is used, for instance, to choose among a set of keys within a JWK Set
+
+            during key rollover.  The structure of the "kid" value is
+
+            unspecified.  When "kid" values are used within a JWK Set, different
+
+            keys within the JWK Set SHOULD use distinct "kid" values.  (One
+
+            example in which different keys might use the same "kid" value is if
+
+            they have different "kty" (key type) values but are considered to be
+
+            equivalent alternatives by the application using them.)  The "kid"
+
+            value is a case-sensitive string.'
+          example: 1603dfe0af8f4596
+          type: string
+        kty:
+          description: 'The "kty" (key type) parameter identifies the cryptographic algorithm
+
+            family used with the key, such as "RSA" or "EC". "kty" values should
+
+            either be registered in the IANA "JSON Web Key Types" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.  The "kty" value is a case-sensitive string.'
+          example: RSA
+          type: string
+        n:
+          example: vTqrxUyQPl_20aqf5kXHwDZrel-KovIp8s7ewJod2EXHl8tWlRB3_Rem34KwBfqlKQGp1nqah-51H4Jzruqe0cFP58hPEIt6WqrvnmJCXxnNuIB53iX_uUUXXHDHBeaPCSRoNJzNysjoJ30TIUsKBiirhBa7f235PXbKiHducLevV6PcKxJ5cY8zO286qJLBWSPm-OIevwqsIsSIH44Qtm9sioFikhkbLwoqwWORGAY0nl6XvVOlhADdLjBSqSAeT1FPuCDCnXwzCDR8N9IFB_IjdStFkC-rVt2K5BYfPd0c3yFp_vHR15eRd0zJ8XQ7woBC8Vnsac6Et1pKS59pX6256DPWu8UDdEOolKAPgcd_g2NpA76cAaF_jcT80j9KrEzw8Tv0nJBGesuCjPNjGs_KzdkWTUXt23Hn9QJsdc1MZuaW0iqXBepHYfYoqNelzVte117t4BwVp0kUM6we0IqyXClaZgOI8S-WDBw2_Ovdm8e5NmhYAblEVoygcX8Y46oH6bKiaCQfKCFDMcRgChme7AoE1yZZYsPbaG_3IjPrC4LBMHQw8rM9dWjJ8ImjicvZ1pAm0dx-KHCP3y5PVKrxBDf1zSOsBRkOSjB8TPODnJMz6-jd5hTtZxpZPwPoIdCanTZ3ZD6uRBpTmDwtpRGm63UQs1m5FWPwb0T2IF0
+          type: string
+        p:
+          example: 6NbkXwDWUhi-eR55Cgbf27FkQDDWIamOaDr0rj1q0f1fFEz1W5A_09YvG09Fiv1AO2-D8Rl8gS1Vkz2i0zCSqnyy8A025XOcRviOMK7nIxE4OH_PEsko8dtIrb3TmE2hUXvCkmzw9EsTF1LQBOGC6iusLTXepIC1x9ukCKFZQvdgtEObQ5kzd9Nhq-cdqmSeMVLoxPLd1blviVT9Vm8-y12CtYpeJHOaIDtVPLlBhJiBoPKWg3vxSm4XxIliNOefqegIlsmTIa3MpS6WWlCK3yHhat0Q-rRxDxdyiVdG_wzJvp0Iw_2wms7pe-PgNPYvUWH9JphWP5K38YqEBiJFXQ
+          type: string
+        q:
+          example: 0A1FmpOWR91_RAWpqreWSavNaZb9nXeKiBo0DQGBz32DbqKqQ8S4aBJmbRhJcctjCLjain-ivut477tAUMmzJwVJDDq2MZFwC9Q-4VYZmFU4HJityQuSzHYe64RjN-E_NQ02TWhG3QGW6roq6c57c99rrUsETwJJiwS8M5p15Miuz53DaOjv-uqqFAFfywN5WkxHbraBcjHtMiQuyQbQqkCFh-oanHkwYNeytsNhTu2mQmwR5DR2roZ2nPiFjC6nsdk-A7E3S3wMzYYFw7jvbWWoYWo9vB40_MY2Y0FYQSqcDzcBIcq_0tnnasf3VW4Fdx6m80RzOb2Fsnln7vKXAQ
+          type: string
+        qi:
+          example: GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzgUIZEVFEcOqwemRN81zoDAaa-Bk0KWNGDjJHZDdDmFhW3AN7lI-puxk_mHZGJ11rxyR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU
+          type: string
+        use:
+          description: 'Use ("public key use") identifies the intended use of
+
+            the public key. The "use" parameter is employed to indicate whether
+
+            a public key is used for encrypting data or verifying the signature
+
+            on data. Values are commonly "sig" (signature) or "enc" (encryption).'
+          example: sig
+          type: string
+        x:
+          example: f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU
+          type: string
+        x5c:
+          description: 'The "x5c" (X.509 certificate chain) parameter contains a chain of one
+
+            or more PKIX certificates [RFC5280].  The certificate chain is
+
+            represented as a JSON array of certificate value strings.  Each
+
+            string in the array is a base64-encoded (Section 4 of [RFC4648] --
+
+            not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
+
+            The PKIX certificate containing the key value MUST be the first
+
+            certificate.'
+          items:
+            type: string
+          type: array
+        x5t:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        x5t#S256:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        y:
+          example: x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0
+          type: string
+      required:
+      - kty
+      type: object
+    JWSPayloadSettings:
+      properties:
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: URI of the JWKs of the trusted party responsible for signing request body
+          type: string
+        source:
+          description: 'JWK source - defines where are the keys for validating dcr request signature
+
+            Keys can be defined at server level or can be taken from jwks_uri claim from the software statement sent by the client'
+          format: jwkSource
+          type: string
+      type: object
+    ServerSettings:
+      properties:
+        deactivated:
+          type: boolean
+        default_client_id:
+          format: clientID
+          type: string
+        default_post_authn_ctx_script_id:
+          format: scriptID
+          type: string
+      type: object
+    CDRConfiguration:
+      properties:
+        adr_validation_enabled:
+          description: 'Flag to enable / disable ADR validation
+
+            If enabled, register URL must be provided and point to a existing registry'
+          type: boolean
+        arrangements_auto_removal:
+          $ref: '#/components/schemas/CDRArrangementsAutoRemoval'
+        brand_id:
+          type: string
+        dont_cache_trust_anchor_data:
+          description: 'Do not cache trust anchor data, fetch it from registry every time
+
+            This is useful for testing purposes when the registry might not be fully up when the test is run'
+          type: boolean
+        industry:
+          $ref: '#/components/schemas/CDRIndustry'
+        register_api_version:
+          $ref: '#/components/schemas/CDRRegisterAPIVersion'
+        register_url:
+          $ref: '#/components/schemas/CDRRegisterURL'
+        skip_register_url_validation:
+          description: 'Flag to disable register URL validation
+
+            If enabled, there will be no error message
+
+            if data from provided register URL can not be fetched
+
+            It is highly not recommended to use this flag if it is not required'
+          type: boolean
+      type: object
+    RoleDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.1
+      properties:
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: RoleDescriptor represents the SAML element RoleDescriptor.
+      type: object
+    AttributeAuthorityDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.7
+      properties:
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AttributeProfiles:
+          items:
+            type: string
+          type: array
+        AttributeServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        Attributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AttributeAuthorityDescriptor represents the SAML AttributeAuthorityDescriptor object.
+      type: object
+    PayloadSettings:
+      properties:
+        format:
+          default: json
+          description: payload format
+          enum:
+          - json
+          - jws
+          format: payloadFormat
+          type: string
+        jws_payload:
+          $ref: '#/components/schemas/JWSPayloadSettings'
+      type: object
+    AttributeValue:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf §2.7.3.1.1
+      properties:
+        NameID:
+          $ref: '#/components/schemas/NameID'
+        Type:
+          type: string
+        Value:
+          type: string
+      title: AttributeValue represents the SAML element AttributeValue.
+      type: object
+    ServerConsent:
+      properties:
+        client_id:
+          format: clientID
+          type: string
+        custom:
+          $ref: '#/components/schemas/CustomServerConsent'
+        oidc:
+          $ref: '#/components/schemas/OIDCServerConsent'
+        openbanking:
+          $ref: '#/components/schemas/OpenbankingServerConsent'
+        server_id:
+          format: serverID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          format: serverConsentType
+          type: string
+      type: object
+    ExternalCIBAAuthenticationService:
+      properties:
+        credentials:
+          $ref: '#/components/schemas/ExternalServiceCredentials'
+        insecure:
+          description: Do not validate cert when calling authenticator service
+          type: boolean
+        url:
+          description: url to the ciba authenticator service
+          type: string
+      type: object
+    FDXConfiguration:
+      properties:
+        initial_client_status:
+          $ref: '#/components/schemas/FDXClientStatus'
+        legal_entity:
+          $ref: '#/components/schemas/LegalEntity'
+      type: object
+    DeprecatedOBBRIndustry:
+      type: string
+    ServerConsentResponse:
+      properties:
+        client:
+          $ref: '#/components/schemas/ClientAdminResponse'
+        client_id:
+          format: clientID
+          type: string
+        custom:
+          $ref: '#/components/schemas/CustomServerConsent'
+        oidc:
+          $ref: '#/components/schemas/OIDCServerConsent'
+        openbanking:
+          $ref: '#/components/schemas/OpenbankingServerConsent'
+        server_id:
+          format: serverID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          format: serverConsentType
+          type: string
+      type: object
+    SameSite:
+      type: string
+    AuthenticationContextSettings:
+      properties:
+        attributes:
+          items:
+            $ref: '#/components/schemas/AuthenticationContextAttribute'
+          type: array
+      type: object
+    RiskLOA:
+      description: Risk engine level of assurance
+      format: double
+      type: number
+    OrganizationConfiguration:
+      properties:
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+      type: object
+    Organization:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.3.2.1
+      properties:
+        OrganizationDisplayNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        OrganizationNames:
+          items:
+            $ref: '#/components/schemas/LocalizedName'
+          type: array
+        OrganizationURLs:
+          items:
+            $ref: '#/components/schemas/LocalizedURI'
+          type: array
+      title: Organization represents the SAML Organization object.
+      type: object
+    IndexedEndpoint:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.3
+      properties:
+        Binding:
+          type: string
+        Index:
+          format: int64
+          type: integer
+        IsDefault:
+          type: boolean
+        Location:
+          type: string
+        ResponseLocation:
+          type: string
+      title: IndexedEndpoint represents the SAML IndexedEndpointType object.
+      type: object
+    ClientAdminResponse:
+      properties:
+        agent_capability:
+          $ref: '#/components/schemas/AgentCapability'
+        app_url:
+          description: Application URL
+          type: string
+        application_purpose:
+          description: Application purpose
+          enum:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - custom
+          - saml
+          - ai_agent
+          example: signle_page
+          type: string
+        application_type:
+          default: web
+          description: 'The client application type.
+
+
+            Client applications can be either of a `web` or `native` types.
+
+
+            Web applications include clients like server web applications or service apps.
+
+
+            Native applications include single-page applications (SPAs) and mobile or desktop
+
+            applications.
+
+
+            Apply security measures according to the type of your application.'
+          example: web
+          type: string
+        application_types:
+          default:
+          - server_web
+          description: An array of dynamically calculated application types that can be used for filtering
+          example:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - dcr
+          items:
+            enum:
+            - single_page
+            - server_web
+            - mobile_desktop
+            - service
+            - legacy
+            - dcr
+            type: string
+          readOnly: true
+          type: array
+        audience:
+          default:
+          - client_id
+          description: 'Identity of the intended recipients (the audience).
+
+
+            Typically, the audience is a single resource server or a list of resource servers.
+
+
+            It is considered a good practice to limit the audience of the token for security purposes.'
+          items:
+            type: string
+          type: array
+        authorization_details_types:
+          description: 'Authorization details types
+
+
+            Indicates what authorization details types the client can use.'
+          items:
+            $ref: '#/components/schemas/AuthorizationDetailType'
+          type: array
+        authorization_encrypted_response_alg:
+          description: 'Algorithm used for encrypting authorization responses.
+
+
+            If both signing and encryption are requested, the response is first signed, and then encrypted.
+
+            As a result, a Nested JWT is obtained, as defined in JWT [RFC7519].
+
+
+            If omitted, no encryption is applied by default.'
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          example: RSA-OAEP-256
+          type: string
+        authorization_encrypted_response_enc:
+          description: 'Algorithm used for encrypting authorization responses.
+
+
+            With `authorization_encrypted_response_alg` specified, the default value is `A128CBC-HS256`.
+
+            When `authorization_encrypted_response_enc` is included, `authorization_encrypted_response_alg`
+
+            MUST also be provided in a request.'
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          example: A128CBC-HS256
+          type: string
+        authorization_server_id:
+          description: An authorization server (workspace) identifier holding the client application.
+          example: default
+          format: serverID
+          type: string
+        authorization_signed_response_alg:
+          description: 'Algorithm used for signing authorization responses.
+
+
+            With this parameter specified, the response is signed using JWS and according to the configured algorithm.
+
+
+            `none` isn''t allowed.'
+          example: RS256
+          type: string
+        backchannel_authentication_request_signing_alg:
+          description: 'OPTIONAL. The JWS alg algorithm value used by the client application to sign authentication requests.
+
+
+            When omitted, the client application doesn''t send signed authentication requests.'
+          type: string
+        backchannel_client_notification_endpoint:
+          description: 'REQUIRED for requests when the client application uses CIBA as an authorization grant type, and the token
+
+            delivery mode is set to `ping` or `push`.
+
+
+            This parameter is the endpoint where an OP (OpenID Provider) posts a notification after end-user authentication.
+
+
+            Input: an HTTPS URL.'
+          type: string
+        backchannel_logout_session_required:
+          description: Boolean value specifying whether the RP requires that a sid (session ID) claim be included in the Logout Token to identify the RP session with the OP when the backchannel_logout_uri is used.
+          type: boolean
+        backchannel_logout_uri:
+          description: RP URL that will cause the RP to log itself out when sent a Logout Token by the OP.
+          type: string
+        backchannel_token_delivery_mode:
+          description: 'REQUIRED for requests when the client application uses CIBA as an authorization grant type.
+
+
+            Input: `poll`, `ping`, or `push`.'
+          type: string
+        backchannel_user_code_parameter:
+          description: 'OPTIONAL. A boolean value indicating the `user_code` parameter support by the client application.
+
+
+            If omitted, the default value is `false`.
+
+
+            This applies only when the `backchannel_user_code_parameter_supported` OP parameter is `true`.'
+          type: boolean
+        certificate:
+          description: 'Base64 encoded certicate in PEM format that will be automatically converted and stored in jwks
+
+
+            It is used only as an input parameter for the Create / Import Client.'
+          type: string
+        client_id:
+          description: 'OAuth client application identifier
+
+
+            If not provided, a random client ID is generated.'
+          format: clientID
+          type: string
+        client_id_issued_at:
+          description: 'The client identifier time of issue.
+
+
+            The value is the number of seconds between 1970-01-01T00:00:00Z (UTC) and the date/time of issue.'
+          format: int64
+          type: integer
+        client_name:
+          description: Human-readable name of a client application.
+          example: My app
+          type: string
+        client_secret:
+          description: 'OAuth client secret
+
+
+            If not provided, a random client secret is generated.'
+          minLength: 32
+          type: string
+        client_secret_expires_at:
+          description: 'The client secret expiration time.
+
+
+            If the client secret does not expire, `client_secret_expires_at` = `0`.'
+          format: int64
+          type: integer
+        client_status:
+          description: 'Defines whether the client application is active or not.
+
+
+            Only clients with the `Active` status can preform authorization, authentication, and PAR requests.'
+          enum:
+          - active
+          - inactive
+          type: string
+        client_type:
+          enum:
+          - oauth2
+          - saml
+          type: string
+        client_uri:
+          description: URI of a client application.
+          type: string
+        created_at:
+          description: Date when the client application was created.
+          example: '2022-04-07T19:17:31.323187Z'
+          format: date-time
+          type: string
+        default_acr_values:
+          description: 'default ACR values
+
+            list of ACR values that will be implicitly requested for the client if not explicitly specified'
+          items:
+            format: acrValue
+            type: string
+          type: array
+        description:
+          description: Description of the client application.
+          type: string
+        developer_id:
+          description: Optional developer owner of the client application.
+          format: subject
+          type: string
+        developer_metadata:
+          $ref: '#/components/schemas/Metadata'
+        dpop_bound_access_tokens:
+          description: 'Boolean value specifying whether the client always uses DPoP for token requests
+
+            If true, the authorization server will reject token requests from this client that do not contain the DPoP header.'
+          type: boolean
+        dynamically_registered:
+          type: boolean
+        enforce_application_membership:
+          description: 'Enforce application membership for this application. When true, a user token is issued only if the
+
+            user has membership/access to this application in the resolved organization. Defaults to false and,
+
+            on creation, to the workspace-level default. Only meaningful while the applications_membership feature is enabled.'
+          type: boolean
+        fdx:
+          $ref: '#/components/schemas/FDXMetadata'
+        grant_types:
+          default:
+          - authorization_code
+          description: 'An array of allowed OAuth client grant types.
+
+
+            The `grantTypes` array stores OAuth flows that are allowed for a given client application.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-grant-types/grant-types-overview/) about grant types.'
+          example:
+          - password
+          - refresh_token
+          - client_credentials
+          - implicit
+          - authorization_code
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        hashed_rotated_secrets:
+          description: An array of hashed rotated client secrets
+          items:
+            type: string
+          type: array
+        hashed_secret:
+          description: 'Hashed client secret
+
+
+            Hashing client secrets provides additional security for your secrets storage as it hides
+
+            plaintext secrets from being viewed both in the UI and the database.'
+          type: string
+        id_token_encrypted_response_alg:
+          description: JWE alg algorithm for encrypting the ID token issued to this client application.
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          type: string
+        id_token_encrypted_response_enc:
+          description: JWE enc algorithm for encrypting the ID token issued to this client application.
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          type: string
+        id_token_signed_response_alg:
+          description: 'Algorithm for signing ID tokens issued for a client application.
+
+
+            The default value depends on authorization server configuration.'
+          enum:
+          - RS256
+          - ES256
+          - PS256
+          example: ES256
+          type: string
+        introspection_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'An introspection endpoint authentication method configured for the client application (read-only).
+
+
+            If empty, the `token_endpoint_auth_method` is used.
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          example: client_secret_basic
+          type: string
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: A URL of JSON Web Key Set with the public keys used by a client application to authenticate to SecureAuth.
+          type: string
+        logo_uri:
+          description: Logo URI.
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        organisation_id:
+          description: 'External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+
+            Data Recipient Brand.
+
+
+            The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+
+            required for authorization, and represents the audience(s) the JWT is intended for.'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        policy_uri:
+          description: Policy URL to read about how the profile data is used.
+          type: string
+        post_logout_redirect_uris:
+          description: Array of URLs to which a relying party may request that the user be redirected after a logout has been performed.
+          items:
+            type: string
+          type: array
+        privacy:
+          $ref: '#/components/schemas/ClientPrivacy'
+        redirect_uris:
+          $ref: '#/components/schemas/RedirectURIs'
+        request_object_encryption_alg:
+          description: Optional JWE alg algorithm the client is declaring that it may use for encrypting Request Objects
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          example: RSA-OAEP
+          type: string
+        request_object_encryption_enc:
+          description: 'Optional JWE enc algorithm the client is declaring that it may use for encrypting Request Objects
+
+            When `request_object_encryption_enc` is included, `request_object_encryption_alg` MUST also be provided.'
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          example: A256GCM
+          type: string
+        request_object_signing_alg:
+          default: any
+          description: 'Request object signing algorithm for the token endpoint
+
+
+            SecureAuth supports signing tokens with the RS256, ES256, and PS256 algorithms. If you do not want
+
+            to use a signing algorithm, set the value of this parameter to `none`.'
+          enum:
+          - any
+          - none
+          - RS256
+          - ES256
+          - PS256
+          example: none
+          type: string
+        request_uris:
+          description: Array of absolute URIs that points to the Request Object that holds authorization request parameters.
+          items:
+            type: string
+          type: array
+        require_pushed_authorization_requests:
+          description: Boolean parameter indicating whether the only means of initiating an authorization request the client is allowed to use is PAR.
+          type: boolean
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        revocation_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'A revocation endpoint authentication method configured for the client application (read-only).
+
+            If empty, the `token_endpoint_auth_method` is used.
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          example: client_secret_basic
+          type: string
+        rotated_secrets:
+          description: An array of rotated OAuth client secrets
+          items:
+            type: string
+          minLength: 32
+          type: array
+        saml_allowed_attributes:
+          description: Allowed SAML attributes
+          items:
+            type: string
+          type: array
+        saml_idp_accept_acs_from_request:
+          description: accept ACS from SamlRequest even if it's not registered in the metadata
+          type: boolean
+        saml_idp_attributes_override:
+          $ref: '#/components/schemas/SAMLIDPAttributesOverride'
+        saml_idp_custom_entity_id:
+          description: custom entity id
+          type: string
+        saml_idp_custom_sso_url:
+          description: custom sso url
+          type: string
+        saml_idp_override_enabled:
+          description: enable flag
+          type: boolean
+        saml_idp_signing_key:
+          $ref: '#/components/schemas/ServerJWK'
+        saml_metadata:
+          $ref: '#/components/schemas/EntityDescriptor'
+        saml_metadata_updated_at:
+          format: date-time
+          type: string
+        saml_metadata_url:
+          type: string
+        saml_override_attributes:
+          description: If true, then only attributes defined in saml_attributes will be used to build the SAML assertion
+          type: boolean
+        saml_service_provider_id:
+          type: string
+        saml_signing_hash:
+          default: sha-256
+          description: SAML Assertion signing hash algorithm.
+          enum:
+          - sha-1
+          - sha-256
+          - sha-512
+          example: sha-256
+          type: string
+        saml_subject_name_id:
+          description: Allows to override the subject name id.
+          type: string
+        saml_subject_name_id_format:
+          description: Allows to override the subject name id format
+          enum:
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+          type: string
+        scope:
+          description: Space-separated list of scopes for compatibility with the OAuth specification.
+          example: email offline_access openid
+          type: string
+        scopes:
+          description: An array of string represented scopes assigned to a client application
+          example:
+          - email
+          - offline_access
+          - openid
+          items:
+            type: string
+          type: array
+        sector_identifier_uri:
+          description: 'OPTIONAL. [A URL using the HTTPS scheme](https://openid.net/specs/openid-connect-registration-1_0.html#SectorIdentifierValidation).
+
+            It must reference a JSON file with the array of `redirect_uri` values.
+
+
+            Pass this parameter when you use multiple domains in your `redirect_uris` or need a mechanism to allow changes in
+
+            domain without affecting consumer consent.
+
+
+            [Read more](https://openid.net/specs/openid-connect-core-1_0.html)'
+          type: string
+        server_issuer_url:
+          type: string
+        server_mtls_issuer_url:
+          type: string
+        skip_dbfp:
+          description: 'Skip device-based fingerprint (DBFP) collection for this client.
+
+            If true, the interactive DBFP collection step is skipped during login, which lets
+
+            non-interactive clients (e.g. backend HTTP clients that cannot execute the collection
+
+            JavaScript) complete the authorization flow. Risk inference is unaffected.'
+          type: boolean
+        software_id:
+          description: 'A unique identifier string (e.g., a Universally Unique Identifier
+
+            (UUID)) assigned by the client developer or software publisher.
+
+
+            The `software_id` MUST remain the same across
+
+            multiple updates or versions of the same software package. The
+
+            value of this field is not intended to be human-readable and is
+
+            usually opaque to the client and authorization server.'
+          type: string
+        software_statement:
+          description: 'A digitally signed or MACed JSON Web Token (JWT) [RFC7519] that
+
+            asserts metadata values about the client software.  In some cases,
+
+            a software statement is issued directly by the client
+
+            developer.  In other cases, a software statement is issued by
+
+            a third-party organization for use by the client developer.
+
+
+            In both cases, the trust relationship the authorization server has
+
+            with the issuer of the software statement is intended to be used
+
+            as an input to the evaluation of whether the registration request
+
+            is accepted.
+
+
+            A software statement can be presented to an
+
+            authorization server as part of the client registration request.'
+          type: string
+        software_statement_payload:
+          $ref: '#/components/schemas/Metadata'
+        software_version:
+          description: 'A version identifier string for the client software identified by
+
+            `software_id`. The value of the `software_version` MUST be changed
+
+            with any update of the client software identified by the same
+
+            `software_id`.'
+          type: string
+        subject_type:
+          default: public
+          description: 'Subject identifier type
+
+
+            Stores information if the subject identifier is of the `public` or the `pairwise` type.
+
+
+            Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+
+            and are intended to be consumed by client applications. There are two types
+
+            of subject identifiers: `public` and `pairwise`.
+
+
+            For the `public` type, the value of the `sub` (subject) token claim is the same for all clients.
+
+
+            For the `pairwise` type, a different `sub` (subject) token claim is provided for each client.
+
+            Using the `pairwise` subject identifier makes it impossible for client applications to correlate the end-user''s
+
+            activity without their permission.'
+          enum:
+          - public
+          - pairwise
+          example: public
+          type: string
+        system:
+          description: Defines whether the client application is a system tenant's application or not.
+          type: boolean
+        tenant_id:
+          description: ID of a tenant where the client application is added
+          example: default
+          format: tenantID
+          type: string
+        tls_client_auth_san_dns:
+          description: A string containing the value of an expected dNSName SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_email:
+          description: A string containing the value of an expected rfc822Name SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_ip:
+          description: A string representation of an IP address in either dotted decimal notation (for IPv4) or colon-delimited hexadecimal (for IPv6, as defined in [RFC5952]) that is expected to be present as an iPAddress SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_uri:
+          description: A string containing the value of an expected uniformResourceIdentifier SAN entry in the certificate.
+          type: string
+        tls_client_auth_subject_dn:
+          description: An [RFC4514] string representation of the expected subject distinguished name of the certificate.
+          type: string
+        tls_client_certificate_bound_access_tokens:
+          description: Boolean value indicating server support for mutual TLS client certificate-bound access tokens. If omitted, the default value is "false".
+          type: boolean
+        token_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'Token endpoint authentication method configured for a client application
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            To learn more, go to the Authorization Basics > Client Authentication section of this guide.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          example: client_secret_basic
+          type: string
+        token_endpoint_auth_signing_alg:
+          default: ES256
+          description: 'Signing algorithm for the token endpoint
+
+
+            This field is optional. If empty, a client can use any algorithm supported by the server (see `token_endpoint_auth_signing_alg_values_supported` in the well-known endpoing).
+
+
+            If provided, depending on the server configuration, client can use of one: HS256, RS256, ES256, PS256 algorithms.
+
+
+            If your token endpoint authentication is set to the `private_key_jwt` method, the
+
+            `token_endpoint_auth_signing_alg` parameter must be either RS256, ES256, or PS256.
+
+
+            If your token endpoint authentication is set to the `client_secret_jwt` method,
+
+            the `token_endpoint_auth_signing_alg` parameter must be HS256.'
+          enum:
+          - RS256
+          - ES256
+          - PS256
+          - HS256
+          - ''
+          example: ES256
+          type: string
+        token_exchange:
+          $ref: '#/components/schemas/ClientTokenExchangeConfiguration'
+        token_ttls:
+          $ref: '#/components/schemas/TokenTTLs'
+        tos_uri:
+          description: Terms of Service URL.
+          type: string
+        trusted:
+          description: 'Defines whether the client application is trusted or not.
+
+
+            For trusted clients, consent pages are skipped during the authorization process.'
+          type: boolean
+        updated_at:
+          description: Date when the client application was updated.
+          example: '2022-05-08T01:11:51.1262916Z'
+          format: date-time
+          type: string
+        use_custom_token_ttls:
+          description: If enabled the client application will be able to set its own token TTLs.
+          type: boolean
+        userinfo_signed_response_alg:
+          default: none
+          description: 'JWS alg algorithm REQUIRED for signing UserInfo Responses.
+
+
+            If specified, the response is a JWT serialized and signed with JWS.
+
+
+            If omitted, then by default, UserInfo Response returns the Claims
+
+            as an UTF-8 encoded JSON object using the application/json content-type.'
+          enum:
+          - none
+          - RS256
+          - ES256
+          example: none
+          type: string
+      required:
+      - tenant_id
+      - authorization_server_id
+      type: object
+    ScopeClaimFormat:
+      type: string
+    ServerResponse:
+      properties:
+        access_token_strategy:
+          default: jwt
+          description: 'Access token strategy
+
+
+            You can choose to go either with `JWT` or `opaque` tokens.
+
+
+            The content of JSON Web Tokens is readable and it is possible to be decoded by anyone that
+
+            has a secret or a public key in their possession.
+
+
+            Opaque tokens are in a proprietary form that contains an identifier to information stored on
+
+            the athorization server. To validate an opaque token, the recipient must call the server that
+
+            issued the token.'
+          enum:
+          - jwt
+          - opaque
+          example: jwt
+          type: string
+        access_token_ttl:
+          default: 1h0m0s
+          description: 'Access token time to live
+
+
+            After an access token reaches its time to live, it expires and it cannot be used to
+
+            authenticate the client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        advanced:
+          $ref: '#/components/schemas/AdvancedConfiguration'
+        authentication_context_settings:
+          $ref: '#/components/schemas/AuthenticationContextSettings'
+        authentication_mechanisms:
+          description: allowed authentication mechanisms for users in the identity pools
+          example:
+          - password
+          - totp
+          - otp
+          - webauthn
+          - sms_otp
+          - email_otp
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        authorization_code_ttl:
+          description: 'Authorization code time to live
+
+
+            After an authorization code reaches its time to live, it expires and it cannot be used to
+
+            authorize the request to the `/token` endpoint.'
+          example: 10m0s
+          format: duration
+          type: string
+        backchannel_token_delivery_modes_supported:
+          default:
+          - poll
+          - ping
+          items:
+            type: string
+          type: array
+        backchannel_user_code_parameter_supported:
+          default: false
+          type: boolean
+        cdr:
+          $ref: '#/components/schemas/CDRConfiguration'
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        consent_id_namespace:
+          description: 'Namespace used when creating Open Banking Brasil consent IDs
+
+
+            Consent IDs will have the form of urn:<consent_id_namespace>:<uid> when this is set.
+
+            If this is empty, the tenant id is used by default'
+          type: string
+        cookie_max_age:
+          description: 'Cookie max age
+
+
+            Defines how long a cookie can live until it expires.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        custom_issuer_url:
+          description: 'Defines a custom issuer URL that can be used as the value of the `iss` claim in an access
+
+            token.
+
+
+            If not provided, it is built dynamically based on the server''s URL.'
+          example: http://example.com/default/default
+          type: string
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        device_authorization:
+          $ref: '#/components/schemas/DeviceAuthorizationConfiguration'
+        dynamic_client_registration:
+          $ref: '#/components/schemas/DynamicClientRegistrationSettings'
+        dynamic_scope_separator:
+          default: .
+          description: 'You can use this property to define a separator that is used for dynamic scopes.
+
+
+            For example, the default separator is `.`, so the scope could look like the following:
+
+            `users.*`.
+
+
+            For Open Banking Brazil compliant servers, the `:` separator should be used.'
+          format: dynamicScopeSeparator
+          type: string
+        enable_idp_discovery:
+          description: 'Deprecated: Use IDPDiscovery instead
+
+
+            If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+        enable_legacy_clients_with_no_software_statement:
+          description: 'Deprecated
+
+
+            If enabled, it is possible to manually register clients withouth the use of software
+
+            statements.
+
+
+            This flag is enabled, when the `enable_trust_anchor` flag is set to `false`. You can disable
+
+            it using API, but it cannot be manually enabled.'
+          type: boolean
+        enable_quick_access:
+          description: If enabled, the server is visible on the Quick Access tab on the login page.
+          type: boolean
+        enable_trust_anchor:
+          default: false
+          description: 'If enabled, it makes it obligatory to provide a software statement signed by a trusted certificate authority
+
+
+            when registering a client application with the use of the Dynamic Client Registration (DCR).
+
+
+            In public key infrastructure (PKI), trust anchors are certification authorities. They are
+
+            represented by a certificate that is used to verify the signature of a certificate issued by
+
+            a particular trust anchor.'
+          type: boolean
+        enforce_id_token_encryption:
+          description: When enabled, the authorization server will enforce encrypted id tokens it issues
+          type: boolean
+        enforce_pkce:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for both
+
+            private and public clients.
+
+
+            PKCE is an OAuth security extension that prevents malicious applications or codes that
+
+            intercepted authorization code from exchanging it for an access token.'
+          example: false
+          type: boolean
+        enforce_pkce_for_public_clients:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for
+
+            public clients.
+
+
+            Public clients, like mobile applications or JavaScript-based applications, by their design,
+
+            cannot store client secrets securely. For such clients, even encrypting the client secret
+
+            inside the application’s code is not a reliable way of protecting secrets as the application
+
+            can be decompiled and the client secret can be extracted while it is decrypted in the memory
+
+            of the application.
+
+
+            For those reasons, ACP supports the use of PKCE as an addition to the authorization code
+
+            grant flow to provide a secure alternative to the implicit grant flow.'
+          example: false
+          type: boolean
+        fdx:
+          $ref: '#/components/schemas/FDXConfiguration'
+        grant_types:
+          default:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          description: An array that defines which of the OAuth 2.0 grant types are enabled for the authorization server.
+          example:
+          - authorization_code
+          - implicit
+          - refresh_token
+          - client_credentials
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an authorization server (workspace)
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        id_jag_ttl:
+          default: 5m0s
+          description: 'ID-JAG time to live
+
+
+            After an Identity Assertion JWT Authorization Grant reaches its time to live, it expires
+
+            and it cannot be redeemed at the resource authorization server. Kept short by default
+
+            because the grant is redeemed immediately, and its expiry bounds how long the resource
+
+            server must remember the grant identifier to reject replays.'
+          example: 5m0s
+          format: duration
+          type: string
+        id_token_ttl:
+          description: 'ID token time to live
+
+
+            After an ID token reaches its time to live, it expires and it cannot be used to provide
+
+            user profile information to a client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        identity_assurance:
+          $ref: '#/components/schemas/IdentityAssuranceConfiguration'
+        idp_discovery:
+          $ref: '#/components/schemas/IDPDiscovery'
+        issuer_id:
+          description: 'Issuer ID that will be used to set `iss` claim on signed messages
+
+
+            If issuer_id is not set then default issuer_url will be used'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        issuer_url:
+          type: string
+        jwks:
+          $ref: '#/components/schemas/ServerJWKs'
+        key_type:
+          default: ecdsa
+          description: 'Determines which type of asymmetric algorithms (RSA or ECDSA) is used to generate keys for signing access and
+
+            ID tokens.
+
+
+            It is used only as an input parameter for the Create Authorization Server API.'
+          enum:
+          - rsa
+          - ecdsa
+          - ps
+          example: rsa
+          type: string
+        legal_entity:
+          $ref: '#/components/schemas/LegalEntity'
+        logo_uri:
+          description: Logo URI
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        mtls_issuer_url:
+          type: string
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        obbr:
+          $ref: '#/components/schemas/DeprecatedOBBRConfiguration'
+        organization:
+          $ref: '#/components/schemas/OrganizationConfiguration'
+        parent_id:
+          description: Optional ID of a parent server
+          format: serverID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/ServerPreferences'
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        pushed_authorization_request_ttl:
+          description: 'Custom pushed authentication request TTL
+
+            If not provided, TTL is set to 60 seconds.'
+          format: duration
+          type: string
+        refresh_token_ttl:
+          default: 720h0m0s
+          description: 'Refresh token time to live
+
+
+            After a refresh token reaches its time to live, it expires and it cannot be used to obtain
+
+            new access tokens for a client application.'
+          example: 720h0m0s
+          format: duration
+          type: string
+        require_pushed_authorization_requests:
+          description: Boolean parameter indicating whether the authorization server accepts authorization request data only via PAR.
+          type: boolean
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        root_cas:
+          description: 'You can provide root Certificate Authority (CA) certificates encoded to the Privacy-Enhanced
+
+            Mail (PEM) file format which are used for the `tls_client_auth` and the
+
+            `self_signed_tls_client_auth` client authentication methods that use the Mutual
+
+            Transport Layer Security (mTLS).
+
+
+            If not set, the system root CA certifiates are used instead.'
+          type: string
+        rotated_secrets:
+          description: An array of rotated secrets that are still used to validate tokens
+          example:
+          - jFpwIvuKJP46J71WqszPv1SrzoUr-cSILP9EPdlClB4
+          items:
+            type: string
+          type: array
+        saml:
+          $ref: '#/components/schemas/SAMLConfiguration'
+        scope_claim_formats:
+          default:
+          - scp_array
+          description: formats of the scope claim that will be included in the access token
+          example:
+          - scp_array
+          - scope_space_separated
+          items:
+            $ref: '#/components/schemas/ScopeClaimFormat'
+          type: array
+        secret:
+          description: 'Secret used for hashing
+
+
+            It must have at least 32 characters. If not provided, it is generated.'
+          example: hW5WhKX_7w7BLwUQ6mn7Cp70_OoKI_F1y1hLS5U8lIU
+          type: string
+        settings:
+          $ref: '#/components/schemas/ServerSettings'
+        sso:
+          $ref: '#/components/schemas/SSOConfiguration'
+        styling:
+          $ref: '#/components/schemas/Styling'
+        subject_custom_attribute:
+          description: The authentication context attribute name that will be used as subject when the custom subject format is used.
+          type: string
+        subject_format:
+          description: 'Define the format of a subject
+
+            When set to hash sub value is a one way hash of idp id and idp sub'
+          enum:
+          - hash
+          - legacy
+          - custom
+          type: string
+        subject_identifier_algorithm_salt:
+          description: 'Salt used to hash `subject` when the `pairwise` subject type is used.
+
+
+            Salt is a random data which is used as an additional input to one-way functions that hashes
+
+            data, passwords, and, in this case, subjects.
+
+
+            It is recommended that your salt value is long for security reasons. Preferably, the salt
+
+            value should be at least the same length as the output of the hash.
+
+
+            If not provided, it is generated.'
+          type: string
+        subject_identifier_types:
+          default:
+          - public
+          - pairwise
+          description: 'An array that defines supported subject identifier types.
+
+
+            Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+
+            and are intended to be consumed by client applications. There are two types
+
+            of subject identifiers: `public` and `pairwise`.
+
+
+            `public` identifiers provide the same `sub` claim value to all client applications.
+
+            `pairwise` identifiers provide different `sub` claim values to each client application. With
+
+            this approach, it makes it impossible for client applications to correlate the end-user''s
+
+            activity without their permission.'
+          example:
+          - public
+          - pairwise
+          items:
+            enum:
+            - public
+            - pairwise
+            type: string
+          type: array
+        supported_application_purposes:
+          description: supported application purposes
+          example:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          items:
+            enum:
+            - single_page
+            - server_web
+            - mobile_desktop
+            - service
+            - legacy
+            - custom
+            - saml
+            - ai_agent
+            type: string
+          type: array
+        template:
+          description: If true this workspace can be used as a template when creating a new ones.
+          type: boolean
+        tenant_id:
+          description: ID of a tenant
+          example: default
+          format: tenantID
+          type: string
+        theme_id:
+          description: optional theme id
+          format: themeID
+          type: string
+        token_endpoint_auth_methods:
+          default:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          description: 'An array that lists all of the supported token endpoint authentication methods for the
+
+            authorization server.'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        token_endpoint_auth_signing_alg_values:
+          description: 'Token endpoint auth signing supported alg values
+
+
+            Supported algorithms: HS256, RS256, ES256, PS256
+
+
+            At least one algorithm must be set.
+
+
+            The default values depends on the server security profile.'
+          items:
+            type: string
+          type: array
+        token_endpoint_authn_methods:
+          description: 'Deprecated: Use TokenEndpointAuthMethods instead'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        trust_anchor_configuration:
+          $ref: '#/components/schemas/TrustAnchorConfiguration'
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+        version:
+          default: 3
+          description: 'server version to track internal changes
+
+            version that is currently the latest: 3'
+          format: int64
+          type: integer
+        workforce:
+          $ref: '#/components/schemas/WorkforceConfiguration'
+      required:
+      - tenant_id
+      type: object
+    Token:
+      description: 'A Token is an interface type used to represent XML elements, character
+
+        data, CDATA sections, XML comments, XML directives, and XML processing
+
+        instructions.'
+      properties:
+        Index:
+          format: int64
+          type: integer
+        Parent:
+          $ref: '#/components/schemas/Element'
+        Remove:
+          type: boolean
+      type: object
+    AdvancedConfiguration:
+      properties:
+        acr_values:
+          description: Deprecated ACR values to enforce during auth flow (use new ACR feature instead)
+          items:
+            type: string
+          type: array
+        advertise_only_mtls_aliases_in_well_known:
+          description: This option overrides all urls advertised by the well known endpoint with their mtls alias
+          type: boolean
+        allow_organization_selection:
+          description: 'Allow the user to select one of their organizations after authentication (application-membership
+
+            org-selector login step). Disabled by default.'
+          type: boolean
+        auto_request_recovery:
+          description: auto request recovery
+          type: boolean
+        block_response_modes:
+          description: Block response modes
+          type: boolean
+        cookies_configuration:
+          $ref: '#/components/schemas/CookiesConfiguration'
+        cross_organization_application_membership:
+          description: 'Allow cross-organization application membership across this workspace''s org tree — granting a
+
+            user whose identity pool lives in one org access to an application in another org of the same
+
+            tree, and honoring such grants at token time. Disabled by default. Set on the tree-root
+
+            workspace; governs the whole tree. Role assignment is unaffected (that stays flag-gated).'
+          type: boolean
+        disable_dcr_client_certificate_bound_access_tokens:
+          description: 'Disable certificate-bound access tokens for new DCR clients
+
+
+            If true, new DCR clients are created with CertificateBoundAccessToken disabled.'
+          type: boolean
+        disable_par:
+          description: Disable PAR
+          type: boolean
+        disable_rar:
+          description: Disable RAR
+          type: boolean
+        disable_refresh_token_cycling:
+          description: 'Disable refresh token cycling
+
+
+            Once disabled, original refresh token can be constantly used to issue new access token.'
+          type: boolean
+        disallow_access_token_in_query_for_protected_resources:
+          description: 'When enabled, the authorization server will not accept access tokens supplied in the request query parameter
+
+            for protected resources endpoints.'
+          type: boolean
+        disallow_code_response_type_without_jarm:
+          description: Disallow code response type without JARM
+          type: boolean
+        disallowed_response_modes:
+          $ref: '#/components/schemas/ResponseModes'
+        do_not_issue_acr_claim_in_id_token:
+          description: Do not issue acr claim in ID Token
+          type: boolean
+        enforce_acr_values:
+          description: Enforce acr values
+          type: boolean
+        enforce_application_membership_default:
+          description: 'Default value stamped onto the enforce_application_membership toggle of applications created in
+
+            this workspace. Applied at creation only — changing it later does not affect existing applications.
+
+            Disabled by default. Only meaningful while the applications_membership feature is enabled.'
+          type: boolean
+        ignore_unknown_scopes_for_dcr:
+          description: 'Ignore unknown scopes for DCR
+
+
+            If enabled, an attempt to register or update a client with a scope that does not exist in the server will succeed.'
+          type: boolean
+        require_request_or_request_uri_parameter:
+          description: Require request or request uri parameter for authorization flow
+          type: boolean
+        return_iss_parameter_in_authorization_response:
+          description: Return iss parameter in the authorization response
+          type: boolean
+        single_audience_equals_issuer_in_authentication_jwts:
+          description: Enforces a single-value audience in authentication JWTs sent to the authorization server, matching the server's issuer URL.
+          type: boolean
+        strict_post_logout_redirect_enforcement:
+          description: Disables SSO as a fallback mechanism for post-logout redirect URI validation
+          type: boolean
+      type: object
+    FDXParty:
+      properties:
+        home_uri:
+          type: string
+        logo_uri:
+          type: string
+        name:
+          type: string
+        registered_entity_identifier:
+          type: string
+        registered_entity_name:
+          type: string
+        registry_name:
+          type: string
+      type: object
+    X509Data:
+      description: X509Data represents the XMLSEC object of the same name
+      properties:
+        X509Certificates:
+          items:
+            $ref: '#/components/schemas/X509Certificate'
+          type: array
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      type: object
+    CustomServerConsent:
+      properties:
+        scope_grant_url:
+          description: Deprecetad scope_grant_url. Use server_consent_url instead
+          type: string
+        server_consent_url:
+          type: string
+      type: object
+    SoftwareStatementSettings:
+      properties:
+        optional:
+          default: false
+          description: 'Accepts registrations without a software statement
+
+
+            If enabled, the registration endpoint no longer requires a software statement, but still
+
+            validates and applies one whenever a client presents it. Clients that register with a
+
+            software statement are distinguished by a non-empty `software_statement_payload`.
+
+
+            Requires `enable_trust_anchor` to be on, as the trust anchor keys verify a presented
+
+            software statement.'
+          type: boolean
+      type: object
+    UserCodeCharacterSet:
+      type: string
+    TokenTTLs:
+      properties:
+        access_token_ttl:
+          default: 1h0m0s
+          description: 'Access token time to live
+
+
+            After an access token reaches its time to live, it expires and it cannot be used to
+
+            authenticate the client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        authorization_code_ttl:
+          description: 'Authorization code time to live
+
+
+            After an authorization code reaches its time to live, it expires and it cannot be used to
+
+            authorize the request to the `/token` endpoint.'
+          example: 10m0s
+          format: duration
+          type: string
+        id_jag_ttl:
+          default: 5m0s
+          description: 'ID-JAG time to live
+
+
+            After an Identity Assertion JWT Authorization Grant reaches its time to live, it expires
+
+            and it cannot be redeemed at the resource authorization server. Kept short by default
+
+            because the grant is redeemed immediately, and its expiry bounds how long the resource
+
+            server must remember the grant identifier to reject replays.'
+          example: 5m0s
+          format: duration
+          type: string
+        id_token_ttl:
+          description: 'ID token time to live
+
+
+            After an ID token reaches its time to live, it expires and it cannot be used to provide
+
+            user profile information to a client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        refresh_token_ttl:
+          default: 720h0m0s
+          description: 'Refresh token time to live
+
+
+            After a refresh token reaches its time to live, it expires and it cannot be used to obtain
+
+            new access tokens for a client application.'
+          example: 720h0m0s
+          format: duration
+          type: string
+      type: object
+    OIDCServerConsent:
+      type: object
+    WorkforceConfiguration:
+      properties:
+        client_id:
+          description: workforce authentication client id
+          type: string
+        client_secret:
+          description: workforce authentication client secret
+          type: string
+        status:
+          $ref: '#/components/schemas/WorkforceProvisioningStatus'
+        tenant_slug:
+          description: workforce tenant slug
+          type: string
+      type: object
+    LocalizedURI:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.5
+      properties:
+        Lang:
+          type: string
+        Value:
+          type: string
+      title: LocalizedURI represents the SAML type localizedURIType.
+      type: object
+    RedirectURIs:
+      description: 'SecureAuth uses redirect URIs to redirect users back to the application after they authorized the application. Along
+
+        with the redirection, an authorization code or access token is added to the URL.
+
+
+        For backward compatibility reasons, it''s also acceptable to pass `redirect_uris` as a string, for example:
+
+        https://example.com/callback.
+
+
+        example: ["https://example.com/callback"]'
+      items:
+        type: string
+      title: OAuth-allowed redirect URIs
+      type: array
+    ServerBindingResponse:
+      properties:
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        dependent:
+          description: dependent server id
+          example: default
+          format: serverID
+          type: string
+        dependent_server:
+          $ref: '#/components/schemas/ServerInfo'
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        logo_uri:
+          description: Logo URI
+          type: string
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        server_id:
+          description: authorization server id
+          example: developer
+          format: serverID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+      type: object
+    Duration:
+      description: 'A Duration represents the elapsed time between two instants
+
+        as an int64 nanosecond count. The representation limits the
+
+        largest representable duration to approximately 290 years.'
+      format: int64
+      type: integer
+    SAMLConfiguration:
+      properties:
+        organization_display_name:
+          description: Organization display name
+          type: string
+        organization_name:
+          description: Organization name
+          type: string
+        organization_url:
+          description: Organization URL
+          type: string
+        response_binding_mode:
+          $ref: '#/components/schemas/SAMLResponseBindingMode'
+        service_provider_discovery_mode:
+          $ref: '#/components/schemas/ServiceProviderDiscoveryMode'
+        signing_hash_algorithms:
+          default:
+          - sha-256
+          description: Allowed SAML Assertion signing hash algorithms.
+          example:
+          - sha-256
+          items:
+            enum:
+            - sha-1
+            - sha-256
+            - sha-512
+            type: string
+          type: array
+        subject_name_id:
+          description: 'Allows to change default subject name id.
+
+
+            The default one will be idp''s subject, even if the value is empty.'
+          type: string
+        subject_name_id_format:
+          description: Allows to set the subject name id format
+          enum:
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+          type: string
+      type: object
+    ClaimSourceType:
+      type: string
+    NameIDFormat:
+      description: NameIDFormat is the format of the id
+      type: string
+    ServerJWK:
+      properties:
+        alg:
+          description: 'The "alg" (algorithm) parameter identifies the algorithm intended for
+
+            use with the key.  The values used should either be registered in the
+
+            IANA "JSON Web Signature and Encryption Algorithms" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.'
+          example: RS256
+          type: string
+        created_at:
+          description: Time when key was generated
+          format: date-time
+          type: string
+        crv:
+          example: P-256
+          type: string
+        d:
+          example: T_N8I-6He3M8a7X1vWt6TGIx4xB_GP3Mb4SsZSA4v-orvJzzRiQhLlRR81naWYxfQAYt5isDI6_C2L9bdWo4FFPjGQFvNoRX-_sBJyBI_rl-TBgsZYoUlAj3J92WmY2inbA-PwyJfsaIIDceYBC-eX-xiCu6qMqkZi3MwQAFL6bMdPEM0z4JBcwFT3VdiWAIRUuACWQwrXMq672x7fMuaIaHi7XDGgt1ith23CLfaREmJku9PQcchbt_uEY-hqrFY6ntTtS4paWWQj86xLL94S-Tf6v6xkL918PfLSOTq6XCzxvlFwzBJqApnAhbwqLjpPhgUG04EDRrqrSBc5Y1BLevn6Ip5h1AhessBp3wLkQgz_roeckt-ybvzKTjESMuagnpqLvOT7Y9veIug2MwPJZI2VjczRc1vzMs25XrFQ8DpUy-bNdp89TmvAXwctUMiJdgHloJw23Cv03gIUAkDnsTqZmkpbIf-crpgNKFmQP_EDKoe8p_PXZZgfbRri3NoEVGP7Mk6yEu8LjJhClhZaBNjuWw2-KlBfOA3g79mhfBnkInee5KO9mGR50qPk1V-MorUYNTFMZIm0kFE6eYVWFBwJHLKYhHU34DoiK1VP-svZpC2uAMFNA_UJEwM9CQ2b8qe4-5e9aywMvwcuArRkAB5mBIfOaOJao3mfukKAE
+          type: string
+        dp:
+          example: G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oimYwxIi2emTAue0UOa5dpgFGyBJ4c8tQ2VF402XRugKDTP8akYhFo5tAA77Qe_NmtuYZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0
+          type: string
+        dq:
+          example: s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUUvMfBcMpn8lqeW6vzznYY5SSQF7pMdC_agI3nG8Ibp1BUb0JUiraRNqUfLhcQb_d9GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk
+          type: string
+        e:
+          example: AQAB
+          type: string
+        k:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        kid:
+          description: 'The "kid" (key ID) parameter is used to match a specific key.  This
+
+            is used, for instance, to choose among a set of keys within a JWK Set
+
+            during key rollover.  The structure of the "kid" value is
+
+            unspecified.  When "kid" values are used within a JWK Set, different
+
+            keys within the JWK Set SHOULD use distinct "kid" values.  (One
+
+            example in which different keys might use the same "kid" value is if
+
+            they have different "kty" (key type) values but are considered to be
+
+            equivalent alternatives by the application using them.)  The "kid"
+
+            value is a case-sensitive string.'
+          example: 1603dfe0af8f4596
+          type: string
+        kty:
+          description: 'The "kty" (key type) parameter identifies the cryptographic algorithm
+
+            family used with the key, such as "RSA" or "EC". "kty" values should
+
+            either be registered in the IANA "JSON Web Key Types" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.  The "kty" value is a case-sensitive string.'
+          example: RSA
+          type: string
+        n:
+          example: vTqrxUyQPl_20aqf5kXHwDZrel-KovIp8s7ewJod2EXHl8tWlRB3_Rem34KwBfqlKQGp1nqah-51H4Jzruqe0cFP58hPEIt6WqrvnmJCXxnNuIB53iX_uUUXXHDHBeaPCSRoNJzNysjoJ30TIUsKBiirhBa7f235PXbKiHducLevV6PcKxJ5cY8zO286qJLBWSPm-OIevwqsIsSIH44Qtm9sioFikhkbLwoqwWORGAY0nl6XvVOlhADdLjBSqSAeT1FPuCDCnXwzCDR8N9IFB_IjdStFkC-rVt2K5BYfPd0c3yFp_vHR15eRd0zJ8XQ7woBC8Vnsac6Et1pKS59pX6256DPWu8UDdEOolKAPgcd_g2NpA76cAaF_jcT80j9KrEzw8Tv0nJBGesuCjPNjGs_KzdkWTUXt23Hn9QJsdc1MZuaW0iqXBepHYfYoqNelzVte117t4BwVp0kUM6we0IqyXClaZgOI8S-WDBw2_Ovdm8e5NmhYAblEVoygcX8Y46oH6bKiaCQfKCFDMcRgChme7AoE1yZZYsPbaG_3IjPrC4LBMHQw8rM9dWjJ8ImjicvZ1pAm0dx-KHCP3y5PVKrxBDf1zSOsBRkOSjB8TPODnJMz6-jd5hTtZxpZPwPoIdCanTZ3ZD6uRBpTmDwtpRGm63UQs1m5FWPwb0T2IF0
+          type: string
+        p:
+          example: 6NbkXwDWUhi-eR55Cgbf27FkQDDWIamOaDr0rj1q0f1fFEz1W5A_09YvG09Fiv1AO2-D8Rl8gS1Vkz2i0zCSqnyy8A025XOcRviOMK7nIxE4OH_PEsko8dtIrb3TmE2hUXvCkmzw9EsTF1LQBOGC6iusLTXepIC1x9ukCKFZQvdgtEObQ5kzd9Nhq-cdqmSeMVLoxPLd1blviVT9Vm8-y12CtYpeJHOaIDtVPLlBhJiBoPKWg3vxSm4XxIliNOefqegIlsmTIa3MpS6WWlCK3yHhat0Q-rRxDxdyiVdG_wzJvp0Iw_2wms7pe-PgNPYvUWH9JphWP5K38YqEBiJFXQ
+          type: string
+        promoted_at:
+          description: Time when key was set as current key in use
+          format: date-time
+          type: string
+        q:
+          example: 0A1FmpOWR91_RAWpqreWSavNaZb9nXeKiBo0DQGBz32DbqKqQ8S4aBJmbRhJcctjCLjain-ivut477tAUMmzJwVJDDq2MZFwC9Q-4VYZmFU4HJityQuSzHYe64RjN-E_NQ02TWhG3QGW6roq6c57c99rrUsETwJJiwS8M5p15Miuz53DaOjv-uqqFAFfywN5WkxHbraBcjHtMiQuyQbQqkCFh-oanHkwYNeytsNhTu2mQmwR5DR2roZ2nPiFjC6nsdk-A7E3S3wMzYYFw7jvbWWoYWo9vB40_MY2Y0FYQSqcDzcBIcq_0tnnasf3VW4Fdx6m80RzOb2Fsnln7vKXAQ
+          type: string
+        qi:
+          example: GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzgUIZEVFEcOqwemRN81zoDAaa-Bk0KWNGDjJHZDdDmFhW3AN7lI-puxk_mHZGJ11rxyR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU
+          type: string
+        revoked_at:
+          description: Time when key was revoked
+          format: date-time
+          type: string
+        rotated_at:
+          description: Time when key was rotated
+          format: date-time
+          type: string
+        use:
+          description: 'Use ("public key use") identifies the intended use of
+
+            the public key. The "use" parameter is employed to indicate whether
+
+            a public key is used for encrypting data or verifying the signature
+
+            on data. Values are commonly "sig" (signature) or "enc" (encryption).'
+          example: sig
+          type: string
+        x:
+          example: f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU
+          type: string
+        x5c:
+          description: 'The "x5c" (X.509 certificate chain) parameter contains a chain of one
+
+            or more PKIX certificates [RFC5280].  The certificate chain is
+
+            represented as a JSON array of certificate value strings.  Each
+
+            string in the array is a base64-encoded (Section 4 of [RFC4648] --
+
+            not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
+
+            The PKIX certificate containing the key value MUST be the first
+
+            certificate.'
+          items:
+            type: string
+          type: array
+        x5t:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        x5t#S256:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        y:
+          example: x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0
+          type: string
+      required:
+      - kty
+      type: object
+    Endpoint:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.2
+      properties:
+        Binding:
+          type: string
+        Location:
+          type: string
+        ResponseLocation:
+          type: string
+      title: Endpoint represents the SAML EndpointType object.
+      type: object
+    ExternalServiceCredentials:
+      properties:
+        api_key_in:
+          description: query or header
+          type: string
+        api_key_name:
+          description: api key name
+          type: string
+        api_key_value:
+          description: api key value
+          type: string
+        password:
+          description: http basic auth password
+          type: string
+        username:
+          description: http basic auth username
+          type: string
+      type: object
+    Name:
+      description: 'A Name represents an XML name (Local) annotated
+
+        with a name space identifier (Space).
+
+        In tokens returned by [Decoder.Token], the Space identifier
+
+        is given as a canonical URL, not the short prefix used
+
+        in the document being parsed.'
+      properties:
+        Space:
+          type: string
+      type: object
+    Server:
+      description: Multi Tenant authorization server
+      properties:
+        access_token_strategy:
+          default: jwt
+          description: 'Access token strategy
+
+
+            You can choose to go either with `JWT` or `opaque` tokens.
+
+
+            The content of JSON Web Tokens is readable and it is possible to be decoded by anyone that
+
+            has a secret or a public key in their possession.
+
+
+            Opaque tokens are in a proprietary form that contains an identifier to information stored on
+
+            the athorization server. To validate an opaque token, the recipient must call the server that
+
+            issued the token.'
+          enum:
+          - jwt
+          - opaque
+          example: jwt
+          type: string
+        access_token_ttl:
+          default: 1h0m0s
+          description: 'Access token time to live
+
+
+            After an access token reaches its time to live, it expires and it cannot be used to
+
+            authenticate the client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        advanced:
+          $ref: '#/components/schemas/AdvancedConfiguration'
+        authentication_context_settings:
+          $ref: '#/components/schemas/AuthenticationContextSettings'
+        authentication_mechanisms:
+          description: allowed authentication mechanisms for users in the identity pools
+          example:
+          - password
+          - totp
+          - otp
+          - webauthn
+          - sms_otp
+          - email_otp
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        authorization_code_ttl:
+          description: 'Authorization code time to live
+
+
+            After an authorization code reaches its time to live, it expires and it cannot be used to
+
+            authorize the request to the `/token` endpoint.'
+          example: 10m0s
+          format: duration
+          type: string
+        backchannel_token_delivery_modes_supported:
+          default:
+          - poll
+          - ping
+          items:
+            type: string
+          type: array
+        backchannel_user_code_parameter_supported:
+          default: false
+          type: boolean
+        cdr:
+          $ref: '#/components/schemas/CDRConfiguration'
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        consent_id_namespace:
+          description: 'Namespace used when creating Open Banking Brasil consent IDs
+
+
+            Consent IDs will have the form of urn:<consent_id_namespace>:<uid> when this is set.
+
+            If this is empty, the tenant id is used by default'
+          type: string
+        cookie_max_age:
+          description: 'Cookie max age
+
+
+            Defines how long a cookie can live until it expires.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        custom_issuer_url:
+          description: 'Defines a custom issuer URL that can be used as the value of the `iss` claim in an access
+
+            token.
+
+
+            If not provided, it is built dynamically based on the server''s URL.'
+          example: http://example.com/default/default
+          type: string
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        device_authorization:
+          $ref: '#/components/schemas/DeviceAuthorizationConfiguration'
+        dynamic_client_registration:
+          $ref: '#/components/schemas/DynamicClientRegistrationSettings'
+        dynamic_scope_separator:
+          default: .
+          description: 'You can use this property to define a separator that is used for dynamic scopes.
+
+
+            For example, the default separator is `.`, so the scope could look like the following:
+
+            `users.*`.
+
+
+            For Open Banking Brazil compliant servers, the `:` separator should be used.'
+          format: dynamicScopeSeparator
+          type: string
+        enable_idp_discovery:
+          description: 'Deprecated: Use IDPDiscovery instead
+
+
+            If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+        enable_legacy_clients_with_no_software_statement:
+          description: 'Deprecated
+
+
+            If enabled, it is possible to manually register clients withouth the use of software
+
+            statements.
+
+
+            This flag is enabled, when the `enable_trust_anchor` flag is set to `false`. You can disable
+
+            it using API, but it cannot be manually enabled.'
+          type: boolean
+        enable_quick_access:
+          description: If enabled, the server is visible on the Quick Access tab on the login page.
+          type: boolean
+        enable_trust_anchor:
+          default: false
+          description: 'If enabled, it makes it obligatory to provide a software statement signed by a trusted certificate authority
+
+
+            when registering a client application with the use of the Dynamic Client Registration (DCR).
+
+
+            In public key infrastructure (PKI), trust anchors are certification authorities. They are
+
+            represented by a certificate that is used to verify the signature of a certificate issued by
+
+            a particular trust anchor.'
+          type: boolean
+        enforce_id_token_encryption:
+          description: When enabled, the authorization server will enforce encrypted id tokens it issues
+          type: boolean
+        enforce_pkce:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for both
+
+            private and public clients.
+
+
+            PKCE is an OAuth security extension that prevents malicious applications or codes that
+
+            intercepted authorization code from exchanging it for an access token.'
+          example: false
+          type: boolean
+        enforce_pkce_for_public_clients:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for
+
+            public clients.
+
+
+            Public clients, like mobile applications or JavaScript-based applications, by their design,
+
+            cannot store client secrets securely. For such clients, even encrypting the client secret
+
+            inside the application’s code is not a reliable way of protecting secrets as the application
+
+            can be decompiled and the client secret can be extracted while it is decrypted in the memory
+
+            of the application.
+
+
+            For those reasons, ACP supports the use of PKCE as an addition to the authorization code
+
+            grant flow to provide a secure alternative to the implicit grant flow.'
+          example: false
+          type: boolean
+        fdx:
+          $ref: '#/components/schemas/FDXConfiguration'
+        grant_types:
+          default:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          description: An array that defines which of the OAuth 2.0 grant types are enabled for the authorization server.
+          example:
+          - authorization_code
+          - implicit
+          - refresh_token
+          - client_credentials
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an authorization server (workspace)
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        id_jag_ttl:
+          default: 5m0s
+          description: 'ID-JAG time to live
+
+
+            After an Identity Assertion JWT Authorization Grant reaches its time to live, it expires
+
+            and it cannot be redeemed at the resource authorization server. Kept short by default
+
+            because the grant is redeemed immediately, and its expiry bounds how long the resource
+
+            server must remember the grant identifier to reject replays.'
+          example: 5m0s
+          format: duration
+          type: string
+        id_token_ttl:
+          description: 'ID token time to live
+
+
+            After an ID token reaches its time to live, it expires and it cannot be used to provide
+
+            user profile information to a client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        identity_assurance:
+          $ref: '#/components/schemas/IdentityAssuranceConfiguration'
+        idp_discovery:
+          $ref: '#/components/schemas/IDPDiscovery'
+        issuer_id:
+          description: 'Issuer ID that will be used to set `iss` claim on signed messages
+
+
+            If issuer_id is not set then default issuer_url will be used'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        jwks:
+          $ref: '#/components/schemas/ServerJWKs'
+        key_type:
+          default: ecdsa
+          description: 'Determines which type of asymmetric algorithms (RSA or ECDSA) is used to generate keys for signing access and
+
+            ID tokens.
+
+
+            It is used only as an input parameter for the Create Authorization Server API.'
+          enum:
+          - rsa
+          - ecdsa
+          - ps
+          example: rsa
+          type: string
+        legal_entity:
+          $ref: '#/components/schemas/LegalEntity'
+        logo_uri:
+          description: Logo URI
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        obbr:
+          $ref: '#/components/schemas/DeprecatedOBBRConfiguration'
+        organization:
+          $ref: '#/components/schemas/OrganizationConfiguration'
+        parent_id:
+          description: Optional ID of a parent server
+          format: serverID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/ServerPreferences'
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        pushed_authorization_request_ttl:
+          description: 'Custom pushed authentication request TTL
+
+            If not provided, TTL is set to 60 seconds.'
+          format: duration
+          type: string
+        refresh_token_ttl:
+          default: 720h0m0s
+          description: 'Refresh token time to live
+
+
+            After a refresh token reaches its time to live, it expires and it cannot be used to obtain
+
+            new access tokens for a client application.'
+          example: 720h0m0s
+          format: duration
+          type: string
+        require_pushed_authorization_requests:
+          description: Boolean parameter indicating whether the authorization server accepts authorization request data only via PAR.
+          type: boolean
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        root_cas:
+          description: 'You can provide root Certificate Authority (CA) certificates encoded to the Privacy-Enhanced
+
+            Mail (PEM) file format which are used for the `tls_client_auth` and the
+
+            `self_signed_tls_client_auth` client authentication methods that use the Mutual
+
+            Transport Layer Security (mTLS).
+
+
+            If not set, the system root CA certifiates are used instead.'
+          type: string
+        rotated_secrets:
+          description: An array of rotated secrets that are still used to validate tokens
+          example:
+          - jFpwIvuKJP46J71WqszPv1SrzoUr-cSILP9EPdlClB4
+          items:
+            type: string
+          type: array
+        saml:
+          $ref: '#/components/schemas/SAMLConfiguration'
+        scope_claim_formats:
+          default:
+          - scp_array
+          description: formats of the scope claim that will be included in the access token
+          example:
+          - scp_array
+          - scope_space_separated
+          items:
+            $ref: '#/components/schemas/ScopeClaimFormat'
+          type: array
+        secret:
+          description: 'Secret used for hashing
+
+
+            It must have at least 32 characters. If not provided, it is generated.'
+          example: hW5WhKX_7w7BLwUQ6mn7Cp70_OoKI_F1y1hLS5U8lIU
+          type: string
+        settings:
+          $ref: '#/components/schemas/ServerSettings'
+        sso:
+          $ref: '#/components/schemas/SSOConfiguration'
+        styling:
+          $ref: '#/components/schemas/Styling'
+        subject_custom_attribute:
+          description: The authentication context attribute name that will be used as subject when the custom subject format is used.
+          type: string
+        subject_format:
+          description: 'Define the format of a subject
+
+            When set to hash sub value is a one way hash of idp id and idp sub'
+          enum:
+          - hash
+          - legacy
+          - custom
+          type: string
+        subject_identifier_algorithm_salt:
+          description: 'Salt used to hash `subject` when the `pairwise` subject type is used.
+
+
+            Salt is a random data which is used as an additional input to one-way functions that hashes
+
+            data, passwords, and, in this case, subjects.
+
+
+            It is recommended that your salt value is long for security reasons. Preferably, the salt
+
+            value should be at least the same length as the output of the hash.
+
+
+            If not provided, it is generated.'
+          type: string
+        subject_identifier_types:
+          default:
+          - public
+          - pairwise
+          description: 'An array that defines supported subject identifier types.
+
+
+            Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+
+            and are intended to be consumed by client applications. There are two types
+
+            of subject identifiers: `public` and `pairwise`.
+
+
+            `public` identifiers provide the same `sub` claim value to all client applications.
+
+            `pairwise` identifiers provide different `sub` claim values to each client application. With
+
+            this approach, it makes it impossible for client applications to correlate the end-user''s
+
+            activity without their permission.'
+          example:
+          - public
+          - pairwise
+          items:
+            enum:
+            - public
+            - pairwise
+            type: string
+          type: array
+        template:
+          description: If true this workspace can be used as a template when creating a new ones.
+          type: boolean
+        tenant_id:
+          description: ID of a tenant
+          example: default
+          format: tenantID
+          type: string
+        token_endpoint_auth_methods:
+          default:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          description: 'An array that lists all of the supported token endpoint authentication methods for the
+
+            authorization server.'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        token_endpoint_auth_signing_alg_values:
+          description: 'Token endpoint auth signing supported alg values
+
+
+            Supported algorithms: HS256, RS256, ES256, PS256
+
+
+            At least one algorithm must be set.
+
+
+            The default values depends on the server security profile.'
+          items:
+            type: string
+          type: array
+        token_endpoint_authn_methods:
+          description: 'Deprecated: Use TokenEndpointAuthMethods instead'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        trust_anchor_configuration:
+          $ref: '#/components/schemas/TrustAnchorConfiguration'
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+        version:
+          default: 3
+          description: 'server version to track internal changes
+
+            version that is currently the latest: 3'
+          format: int64
+          type: integer
+        workforce:
+          $ref: '#/components/schemas/WorkforceConfiguration'
+      required:
+      - tenant_id
+      type: object
+    IDPSSODescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.4.3
+      properties:
+        ArtifactResolutionServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AssertionIDRequestServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        AttributeProfiles:
+          items:
+            type: string
+          type: array
+        Attributes:
+          items:
+            $ref: '#/components/schemas/Attribute'
+          type: array
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ContactPeople:
+          items:
+            $ref: '#/components/schemas/ContactPerson'
+          type: array
+        ErrorURL:
+          type: string
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        ManageNameIDServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        NameIDFormats:
+          items:
+            $ref: '#/components/schemas/NameIDFormat'
+          type: array
+        NameIDMappingServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        Organization:
+          $ref: '#/components/schemas/Organization'
+        ProtocolSupportEnumeration:
+          type: string
+        Signature:
+          $ref: '#/components/schemas/Element'
+        SingleLogoutServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        SingleSignOnServices:
+          items:
+            $ref: '#/components/schemas/Endpoint'
+          type: array
+        ValidUntil:
+          format: date-time
+          type: string
+        WantAuthnRequestsSigned:
+          type: boolean
+        XMLName:
+          $ref: '#/components/schemas/Name'
+      title: IDPSSODescriptor represents the SAML IDPSSODescriptorType object.
+      type: object
+    DurationType:
+      type: string
+    ResponseModes:
+      items:
+        enum:
+        - query
+        - fragment
+        - form_post
+        - query.jwt
+        - fragment.jwt
+        - form_post.jwt
+        - jwt
+        type: string
+      type: array
+    CDRRegisterAPIVersion:
+      type: string
+    ClientJWKs:
+      properties:
+        keys:
+          example: []
+          items:
+            $ref: '#/components/schemas/ClientJWK'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    AuthenticationContextAttribute:
+      description: Authentication context attribute
+      properties:
+        description:
+          description: String represented display name of an attribute
+          type: string
+        labels:
+          description: Array of Strings represents attribute labels
+          items:
+            format: label
+            type: string
+          type: array
+        name:
+          description: String represented variable name of an attribute
+          type: string
+        type:
+          description: 'The data type of an attribute
+
+
+            It stores information what kind of data is used as the value of the attribute.
+
+
+            Available types: `number`, `string`, `bool`, `object`, `number_array`, `string_array`, `bool_array`, `object_array` or `any`.'
+          format: type
+          type: string
+      type: object
+    OpenbankingServerConsent:
+      properties:
+        bank_url:
+          description: If empty it defaults to demo bank embedded in acp
+          type: string
+      type: object
+    ClientTokenExchangeConfiguration:
+      properties:
+        actor_claims:
+          description: 'Additional actor token claims
+
+
+            Claims from the actor token that will be injected into the exchanged token under the `act` claim.
+
+
+            Applies for the token exchange delegation flow only.'
+          items:
+            type: string
+          type: array
+        id_jag_targets:
+          description: ID-JAG targets with optional client ID and audience tenant overrides. Audiences must be unique.
+          items:
+            $ref: '#/components/schemas/ClientIDJAGTarget'
+          type: array
+      type: object
+    KeyDescriptor:
+      description: KeyDescriptor represents the XMLSEC object of the same name
+      properties:
+        EncryptionMethods:
+          items:
+            $ref: '#/components/schemas/EncryptionMethod'
+          type: array
+        KeyInfo:
+          $ref: '#/components/schemas/KeyInfo'
+        Use:
+          type: string
+      type: object
+    CDRIndustry:
+      type: string
+    LocalizedName:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.2.4
+      properties:
+        Lang:
+          type: string
+        Value:
+          type: string
+      title: LocalizedName represents the SAML type localizedNameType.
+      type: object
+    AffiliationDescriptor:
+      description: See http://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf §2.5
+      properties:
+        AffiliateMembers:
+          items:
+            type: string
+          type: array
+        AffiliationOwnerID:
+          type: string
+        CacheDuration:
+          $ref: '#/components/schemas/Duration'
+        ID:
+          type: string
+        KeyDescriptors:
+          items:
+            $ref: '#/components/schemas/KeyDescriptor'
+          type: array
+        Signature:
+          $ref: '#/components/schemas/Element'
+        ValidUntil:
+          format: date-time
+          type: string
+      title: AffiliationDescriptor represents the SAML AffiliationDescriptor object.
+      type: object
+    InitialAccessTokenSettings:
+      properties:
+        required:
+          description: 'Enables initial access token for dynamic client registration
+
+
+            If enabled, the registration endpoint requires an access token with the dcr_register scope granted.
+
+            To issue the access token, you need a separate client with the client credentials grant type.
+
+            Upon successful registration, the access token is terminated.'
+          type: boolean
+      type: object
+    SAMLIDPAttributesOverride:
+      items:
+        $ref: '#/components/schemas/SAMLAttribute'
+      type: array
+    FDXClientStatus:
+      type: string
+    GetServerWithScopesDeveloperResponse:
+      properties:
+        authorization_details:
+          description: list of authorization details
+          items:
+            $ref: '#/components/schemas/AuthorizationDetailWithServiceDeveloperResponse'
+          type: array
+        color:
+          description: Color
+          example: '#007FFF'
+          type: string
+        grant_types:
+          description: supported grant types
+          example:
+          - implicit
+          - authorization_code
+          - refresh_token
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id:
+          description: authorization server id
+          example: default
+          type: string
+        issuer_url:
+          description: issuer URL
+          example: https://example.com/default/default
+          type: string
+        mtls_issuer_url:
+          description: mtls issuer url
+          type: string
+        name:
+          description: authorizations server name
+          example: ACP
+          type: string
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        scopes:
+          description: list of scopes
+          items:
+            $ref: '#/components/schemas/ScopeWithServiceDeveloperResponse'
+          type: array
+        subject_identifier_types:
+          description: supported subject identifier types
+          example:
+          - public
+          - pairwise
+          items:
+            enum:
+            - public
+            - pairwise
+            type: string
+          type: array
+        supported_application_purposes:
+          description: supported application purposes
+          example:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          items:
+            enum:
+            - single_page
+            - server_web
+            - mobile_desktop
+            - service
+            - legacy
+            - custom
+            - saml
+            - ai_agent
+            type: string
+          type: array
+      type: object
+    ScopeWithServiceDeveloperResponse:
+      properties:
+        scope_description:
+          description: scope description
+          example: This scope value requests offline access using refresh token
+          type: string
+        scope_display_name:
+          description: scope display name
+          example: Offline access
+          type: string
+        scope_id:
+          description: scope id
+          example: '1'
+          type: string
+        scope_name:
+          description: scope name
+          example: offline_access
+          type: string
+        service_description:
+          description: service description
+          example: service description
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          type: string
+        service_name:
+          description: service name
+          example: service
+          type: string
+        with_service:
+          description: is scope assigned to a service
+          example: false
+          type: boolean
+      type: object
+    ListServersDeveloperResponse:
+      properties:
+        servers:
+          description: list of authorization servers
+          items:
+            $ref: '#/components/schemas/GetServerDeveloperResponse'
+          type: array
+      type: object
+    AuthorizationDetailWithServiceDeveloperResponse:
+      properties:
+        description:
+          description: Description
+          example: Authorization detail for payment initiation
+          type: string
+        name:
+          description: Display name
+          example: Payment Initiation
+          type: string
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        service_description:
+          description: service description
+          example: service description
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          type: string
+        service_name:
+          description: service name
+          example: service
+          type: string
+        type:
+          description: 'Authorization detail type as defined in RFC: https://datatracker.ietf.org/doc/html/rfc9396
+
+            Must be unique within the authorization server.'
+          example: payment_initiation
+          type: string
+      required:
+      - type
+      type: object
+    GetServerDeveloperResponse:
+      properties:
+        color:
+          description: Color
+          example: '#007FFF'
+          type: string
+        grant_types:
+          description: supported grant types
+          example:
+          - implicit
+          - authorization_code
+          - refresh_token
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id:
+          description: authorization server id
+          example: default
+          type: string
+        issuer_url:
+          description: issuer URL
+          example: https://example.com/default/default
+          type: string
+        mtls_issuer_url:
+          description: mtls issuer url
+          type: string
+        name:
+          description: authorizations server name
+          example: ACP
+          type: string
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        subject_identifier_types:
+          description: supported subject identifier types
+          example:
+          - public
+          - pairwise
+          items:
+            enum:
+            - public
+            - pairwise
+            type: string
+          type: array
+        supported_application_purposes:
+          description: supported application purposes
+          example:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          items:
+            enum:
+            - single_page
+            - server_web
+            - mobile_desktop
+            - service
+            - legacy
+            - custom
+            - saml
+            - ai_agent
+            type: string
+          type: array
+      type: object
+  responses:
+    CIBAAuthenticationServiceResponse:
+      description: CIBA authentication service
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CIBAAuthenticationService'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Server:
+      description: Server
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerResponse'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerConsentResponse:
+      description: Server consent
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerConsentResponse'
+    Servers:
+      description: Servers
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServersResponse'
+    ServerToTheme:
+      description: Server to Theme binding
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerToTheme'
+    ServersBindings:
+      description: Server bindings
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServersBindingsResponse'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerToServer:
+      description: Server to server binding
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ServerToServer'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GetServerWithScopesDeveloperAPIResponse:
+      description: Get developer server with scopes
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetServerWithScopesDeveloperResponse'
+    ListAPIServersDeveloperAPIResponse:
+      description: List developer servers
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ListServersDeveloperResponse'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    developer:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/developer/oauth2/authorize
+          tokenUrl: /default/developer/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-developer-openapi.yml
+- secureauth-system-openapi.yml

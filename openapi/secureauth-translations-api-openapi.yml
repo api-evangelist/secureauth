@@ -1,0 +1,398 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Translations API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: Translations
+paths:
+  /translation/{locale}:
+    delete:
+      description: 'Deletes the custom translation for a given locale.
+
+        If the custom translation does not exist, 204 No Content is returned.'
+      operationId: deleteTranslation
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: translation locale
+        in: path
+        name: locale
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' translation has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: (Alpha) Delete Custom Translation
+      tags:
+      - Translations
+    get:
+      description: Returns the built-in and/or custom translation for a given locale.
+      operationId: getTranslation
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: translation locale
+        in: path
+        name: locale
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Translation'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: (Alpha) Get Translation for a given Locale
+      tags:
+      - Translations
+    put:
+      description: 'Updates an existing custom translation, or inserts a new one.
+
+
+        Returns built-in translations (if exists) as well as custom translations created by the tenant.'
+      operationId: upsertTranslation
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: translation locale
+        in: path
+        name: locale
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Translation'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: (Alpha) Update or Create Custom Translation
+      tags:
+      - Translations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTranslation'
+  /translations:
+    get:
+      description: 'Returns translations available for the tenant.
+
+        The list includes built-in translations as well as custom translations created by the tenant.
+
+        Translations are groupped by Locale.'
+      operationId: listTranslations
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Translations'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: (Alpha) List Translations
+      tags:
+      - Translations
+components:
+  schemas:
+    CustomTranslation:
+      properties:
+        content:
+          additionalProperties:
+            type: object
+          description: content of the translation
+          type: object
+        created_at:
+          description: timestamp when the translation was created
+          format: date-time
+          type: string
+        enabled:
+          description: is the overwritten translation enabled
+          type: boolean
+        updated_at:
+          description: timestamp when the translation was last updated
+          format: date-time
+          type: string
+      type: object
+    Translations:
+      properties:
+        translations:
+          items:
+            $ref: '#/components/schemas/TranslationSummary'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    Translation:
+      description: 'Returns translations for a specific locale.
+
+        It might include built-in translation, custom translation, and whether the locale is enabled.'
+      properties:
+        built_in_translation:
+          $ref: '#/components/schemas/BuiltInTranslation'
+        custom_translation:
+          $ref: '#/components/schemas/CustomTranslation'
+        enabled:
+          description: 'When enabled, trnslations for this locale are available, when disabled the whole locale is disabled and no translations are available.
+
+            In case there is no built-in translation for this locale and the overwritten translation is not set, the locale is not active.'
+          type: boolean
+        locale:
+          description: Locale for which the translations are provided.
+          format: locale
+          type: string
+      required:
+      - locale
+      title: Translation
+      type: object
+    BuiltInTranslation:
+      properties:
+        content:
+          additionalProperties:
+            type: object
+          description: content of the translation
+          type: object
+      type: object
+    TranslationSummary:
+      properties:
+        enabled:
+          description: 'When enabled, trnslations for this locale are available, when disabled the whole locale is disabled and no translations are available.
+
+            In case there is no built-in translation for this locale and the overwritten translation is not set, the locale is not active.'
+          type: boolean
+        has_built_in_translation:
+          description: When the built-in translation exists for this locale it means that there is a system-provided translation for the locale.
+          type: boolean
+        has_custom_translation:
+          description: When set, it means that there is a tenant specifc translation for this locale.
+          type: boolean
+        locale:
+          description: Locale for which the translations are provided.
+          format: locale
+          type: string
+      required:
+      - locale
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Translation:
+      description: Translation
+      headers:
+        if-match:
+          description: 'A server will only return requested resources if the resource matches one of the listed ETag value
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-correlation-id:
+          description: 'Unique identifier included in audit events for request tracking
+
+
+            in:header'
+          schema:
+            type: string
+        x-idempotency-key:
+          description: 'Key used to safely retry failed requests without duplicate processing
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Translation'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Translations:
+      description: Translations
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Translations'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

@@ -1,0 +1,1192 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Roles API
+  version: latest
+servers:
+- url: https://localhost:8443/api/admin/default
+tags:
+- name: Roles
+paths:
+  /pools/{ipID}/roles:
+    get:
+      description: List identityPool roles.
+      operationId: listIdentityPoolRoles
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Identity pool id
+        in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/IdentityPoolRolesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List identityPool roles
+      tags:
+      - Roles
+  /pools/{ipID}/roles/grant:
+    post:
+      description: Grant identityPool role.
+      operationId: grantIdentityPoolRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Identity pool id
+        in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          $ref: '#/components/responses/GrantIdentityPoolRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Grant identityPool role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantIdentityPoolRoleRequest'
+  /pools/{ipID}/roles/revoke:
+    delete:
+      description: Revoke identityPool role.
+      operationId: revokeIdentityPoolRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Identity pool id
+        in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          $ref: '#/components/responses/RevokeIdentityPoolRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Revoke identityPool role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeIdentityPoolRoleRequest'
+  /pools/{ipID}/users/{userID}/roles:
+    get:
+      description: List user roles.
+      operationId: listUserRoles
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Identity pool id
+        in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+          default: default
+      - description: User id
+        in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+          format: userID
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/UserRolesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List user roles
+      tags:
+      - Roles
+  /servers/{wid}/roles:
+    get:
+      description: List workspace roles.
+      operationId: listWorkspaceRoles
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/WorkspaceRolesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List workspace roles
+      tags:
+      - Roles
+  /servers/{wid}/roles/grant:
+    post:
+      description: Grant workspace role.
+      operationId: grantWorkspaceRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          $ref: '#/components/responses/GrantWorkspaceRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Grant workspace role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantWorkspaceRoleRequest'
+  /servers/{wid}/roles/revoke:
+    delete:
+      description: Revoke workspace role.
+      operationId: revokeWorkspaceRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Workspace id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          $ref: '#/components/responses/RevokeWorkspaceRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Revoke workspace role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeWorkspaceRoleRequest'
+  /tenant/roles:
+    get:
+      description: List tenant roles.
+      operationId: listTenantRoles
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/TenantRolesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List tenant roles
+      tags:
+      - Roles
+  /tenant/roles/grant:
+    post:
+      description: Grant tenant role.
+      operationId: grantTenantRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/GrantTenantRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Grant tenant role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GrantTenantRoleRequest'
+  /tenant/roles/revoke:
+    delete:
+      description: Revoke tenant role.
+      operationId: revokeTenantRole
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      responses:
+        '204':
+          $ref: '#/components/responses/RevokeTenantRoleResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Revoke tenant role
+      tags:
+      - Roles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevokeTenantRoleRequest'
+components:
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RevokeWorkspaceRoleResponse:
+      description: Role revoked
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    UserRolesResponse:
+      description: UserRoles
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RoleResources'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    WorkspaceRolesResponse:
+      description: WorkspaceRoles
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WorkspaceRolesResponse'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GrantWorkspaceRoleResponse:
+      description: Role granted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GrantTenantRoleResponse:
+      description: Role granted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    IdentityPoolRolesResponse:
+      description: IdentityPoolRoles
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/IdentityPoolRolesResponse'
+    RevokeIdentityPoolRoleResponse:
+      description: Role revoked
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    TenantRolesResponse:
+      description: TenantRoles
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TenantRolesResponse'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    GrantIdentityPoolRoleResponse:
+      description: Role granted
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+    RevokeTenantRoleResponse:
+      description: Role revoked
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+  schemas:
+    IdentityPoolRoleSubject:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        roles:
+          $ref: '#/components/schemas/IdentityPoolRoles'
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    TenantRolesResponse:
+      properties:
+        subjects:
+          items:
+            $ref: '#/components/schemas/TenantRoleSubject'
+          type: array
+      type: object
+    RevokeWorkspaceRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - admin
+          - auditor
+          - manager
+          - user_manager
+          - member
+          example: admin
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    GrantTenantRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - admin
+          - business_admin
+          - auditor
+          - member
+          example: admin
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    IdentityPoolRolesResponse:
+      properties:
+        subjects:
+          items:
+            $ref: '#/components/schemas/IdentityPoolRoleSubject'
+          type: array
+      type: object
+    RevokeIdentityPoolRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - user_manager
+          example: user_manager
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    GrantWorkspaceRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - admin
+          - auditor
+          - manager
+          - user_manager
+          - member
+          example: admin
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    RevokeTenantRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - admin
+          - business_admin
+          - auditor
+          - member
+          example: admin
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    GrantIdentityPoolRoleRequest:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        role:
+          enum:
+          - user_manager
+          example: user_manager
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    TenantRoleSubject:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        roles:
+          $ref: '#/components/schemas/TenantRoles'
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    RoleResources:
+      properties:
+        resources:
+          items:
+            $ref: '#/components/schemas/ExtendedRoleResource'
+          type: array
+      type: object
+    TenantRoles:
+      properties:
+        admin:
+          type: boolean
+        auditor:
+          type: boolean
+        business_admin:
+          type: boolean
+        member:
+          type: boolean
+      type: object
+    ExtendedRoleResource:
+      properties:
+        identity_pool_id:
+          format: poolID
+          type: string
+        role:
+          enum:
+          - admin
+          - business_admin
+          - auditor
+          - manager
+          - user_manager
+          - member
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - tenant
+          - workspace
+          - identity_pool
+          type: string
+        workspace_id:
+          format: serverID
+          type: string
+      type: object
+    WorkspaceRoleSubject:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        roles:
+          $ref: '#/components/schemas/WorkspaceRoles'
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    IdentityPoolRoles:
+      properties:
+        user_manager:
+          type: boolean
+      type: object
+    WorkspaceRoles:
+      properties:
+        admin:
+          type: boolean
+        auditor:
+          type: boolean
+        manager:
+          type: boolean
+        member:
+          type: boolean
+        user_manager:
+          type: boolean
+      type: object
+    WorkspaceRolesResponse:
+      properties:
+        subjects:
+          items:
+            $ref: '#/components/schemas/WorkspaceRoleSubject'
+          type: array
+      type: object
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

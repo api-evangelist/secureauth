@@ -1,0 +1,5817 @@
+openapi: 3.2.0
+info:
+  title: Secureauth Audit Events API
+  version: latest
+  description: 'Operations tagged auditEvents across 2 of this provider''s published API definitions: secureauth-admin-openapi.yml, secureauth-system-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://localhost:8443/api/admin/default
+- url: https://localhost:8443/api/system/default
+tags:
+- name: auditEvents
+paths:
+  /servers/{wid}/audit-events:
+    get:
+      description: Returns list of audit events.
+      operationId: listAuditEvents
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - description: Authorization server id
+        in: path
+        name: wid
+        required: true
+        schema:
+          type: string
+          default: admin
+      - description: 'optional list audit events with a given client id
+
+          ClientID'
+        in: query
+        name: client_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given subject
+
+          Subject'
+        in: query
+        name: subject
+        schema:
+          type: string
+      - description: 'optional list audit events with a given ip address
+
+          IP'
+        in: query
+        name: ip
+        schema:
+          type: string
+      - description: 'optional list audit events with high risk
+
+          IP'
+        in: query
+        name: high_risk
+        schema:
+          type: string
+      - description: 'optional list audit events with a given result (success/failure)
+
+          IP'
+        in: query
+        name: result
+        schema:
+          type: string
+      - description: 'optional list audit events with a given session id
+
+
+          it can be used as a correlation id for listing all login related audit events
+
+          SessionID'
+        in: query
+        name: session_id
+        schema:
+          type: string
+      - description: optional list audit events with a given authorization correlation id
+        in: query
+        name: authorization_correlation_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given IDP subject
+
+          IDPSubject'
+        in: query
+        name: idp_subject
+        schema:
+          type: string
+      - description: 'optional list audit events with a given IDP id
+
+          IDPID'
+        in: query
+        name: idp_id
+        schema:
+          type: string
+      - description: 'optional list audit events performed by a principal from a given identity pool
+
+          UserPoolID'
+        in: query
+        name: user_pool_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given user id
+
+          UserID'
+        in: query
+        name: user_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given IDP method
+
+          IDPMethod'
+        in: query
+        name: idp_method
+        schema:
+          type: string
+      - description: optional organization id
+        in: query
+        name: organization_id
+        schema:
+          type: string
+      - description: optional list audit events for a given application (target OAuth client id)
+        in: query
+        name: application_id
+        schema:
+          type: string
+      - description: 'optional list audit events targeting a given identity pool: the pool administered, or the
+
+          pool owning the affected user or group'
+        in: query
+        name: identity_pool_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given affected user identity pool id
+
+          AffectedUserPoolID'
+        in: query
+        name: affected_user_pool_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given affected user id
+
+          AffectedUserID'
+        in: query
+        name: affected_user_id
+        schema:
+          type: string
+      - description: 'optional list audit events with a given group id
+
+          GroupID'
+        in: query
+        name: group_id
+        schema:
+          type: string
+      - description: 'Optional list of event subjects, one of: request client gateway_request policy consent authorization_code recovery login access_token scopes otp gateway_policy user credential dcr role jit tokens service server
+
+          EventSubject'
+        in: query
+        name: event_subject
+        schema:
+          type: array
+          items:
+            type: string
+      - description: 'Optional list of event types, one of: authorized unauthorized created updated deleted requested accepted rejected issued denied granted attempted failed sent not_sent revoked generated reset_requested reset_completed add_requested add_completed
+
+          EventType'
+        in: query
+        name: event_action
+        schema:
+          type: array
+          items:
+            type: string
+      - description: 'list all events after a given time
+
+          TimestampFrom'
+        in: query
+        name: timestamp_from
+        schema:
+          type: string
+          format: date-time
+      - description: 'list all events before a given time
+
+          TimestampTo'
+        in: query
+        name: timestamp_to
+        schema:
+          type: string
+          format: date-time
+      - description: 'optional list events before a given event id
+
+          BeforeEventID'
+        in: query
+        name: before_event_id
+        schema:
+          type: string
+      - description: 'optional list audit events after a given event id
+
+          AfterEventID'
+        in: query
+        name: after_event_id
+        schema:
+          type: string
+      - description: 'optional sort audit events by a given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order audit events by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results, min 1, max 100
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      responses:
+        '200':
+          $ref: '#/components/responses/AuditEventsResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List audit events
+      tags:
+      - auditEvents
+    servers:
+    - url: https://localhost:8443/api/admin/default
+components:
+  schemas:
+    AccessRequestDataWithError:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: Actor claims
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        authentication_mechanisms:
+          description: The authentication mechanisms a user used to login.
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        city:
+          description: The visitor's city
+          type: string
+        client_id:
+          description: OAuth client application identifier.
+          format: clientID
+          type: string
+        client_name:
+          description: Human readable name of a client application
+          type: string
+        country_code:
+          description: The visitor's country
+          type: string
+        created_by_developer:
+          description: Stores information if the owner of the client application is a developer.
+          type: boolean
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        error:
+          description: High level error name (request_forbidden, access_denied, invalid_request).
+          type: string
+        error_cause:
+          description: Error root cause (invalid_pkce, invalid_state, user_policy_failed).
+          type: string
+        error_description:
+          description: Human readable error description
+          type: string
+        error_hint:
+          description: Error hint
+          type: string
+        external_error:
+          description: External error
+          type: boolean
+        grant_type:
+          description: 'Stores the information which grant type was selected to perfom a given action.
+
+            Matches one of allowed OAuth client grant types for a given client.'
+          type: string
+        granted_scopes:
+          description: Granted scopes
+          items:
+            type: string
+          type: array
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: Subject within the Identity Provider
+          format: subject
+          type: string
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: May act claims
+          type: object
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        public:
+          description: Stores information if the client application is a public one.
+          type: boolean
+        recovery:
+          description: True if user had to do login recovery during authentication
+          type: boolean
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        risk_engine_context:
+          $ref: '#/components/schemas/RiskContext'
+        server_id:
+          description: ID of the authorization server (workspace) to which an access request is tied.
+          format: serverID
+          type: string
+        session_id:
+          description: 'Session id of a given subject. It''s uniform across the authentication processes.
+
+            It can be used as a correlation ID between a different audit events.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Identification of the principal that is the subject of authorization.
+
+            For the authorization grant, the subject typically identifies an authorized accessor for which the access token is being requested.
+
+            For client authentication, the subject is the client_id of the OAuth client.'
+          format: subject
+          type: string
+        system:
+          description: Stores information if the client application is a system tenant's application.
+          type: boolean
+        token_endpoint_authn_method:
+          description: Token endpoint authentication method configured for a client application.
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        token_signature:
+          description: Token signature
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+        workspace_id:
+          description: ID of the authorization server (workspace) to which a resource is tied.
+          format: serverID
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    DeprecatedOBBRConfiguration:
+      properties:
+        industry:
+          $ref: '#/components/schemas/DeprecatedOBBRIndustry'
+      type: object
+    ApplicationOpenAccessAuditPayload:
+      properties:
+        app_workspace_id:
+          format: serverID
+          type: string
+        cascade_to_suborgs:
+          type: boolean
+        client_id:
+          format: clientID
+          type: string
+        open_to_all:
+          type: boolean
+        organization_id:
+          format: serverID
+          type: string
+      type: object
+    Service:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        authorization_server_id:
+          description: Authorization server identifier
+          example: my-server
+          format: serverID
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    ConsentDetails:
+      properties:
+        cdr:
+          $ref: '#/components/schemas/CDRArrangement'
+        cdr_previous:
+          $ref: '#/components/schemas/CDRArrangement'
+        fdx:
+          $ref: '#/components/schemas/FDXConsent'
+      type: object
+    BruteForceLimit:
+      properties:
+        block_duration:
+          example: 1m0s
+          format: duration
+          type: string
+        max_attempts:
+          description: Max number of attempts
+          example: 5
+          format: int64
+          type: integer
+        protected_type:
+          $ref: '#/components/schemas/ProtectedType'
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+      required:
+      - tenant_id
+      - protected_type
+      - max_attempts
+      - block_duration
+      type: object
+    CookiesConfiguration:
+      properties:
+        same_site:
+          $ref: '#/components/schemas/SameSite'
+      type: object
+    EventAddress:
+      description: EventAddress event address
+      properties:
+        value:
+          description: value
+          type: string
+      type: object
+    Gateway:
+      properties:
+        authorization_server_id:
+          description: authorization server id
+          example: default
+          format: serverID
+          type: string
+        client_id:
+          description: id of a client created for this gateway for authentication
+          format: clientID
+          type: string
+        create_and_bind_services_automatically:
+          description: if true services are created automatically for each new discovered api group
+          type: boolean
+        default_policy_id:
+          description: default policy id assigned to new APIs
+          format: policyID
+          type: string
+        description:
+          description: description
+          type: string
+        id:
+          description: unique gateway id
+          example: '1'
+          format: gatewayID
+          type: string
+        last_active:
+          description: last time a client fetched configuration
+          format: date-time
+          type: string
+        name:
+          description: gateway name
+          example: SecureAuth Pyron
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+        token_exchange:
+          $ref: '#/components/schemas/GatewayTokenExchangeSettings'
+        token_exchange_client_id:
+          description: Token exchange client id
+          format: clientID
+          type: string
+        type:
+          description: 'gateway type, one of: pyron, aws'
+          example: pyron
+          format: gatewayType
+          type: string
+      type: object
+    GatewayTokenExchangeSettings:
+      properties:
+        enabled:
+          type: boolean
+        trusted_idp_ids:
+          items:
+            format: idpID
+            type: string
+          type: array
+      type: object
+    OTPPayload:
+      properties:
+        address:
+          type: string
+        failure_reason:
+          type: string
+        otp_id:
+          type: string
+        purpose:
+          type: string
+        redaction:
+          $ref: '#/components/schemas/RedactionPolicy'
+        type:
+          enum:
+          - sms
+          - email
+          - voice
+          type: string
+        user_id:
+          format: userID
+          type: string
+      type: object
+    Metadata:
+      additionalProperties:
+        type: object
+      type: object
+    Org:
+      properties:
+        authentication_mechanisms:
+          description: allowed authentication mechanisms
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        color:
+          default: '#007FFF'
+          description: Your organization's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        created_at:
+          description: 'Date the workspace or organization was created.
+
+
+            Not set for workspaces and organizations that existed before this field was introduced,
+
+            as there is no stored creation time to recover for them.'
+          example: '2026-04-07T19:17:31.323187Z'
+          format: date-time
+          readOnly: true
+          type: string
+        deactivated:
+          type: boolean
+        description:
+          description: Display description of the organization
+          example: Organization description
+          type: string
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an organization
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: Display name of the organization
+          example: default
+          type: string
+        parent_id:
+          description: The id of the parent workspace / organization
+          format: serverID
+          type: string
+        template:
+          description: If true this organization can be used as a template when creating a new ones.
+          type: boolean
+        updated_at:
+          description: 'Date the workspace or organization was last updated.
+
+
+            Not set until the first write after this field was introduced.'
+          example: '2026-05-08T01:11:51.126291Z'
+          format: date-time
+          readOnly: true
+          type: string
+      type: object
+    ServiceProviderDiscoveryMode:
+      type: string
+    FDXConsent:
+      properties:
+        authorization_server_id:
+          format: serverID
+          type: string
+        client_id:
+          format: clientID
+          type: string
+        createdTime:
+          description: Time of consent creation
+          format: date-time
+          type: string
+        durationPeriod:
+          description: Consent duration, in days, from day of original grant.
+          format: int64
+          type: integer
+        durationType:
+          $ref: '#/components/schemas/DurationType'
+        expirationTime:
+          description: Time of consent expiration
+          format: date-time
+          type: string
+        granted_resources:
+          description: 'Enumeration of the Clusters of granted data elements permissioned by this Consent Grant.
+
+            Data Clusters are described in FDX RFC 0167.'
+          items:
+            $ref: '#/components/schemas/FDXGrantedResource'
+          type: array
+        id:
+          $ref: '#/components/schemas/FDXConsentID'
+        lookbackPeriod:
+          description: Period, in days, for which historical data may be requested; period is measured from request time, not grant time
+          format: int64
+          type: integer
+        parties:
+          description: 'A collection of parameters identifying the Parties (including the legal entity operating branded products or services)
+
+            in the data sharing chain. Descriptive information is collected during Data Recipient registration at Data Provider,
+
+            and populated during issuance by DataProvider from its registry;'
+          items:
+            $ref: '#/components/schemas/FDXConsentGrantParty'
+          type: array
+        resources:
+          description: 'Enumeration of the Clusters of requested data elements permissioned by this Consent Grant.
+
+            Data Clusters are described in FDX RFC 0167.'
+          items:
+            $ref: '#/components/schemas/FDXRequestedResource'
+          type: array
+        revocationReason:
+          $ref: '#/components/schemas/FDXConsentRevocation'
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        tenant_id:
+          format: tenantID
+          type: string
+        updatedTime:
+          description: Time of last consent's status change
+          format: date-time
+          type: string
+      type: object
+    CustomerConsentsAuditEventPayload:
+      properties:
+        customer_id:
+          description: customer id
+          type: string
+        number_revoked:
+          description: number of consents revoked
+          format: int64
+          type: integer
+      type: object
+    ClientAuditPayload:
+      properties:
+        agent_capability:
+          $ref: '#/components/schemas/AgentCapability'
+        app_url:
+          description: Application URL
+          type: string
+        application_purpose:
+          description: Application purpose
+          enum:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - custom
+          - saml
+          - ai_agent
+          example: signle_page
+          type: string
+        application_type:
+          default: web
+          description: 'The client application type.
+
+
+            Client applications can be either of a `web` or `native` types.
+
+
+            Web applications include clients like server web applications or service apps.
+
+
+            Native applications include single-page applications (SPAs) and mobile or desktop
+
+            applications.
+
+
+            Apply security measures according to the type of your application.'
+          example: web
+          type: string
+        application_types:
+          default:
+          - server_web
+          description: An array of dynamically calculated application types that can be used for filtering
+          example:
+          - single_page
+          - server_web
+          - mobile_desktop
+          - service
+          - legacy
+          - dcr
+          items:
+            enum:
+            - single_page
+            - server_web
+            - mobile_desktop
+            - service
+            - legacy
+            - dcr
+            type: string
+          readOnly: true
+          type: array
+        audience:
+          default:
+          - client_id
+          description: 'Identity of the intended recipients (the audience).
+
+
+            Typically, the audience is a single resource server or a list of resource servers.
+
+
+            It is considered a good practice to limit the audience of the token for security purposes.'
+          items:
+            type: string
+          type: array
+        authorization_details_types:
+          description: 'Authorization details types
+
+
+            Indicates what authorization details types the client can use.'
+          items:
+            $ref: '#/components/schemas/AuthorizationDetailType'
+          type: array
+        authorization_encrypted_response_alg:
+          description: 'Algorithm used for encrypting authorization responses.
+
+
+            If both signing and encryption are requested, the response is first signed, and then encrypted.
+
+            As a result, a Nested JWT is obtained, as defined in JWT [RFC7519].
+
+
+            If omitted, no encryption is applied by default.'
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          example: RSA-OAEP-256
+          type: string
+        authorization_encrypted_response_enc:
+          description: 'Algorithm used for encrypting authorization responses.
+
+
+            With `authorization_encrypted_response_alg` specified, the default value is `A128CBC-HS256`.
+
+            When `authorization_encrypted_response_enc` is included, `authorization_encrypted_response_alg`
+
+            MUST also be provided in a request.'
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          example: A128CBC-HS256
+          type: string
+        authorization_server_id:
+          description: An authorization server (workspace) identifier holding the client application.
+          example: default
+          format: serverID
+          type: string
+        authorization_signed_response_alg:
+          description: 'Algorithm used for signing authorization responses.
+
+
+            With this parameter specified, the response is signed using JWS and according to the configured algorithm.
+
+
+            `none` isn''t allowed.'
+          example: RS256
+          type: string
+        backchannel_authentication_request_signing_alg:
+          description: 'OPTIONAL. The JWS alg algorithm value used by the client application to sign authentication requests.
+
+
+            When omitted, the client application doesn''t send signed authentication requests.'
+          type: string
+        backchannel_client_notification_endpoint:
+          description: 'REQUIRED for requests when the client application uses CIBA as an authorization grant type, and the token
+
+            delivery mode is set to `ping` or `push`.
+
+
+            This parameter is the endpoint where an OP (OpenID Provider) posts a notification after end-user authentication.
+
+
+            Input: an HTTPS URL.'
+          type: string
+        backchannel_logout_session_required:
+          description: Boolean value specifying whether the RP requires that a sid (session ID) claim be included in the Logout Token to identify the RP session with the OP when the backchannel_logout_uri is used.
+          type: boolean
+        backchannel_logout_uri:
+          description: RP URL that will cause the RP to log itself out when sent a Logout Token by the OP.
+          type: string
+        backchannel_token_delivery_mode:
+          description: 'REQUIRED for requests when the client application uses CIBA as an authorization grant type.
+
+
+            Input: `poll`, `ping`, or `push`.'
+          type: string
+        backchannel_user_code_parameter:
+          description: 'OPTIONAL. A boolean value indicating the `user_code` parameter support by the client application.
+
+
+            If omitted, the default value is `false`.
+
+
+            This applies only when the `backchannel_user_code_parameter_supported` OP parameter is `true`.'
+          type: boolean
+        certificate:
+          description: 'Base64 encoded certicate in PEM format that will be automatically converted and stored in jwks
+
+
+            It is used only as an input parameter for the Create / Import Client.'
+          type: string
+        client_id:
+          description: 'OAuth client application identifier
+
+
+            If not provided, a random client ID is generated.'
+          format: clientID
+          type: string
+        client_id_issued_at:
+          description: 'The client identifier time of issue.
+
+
+            The value is the number of seconds between 1970-01-01T00:00:00Z (UTC) and the date/time of issue.'
+          format: int64
+          type: integer
+        client_name:
+          description: Human-readable name of a client application.
+          example: My app
+          type: string
+        client_secret_expires_at:
+          description: 'The client secret expiration time.
+
+
+            If the client secret does not expire, `client_secret_expires_at` = `0`.'
+          format: int64
+          type: integer
+        client_status:
+          description: 'Defines whether the client application is active or not.
+
+
+            Only clients with the `Active` status can preform authorization, authentication, and PAR requests.'
+          enum:
+          - active
+          - inactive
+          type: string
+        client_uri:
+          description: URI of a client application.
+          type: string
+        created_at:
+          description: Date when the client application was created.
+          example: '2022-04-07T19:17:31.323187Z'
+          format: date-time
+          type: string
+        default_acr_values:
+          description: 'default ACR values
+
+            list of ACR values that will be implicitly requested for the client if not explicitly specified'
+          items:
+            format: acrValue
+            type: string
+          type: array
+        description:
+          description: Description of the client application.
+          type: string
+        developer_id:
+          description: Optional developer owner of the client application.
+          format: subject
+          type: string
+        developer_metadata:
+          $ref: '#/components/schemas/Metadata'
+        dpop_bound_access_tokens:
+          description: 'Boolean value specifying whether the client always uses DPoP for token requests
+
+            If true, the authorization server will reject token requests from this client that do not contain the DPoP header.'
+          type: boolean
+        dynamically_registered:
+          type: boolean
+        enforce_application_membership:
+          description: 'Enforce application membership for this application. When true, a user token is issued only if the
+
+            user has membership/access to this application in the resolved organization. Defaults to false and,
+
+            on creation, to the workspace-level default. Only meaningful while the applications_membership feature is enabled.'
+          type: boolean
+        grant_types:
+          default:
+          - authorization_code
+          description: 'An array of allowed OAuth client grant types.
+
+
+            The `grantTypes` array stores OAuth flows that are allowed for a given client application.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-grant-types/grant-types-overview/) about grant types.'
+          example:
+          - password
+          - refresh_token
+          - client_credentials
+          - implicit
+          - authorization_code
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id_token_encrypted_response_alg:
+          description: JWE alg algorithm for encrypting the ID token issued to this client application.
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          type: string
+        id_token_encrypted_response_enc:
+          description: JWE enc algorithm for encrypting the ID token issued to this client application.
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          type: string
+        id_token_signed_response_alg:
+          description: 'Algorithm for signing ID tokens issued for a client application.
+
+
+            The default value depends on authorization server configuration.'
+          enum:
+          - RS256
+          - ES256
+          - PS256
+          example: ES256
+          type: string
+        introspection_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'An introspection endpoint authentication method configured for the client application (read-only).
+
+
+            If empty, the `token_endpoint_auth_method` is used.
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          example: client_secret_basic
+          type: string
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: A URL of JSON Web Key Set with the public keys used by a client application to authenticate to SecureAuth.
+          type: string
+        logo_uri:
+          description: Logo URI.
+          type: string
+        metadata:
+          $ref: '#/components/schemas/Metadata'
+        organisation_id:
+          description: 'External organization identifier. It is a unique string assigned by the CDR Register to identify an Accredited
+
+            Data Recipient Brand.
+
+
+            The value obtained is used as the `aud` claim for message signing, for example, when a JSON Web Token (JWT) is
+
+            required for authorization, and represents the audience(s) the JWT is intended for.'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        policy_uri:
+          description: Policy URL to read about how the profile data is used.
+          type: string
+        post_logout_redirect_uris:
+          description: Array of URLs to which a relying party may request that the user be redirected after a logout has been performed.
+          items:
+            type: string
+          type: array
+        privacy:
+          $ref: '#/components/schemas/ClientPrivacy'
+        redirect_uris:
+          $ref: '#/components/schemas/RedirectURIs'
+        request_object_encryption_alg:
+          description: Optional JWE alg algorithm the client is declaring that it may use for encrypting Request Objects
+          enum:
+          - RSA-OAEP
+          - RSA-OAEP-256
+          example: RSA-OAEP
+          type: string
+        request_object_encryption_enc:
+          description: 'Optional JWE enc algorithm the client is declaring that it may use for encrypting Request Objects
+
+            When `request_object_encryption_enc` is included, `request_object_encryption_alg` MUST also be provided.'
+          enum:
+          - A256GCM
+          - A128CBC-HS256
+          example: A256GCM
+          type: string
+        request_object_signing_alg:
+          default: any
+          description: 'Request object signing algorithm for the token endpoint
+
+
+            SecureAuth supports signing tokens with the RS256, ES256, and PS256 algorithms. If you do not want
+
+            to use a signing algorithm, set the value of this parameter to `none`.'
+          enum:
+          - any
+          - none
+          - RS256
+          - ES256
+          - PS256
+          example: none
+          type: string
+        request_uris:
+          description: Array of absolute URIs that points to the Request Object that holds authorization request parameters.
+          items:
+            type: string
+          type: array
+        require_pushed_authorization_requests:
+          description: Boolean parameter indicating whether the only means of initiating an authorization request the client is allowed to use is PAR.
+          type: boolean
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        revocation_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'A revocation endpoint authentication method configured for the client application (read-only).
+
+            If empty, the `token_endpoint_auth_method` is used.
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            [Read more](https://cloudentity.com/developers/basics/oauth-client-authentication/client-authentication-overview/) about client authentication.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          example: client_secret_basic
+          type: string
+        scope:
+          description: Space-separated list of scopes for compatibility with the OAuth specification.
+          example: email offline_access openid
+          type: string
+        scopes:
+          description: An array of string represented scopes assigned to a client application
+          example:
+          - email
+          - offline_access
+          - openid
+          items:
+            type: string
+          type: array
+        sector_identifier_uri:
+          description: 'OPTIONAL. [A URL using the HTTPS scheme](https://openid.net/specs/openid-connect-registration-1_0.html#SectorIdentifierValidation).
+
+            It must reference a JSON file with the array of `redirect_uri` values.
+
+
+            Pass this parameter when you use multiple domains in your `redirect_uris` or need a mechanism to allow changes in
+
+            domain without affecting consumer consent.
+
+
+            [Read more](https://openid.net/specs/openid-connect-core-1_0.html)'
+          type: string
+        skip_dbfp:
+          description: 'Skip device-based fingerprint (DBFP) collection for this client.
+
+            If true, the interactive DBFP collection step is skipped during login, which lets
+
+            non-interactive clients (e.g. backend HTTP clients that cannot execute the collection
+
+            JavaScript) complete the authorization flow. Risk inference is unaffected.'
+          type: boolean
+        software_statement:
+          description: 'A digitally signed or MACed JSON Web Token (JWT) [RFC7519] that
+
+            asserts metadata values about the client software.  In some cases,
+
+            a software statement is issued directly by the client
+
+            developer.  In other cases, a software statement is issued by
+
+            a third-party organization for use by the client developer.
+
+
+            In both cases, the trust relationship the authorization server has
+
+            with the issuer of the software statement is intended to be used
+
+            as an input to the evaluation of whether the registration request
+
+            is accepted.
+
+
+            A software statement can be presented to an
+
+            authorization server as part of the client registration request.'
+          type: string
+        software_statement_payload:
+          $ref: '#/components/schemas/Metadata'
+        subject_type:
+          default: public
+          description: 'Subject identifier type
+
+
+            Stores information if the subject identifier is of the `public` or the `pairwise` type.
+
+
+            Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+
+            and are intended to be consumed by client applications. There are two types
+
+            of subject identifiers: `public` and `pairwise`.
+
+
+            For the `public` type, the value of the `sub` (subject) token claim is the same for all clients.
+
+
+            For the `pairwise` type, a different `sub` (subject) token claim is provided for each client.
+
+            Using the `pairwise` subject identifier makes it impossible for client applications to correlate the end-user''s
+
+            activity without their permission.'
+          enum:
+          - public
+          - pairwise
+          example: public
+          type: string
+        system:
+          description: Defines whether the client application is a system tenant's application or not.
+          type: boolean
+        tenant_id:
+          description: ID of a tenant where the client application is added
+          example: default
+          format: tenantID
+          type: string
+        tls_client_auth_san_dns:
+          description: A string containing the value of an expected dNSName SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_email:
+          description: A string containing the value of an expected rfc822Name SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_ip:
+          description: A string representation of an IP address in either dotted decimal notation (for IPv4) or colon-delimited hexadecimal (for IPv6, as defined in [RFC5952]) that is expected to be present as an iPAddress SAN entry in the certificate.
+          type: string
+        tls_client_auth_san_uri:
+          description: A string containing the value of an expected uniformResourceIdentifier SAN entry in the certificate.
+          type: string
+        tls_client_auth_subject_dn:
+          description: An [RFC4514] string representation of the expected subject distinguished name of the certificate.
+          type: string
+        tls_client_certificate_bound_access_tokens:
+          description: Boolean value indicating server support for mutual TLS client certificate-bound access tokens. If omitted, the default value is "false".
+          type: boolean
+        token_endpoint_auth_method:
+          default: client_secret_basic
+          description: 'Token endpoint authentication method configured for a client application
+
+
+            SecureAuth supports the following client authentication methods:
+
+            `client_secret_basic`, `client_secret_post`, `client_secret_jwt`, `private_key_jwt`,
+
+            `self_signed_tls_client_auth`, `tls_client_auth`, `none`.
+
+
+            To learn more, go to the Authorization Basics > Client Authentication section of this guide.'
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          example: client_secret_basic
+          type: string
+        token_endpoint_auth_signing_alg:
+          default: ES256
+          description: 'Signing algorithm for the token endpoint
+
+
+            This field is optional. If empty, a client can use any algorithm supported by the server (see `token_endpoint_auth_signing_alg_values_supported` in the well-known endpoing).
+
+
+            If provided, depending on the server configuration, client can use of one: HS256, RS256, ES256, PS256 algorithms.
+
+
+            If your token endpoint authentication is set to the `private_key_jwt` method, the
+
+            `token_endpoint_auth_signing_alg` parameter must be either RS256, ES256, or PS256.
+
+
+            If your token endpoint authentication is set to the `client_secret_jwt` method,
+
+            the `token_endpoint_auth_signing_alg` parameter must be HS256.'
+          enum:
+          - RS256
+          - ES256
+          - PS256
+          - HS256
+          - ''
+          example: ES256
+          type: string
+        token_exchange:
+          $ref: '#/components/schemas/ClientTokenExchangeConfiguration'
+        token_ttls:
+          $ref: '#/components/schemas/TokenTTLs'
+        tos_uri:
+          description: Terms of Service URL.
+          type: string
+        trusted:
+          description: 'Defines whether the client application is trusted or not.
+
+
+            For trusted clients, consent pages are skipped during the authorization process.'
+          type: boolean
+        updated_at:
+          description: Date when the client application was updated.
+          example: '2022-05-08T01:11:51.1262916Z'
+          format: date-time
+          type: string
+        use_custom_token_ttls:
+          description: If enabled the client application will be able to set its own token TTLs.
+          type: boolean
+        userinfo_signed_response_alg:
+          default: none
+          description: 'JWS alg algorithm REQUIRED for signing UserInfo Responses.
+
+
+            If specified, the response is a JWT serialized and signed with JWS.
+
+
+            If omitted, then by default, UserInfo Response returns the Claims
+
+            as an UTF-8 encoded JSON object using the application/json content-type.'
+          enum:
+          - none
+          - RS256
+          - ES256
+          example: none
+          type: string
+      required:
+      - tenant_id
+      - authorization_server_id
+      type: object
+    DynamicClientRegistrationSettings:
+      properties:
+        cert_bound_registration_token:
+          description: Binds registration token to the certificate used to register client
+          type: boolean
+        client_id_metadata_document:
+          default: false
+          description: 'Accepts an https client_id that points at the client''s own metadata document
+
+
+            Requires the `client_id_metadata_document` tenant feature.'
+          type: boolean
+        default_scopes:
+          description: 'An optional list of scopes that are always included in client registrations, merged with any scopes requested by the client
+
+
+            If not provided, the following default scopes are granted for the client application: openid, address, email, phone, profile.'
+          items:
+            type: string
+          type: array
+        disable_registration_access_token_expiry:
+          default: false
+          description: 'Disable registration access token expiry
+
+
+            If is flag is on, the registration access token will never expire.'
+          type: boolean
+        disable_registration_token_management:
+          description: 'Disables client management using registration token
+
+
+            If disabled, client can manage itself using access token issued by client credentials flow.'
+          type: boolean
+        disable_registration_token_rotation:
+          description: Disables registration token rotation
+          type: boolean
+        enabled:
+          description: Enables dynamic client registration
+          type: boolean
+        initial_access_token:
+          $ref: '#/components/schemas/InitialAccessTokenSettings'
+        payload:
+          $ref: '#/components/schemas/PayloadSettings'
+        registration_access_token_ttl:
+          default: 720h0m0s
+          description: 'Registration access token TTL
+
+
+            Time to live of the registration access token (default 30 days).
+
+            The minimum value is 24 hours.'
+          example: 720h0m0s
+          format: duration
+          type: string
+        software_statement:
+          $ref: '#/components/schemas/SoftwareStatementSettings'
+      type: object
+    DeviceAuthorizationConfiguration:
+      properties:
+        request_ttl:
+          description: 'Custom device authorization request TTL
+
+            If not provided, TTL is set to 30 minutes'
+          format: duration
+          type: string
+        user_code_character_set:
+          $ref: '#/components/schemas/UserCodeCharacterSet'
+        user_code_length:
+          description: user code length
+          format: int64
+          type: integer
+      type: object
+    JITUserIdentifier:
+      properties:
+        source:
+          type: string
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+      type: object
+    EnforcementGate:
+      type: string
+    ApplicationMembershipDeniedAuditPayload:
+      properties:
+        app_workspace_id:
+          format: serverID
+          type: string
+        client_id:
+          format: clientID
+          type: string
+        gate:
+          $ref: '#/components/schemas/EnforcementGate'
+        identity_pool_id:
+          description: Absent for pool-less subjects, which reach the gate legitimately.
+          format: poolID
+          type: string
+        organization_id:
+          format: serverID
+          type: string
+        reason:
+          $ref: '#/components/schemas/DenialReason'
+        user_id:
+          format: userID
+          type: string
+      type: object
+    AuthorizationDetailsGrantedPayload:
+      properties:
+        authorization_details:
+          items:
+            $ref: '#/components/schemas/AuthorizationDetailsGrant'
+          type: array
+      type: object
+    SAMLAssertionDeniedPayload:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: Actor claims
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        authentication_mechanisms:
+          description: The authentication mechanisms a user used to login.
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        city:
+          description: The visitor's city
+          type: string
+        client_id:
+          description: OAuth client application identifier.
+          format: clientID
+          type: string
+        client_name:
+          description: Human readable name of a client application
+          type: string
+        country_code:
+          description: The visitor's country
+          type: string
+        created_by_developer:
+          description: Stores information if the owner of the client application is a developer.
+          type: boolean
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        error:
+          description: High level error name (request_forbidden, access_denied, invalid_request).
+          type: string
+        error_cause:
+          description: Error root cause (invalid_pkce, invalid_state, user_policy_failed).
+          type: string
+        error_description:
+          description: Human readable error description
+          type: string
+        error_hint:
+          description: Error hint
+          type: string
+        external_error:
+          description: External error
+          type: boolean
+        grant_type:
+          description: 'Stores the information which grant type was selected to perfom a given action.
+
+            Matches one of allowed OAuth client grant types for a given client.'
+          type: string
+        granted_scopes:
+          description: Granted scopes
+          items:
+            type: string
+          type: array
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_initiated:
+          type: boolean
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: Subject within the Identity Provider
+          format: subject
+          type: string
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: May act claims
+          type: object
+        name_id:
+          description: SAML subject identifier.
+          type: string
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        public:
+          description: Stores information if the client application is a public one.
+          type: boolean
+        recovery:
+          description: True if user had to do login recovery during authentication
+          type: boolean
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        risk_engine_context:
+          $ref: '#/components/schemas/RiskContext'
+        server_id:
+          description: ID of the authorization server (workspace) to which an access request is tied.
+          format: serverID
+          type: string
+        service_provider_id:
+          type: string
+        session_id:
+          description: 'Session id of a given subject. It''s uniform across the authentication processes.
+
+            It can be used as a correlation ID between a different audit events.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Identification of the principal that is the subject of authorization.
+
+            For the authorization grant, the subject typically identifies an authorized accessor for which the access token is being requested.
+
+            For client authentication, the subject is the client_id of the OAuth client.'
+          format: subject
+          type: string
+        system:
+          description: Stores information if the client application is a system tenant's application.
+          type: boolean
+        token_endpoint_authn_method:
+          description: Token endpoint authentication method configured for a client application.
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        token_signature:
+          description: Token signature
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+        workspace_id:
+          description: ID of the authorization server (workspace) to which a resource is tied.
+          format: serverID
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    AccessRequestData:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: Actor claims
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        authentication_mechanisms:
+          description: The authentication mechanisms a user used to login.
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        city:
+          description: The visitor's city
+          type: string
+        client_id:
+          description: OAuth client application identifier.
+          format: clientID
+          type: string
+        client_name:
+          description: Human readable name of a client application
+          type: string
+        country_code:
+          description: The visitor's country
+          type: string
+        created_by_developer:
+          description: Stores information if the owner of the client application is a developer.
+          type: boolean
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        grant_type:
+          description: 'Stores the information which grant type was selected to perfom a given action.
+
+            Matches one of allowed OAuth client grant types for a given client.'
+          type: string
+        granted_scopes:
+          description: Granted scopes
+          items:
+            type: string
+          type: array
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: Subject within the Identity Provider
+          format: subject
+          type: string
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: May act claims
+          type: object
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        public:
+          description: Stores information if the client application is a public one.
+          type: boolean
+        recovery:
+          description: True if user had to do login recovery during authentication
+          type: boolean
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        risk_engine_context:
+          $ref: '#/components/schemas/RiskContext'
+        server_id:
+          description: ID of the authorization server (workspace) to which an access request is tied.
+          format: serverID
+          type: string
+        session_id:
+          description: 'Session id of a given subject. It''s uniform across the authentication processes.
+
+            It can be used as a correlation ID between a different audit events.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Identification of the principal that is the subject of authorization.
+
+            For the authorization grant, the subject typically identifies an authorized accessor for which the access token is being requested.
+
+            For client authentication, the subject is the client_id of the OAuth client.'
+          format: subject
+          type: string
+        system:
+          description: Stores information if the client application is a system tenant's application.
+          type: boolean
+        token_endpoint_authn_method:
+          description: Token endpoint authentication method configured for a client application.
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        token_signature:
+          description: Token signature
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+        workspace_id:
+          description: ID of the authorization server (workspace) to which a resource is tied.
+          format: serverID
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    ClientIDJAGTarget:
+      properties:
+        aud_tenant:
+          description: Sets the ID-JAG aud_tenant claim for this audience. Multi-tenant resource servers require it.
+          type: string
+        audience:
+          description: Target authorization server issuer URL.
+          type: string
+        client_id:
+          description: Overrides the ID-JAG client_id claim for this audience. Empty uses the requesting client's ID.
+          type: string
+      required:
+      - audience
+      type: object
+    CDRCustomerID:
+      type: string
+    PolicyPayload:
+      properties:
+        execution_point_type:
+          description: String representation of the policy execution point type
+          format: policyExecutionPoint
+          type: string
+        key:
+          description: 'Unique key, derived from execution point, of protected resource where the policy is assigned.
+
+
+            Example key for policy in default tenant, default server protecting scope email for machine access.
+
+            default/default/scope/email/machine'
+          format: policyKey
+          type: string
+        policy_id:
+          description: Policy id
+          format: policyID
+          type: string
+        type:
+          description: 'Define a type of your policy
+
+
+            ACP is provided with the following policy types: user, developer, machine, dcr, api.'
+          format: policyType
+          type: string
+      type: object
+    UserAuthenticatedPayload:
+      description: UserAuthenticatedPayload user authenticated payload
+      properties:
+        authn_method:
+          description: authn method
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          type: string
+        brute_force:
+          $ref: '#/components/schemas/BruteForceEventPayload'
+        failure_reason:
+          description: failure reason
+          type: string
+        identifier:
+          description: identifier
+          type: string
+        mfa:
+          description: mfa
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          type: string
+        mfa_skipped:
+          description: mfa skipped
+          type: boolean
+        password_mode:
+          description: password mode
+          type: boolean
+        success:
+          description: success
+          type: boolean
+      required:
+      - success
+      type: object
+    ProtectedType:
+      type: string
+    RequestValidatedData:
+      properties:
+        anonymous:
+          type: boolean
+        api:
+          $ref: '#/components/schemas/API'
+        claims:
+          $ref: '#/components/schemas/JwtClaims'
+        duration_ms:
+          format: int64
+          type: integer
+        gateway:
+          $ref: '#/components/schemas/Gateway'
+        invalid_token:
+          type: boolean
+        output:
+          additionalProperties:
+            type: string
+          type: object
+        result:
+          $ref: '#/components/schemas/PolicyValidationResult'
+        service:
+          $ref: '#/components/schemas/Service'
+      type: object
+    RiskID:
+      description: Risk engine transaction id
+      type: string
+    LegalEntity:
+      properties:
+        party:
+          $ref: '#/components/schemas/FDXParty'
+      type: object
+    RedactionPolicy:
+      properties:
+        address:
+          description: Controls whether phone numbers are retained or obfuscated by the provider.
+          example: retain
+          type: string
+        content:
+          description: Controls whether message body content is retained by the provider.
+          example: retain
+          type: string
+      title: RedactionPolicy controls message redaction at the SMS provider level.
+      type: object
+    UserIDAndIdentifierPayload:
+      description: UserIDAndIdentifierPayload user ID and identifier payload
+      properties:
+        code_id:
+          description: code id
+          type: string
+        failure_reason:
+          description: failure reason
+          type: string
+        identifier:
+          description: identifier
+          type: string
+        operation_type:
+          description: operation type
+          type: string
+        user_id:
+          description: user id
+          type: string
+      type: object
+    JITAdressVerificationMode:
+      type: string
+    ResponseTypes:
+      description: 'The array may consist of the following arguments:
+
+
+        `code` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an authorization code
+
+
+        `code token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token, an access token type, and an authorization code
+
+
+        `id_token token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token, an access token type, and an ID token
+
+
+        `code id_token token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an authorization code, an ID token, an access token, and an access token
+
+        type.
+
+
+        `token` - when supplied as the value for the `response_type` parameter, a successful
+
+        response includes an access token and its type. This argument is used for the implicit grant
+
+        flow, but is not recommended. Instead, you should use either the authorization code grant
+
+        flow with PKCE or client authentication set to `none` and with the use of PKCE.
+
+
+        example: ["token", "id_token", "code"]
+
+        default: ["code"]'
+      items:
+        enum:
+        - token
+        - id_token
+        - code
+        - code id_token
+        - token id_token
+        - token code
+        - token id_token code
+        - none
+        type: string
+      title: An array of allowed response types
+      type: array
+    UserPayload:
+      description: UserPayload user payload
+      properties:
+        address:
+          description: address
+          type: string
+        address_type:
+          description: address type
+          enum:
+          - email
+          - mobile
+          type: string
+        address_verified:
+          description: address verified
+          type: boolean
+        identifier:
+          description: identifier
+          type: string
+        identifier_type:
+          description: identifier type
+          enum:
+          - email
+          - mobile
+          - uid
+          - external
+          - federated
+          type: string
+        identifiers:
+          description: identifiers
+          items:
+            type: string
+          type: array
+        payload:
+          additionalProperties:
+            type: object
+          description: payload
+          type: object
+        status:
+          description: status
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          type: string
+        update_details:
+          description: update details
+          type: string
+        user_addresses:
+          description: user addresses
+          items:
+            $ref: '#/components/schemas/EventAddress'
+          type: array
+        user_id:
+          description: user id
+          type: string
+        user_identifiers:
+          description: user identifiers
+          items:
+            $ref: '#/components/schemas/EventIdentifier'
+          type: array
+        user_type:
+          description: user type
+          enum:
+          - jit
+          - standard
+          - scim
+          type: string
+      type: object
+    Group:
+      description: Group group
+      properties:
+        created_at:
+          description: 'created at
+
+            Format: date-time'
+          format: date-time
+          type: string
+        description:
+          description: description
+          type: string
+        id:
+          description: id
+          type: string
+        name:
+          description: name
+          type: string
+        parent_id:
+          description: parent id
+          type: string
+        tenant_id:
+          description: tenant id
+          type: string
+        updated_at:
+          description: 'updated at
+
+            Format: date-time'
+          format: date-time
+          type: string
+        user_pool_id:
+          description: user pool id
+          example: default
+          type: string
+      required:
+      - user_pool_id
+      type: object
+    RoleResource:
+      properties:
+        identity_pool_id:
+          format: poolID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - tenant
+          - workspace
+          - identity_pool
+          type: string
+        workspace_id:
+          format: serverID
+          type: string
+      type: object
+    ClientPrivacy:
+      properties:
+        scopes:
+          additionalProperties:
+            $ref: '#/components/schemas/ScopePrivacyInformation'
+          description: optional privacy information mapping for scopes
+          type: object
+      type: object
+    CDRArrangementsAutoRemoval:
+      properties:
+        enabled:
+          description: enable auto removal
+          type: boolean
+        remove_after_days:
+          description: Period in days after which arrangements in Expired status will be removed
+          format: int64
+          type: integer
+      type: object
+    AuditEvents:
+      properties:
+        audit_events:
+          items:
+            $ref: '#/components/schemas/AuditEvent'
+          type: array
+      type: object
+    SSOConfiguration:
+      properties:
+        domain:
+          description: Domain for the SSO cookie
+          type: string
+        enabled:
+          description: If enabled, single-sign-on (SSO) is active for all IDPs in this workspace.
+          example: false
+          type: boolean
+        loa_threshold:
+          $ref: '#/components/schemas/RiskLOA'
+        logout_redirect_domains:
+          description: Additional domains permitted in the logout redirect_to parameter
+          items:
+            type: string
+          type: array
+        max_age:
+          description: Active TTL - Active SSO sessions expire after MaxAge nanoseconds.
+          format: duration
+          type: string
+        max_idle:
+          description: Idle TTL - Idle SSO sessions expire after MaxIdle nanoseconds.
+          format: duration
+          type: string
+        post_logout_url:
+          description: Admin-configured target URL after logout, if redirect_to omitted or invalid
+          type: string
+      type: object
+    CDRRegisterURL:
+      type: string
+    ServerAuditPayload:
+      properties:
+        access_token_strategy:
+          default: jwt
+          description: 'Access token strategy
+
+
+            You can choose to go either with `JWT` or `opaque` tokens.
+
+
+            The content of JSON Web Tokens is readable and it is possible to be decoded by anyone that
+
+            has a secret or a public key in their possession.
+
+
+            Opaque tokens are in a proprietary form that contains an identifier to information stored on
+
+            the athorization server. To validate an opaque token, the recipient must call the server that
+
+            issued the token.'
+          enum:
+          - jwt
+          - opaque
+          example: jwt
+          type: string
+        access_token_ttl:
+          default: 1h0m0s
+          description: 'Access token time to live
+
+
+            After an access token reaches its time to live, it expires and it cannot be used to
+
+            authenticate the client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        advanced:
+          $ref: '#/components/schemas/AdvancedConfiguration'
+        authentication_context_settings:
+          $ref: '#/components/schemas/AuthenticationContextSettings'
+        authentication_mechanisms:
+          description: allowed authentication mechanisms for users in the identity pools
+          example:
+          - password
+          - totp
+          - otp
+          - webauthn
+          - sms_otp
+          - email_otp
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        authorization_code_ttl:
+          description: 'Authorization code time to live
+
+
+            After an authorization code reaches its time to live, it expires and it cannot be used to
+
+            authorize the request to the `/token` endpoint.'
+          example: 10m0s
+          format: duration
+          type: string
+        backchannel_token_delivery_modes_supported:
+          default:
+          - poll
+          - ping
+          items:
+            type: string
+          type: array
+        backchannel_user_code_parameter_supported:
+          default: false
+          type: boolean
+        cdr:
+          $ref: '#/components/schemas/CDRConfiguration'
+        color:
+          default: '#007FFF'
+          description: Your server's label color in a HEX format.
+          example: '#007FFF'
+          type: string
+        consent_id_namespace:
+          description: 'Namespace used when creating Open Banking Brasil consent IDs
+
+
+            Consent IDs will have the form of urn:<consent_id_namespace>:<uid> when this is set.
+
+            If this is empty, the tenant id is used by default'
+          type: string
+        cookie_max_age:
+          description: 'Cookie max age
+
+
+            Defines how long a cookie can live until it expires.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        custom_issuer_url:
+          description: 'Defines a custom issuer URL that can be used as the value of the `iss` claim in an access
+
+            token.
+
+
+            If not provided, it is built dynamically based on the server''s URL.'
+          example: http://example.com/default/default
+          type: string
+        description:
+          description: Display description of the workspace
+          example: Server description
+          type: string
+        device_authorization:
+          $ref: '#/components/schemas/DeviceAuthorizationConfiguration'
+        dynamic_client_registration:
+          $ref: '#/components/schemas/DynamicClientRegistrationSettings'
+        dynamic_scope_separator:
+          default: .
+          description: 'You can use this property to define a separator that is used for dynamic scopes.
+
+
+            For example, the default separator is `.`, so the scope could look like the following:
+
+            `users.*`.
+
+
+            For Open Banking Brazil compliant servers, the `:` separator should be used.'
+          format: dynamicScopeSeparator
+          type: string
+        enable_idp_discovery:
+          description: 'Deprecated: Use IDPDiscovery instead
+
+
+            If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+        enable_legacy_clients_with_no_software_statement:
+          description: 'Deprecated
+
+
+            If enabled, it is possible to manually register clients withouth the use of software
+
+            statements.
+
+
+            This flag is enabled, when the `enable_trust_anchor` flag is set to `false`. You can disable
+
+            it using API, but it cannot be manually enabled.'
+          type: boolean
+        enable_quick_access:
+          description: If enabled, the server is visible on the Quick Access tab on the login page.
+          type: boolean
+        enable_trust_anchor:
+          default: false
+          description: 'If enabled, it makes it obligatory to provide a software statement signed by a trusted certificate authority
+
+
+            when registering a client application with the use of the Dynamic Client Registration (DCR).
+
+
+            In public key infrastructure (PKI), trust anchors are certification authorities. They are
+
+            represented by a certificate that is used to verify the signature of a certificate issued by
+
+            a particular trust anchor.'
+          type: boolean
+        enforce_id_token_encryption:
+          description: When enabled, the authorization server will enforce encrypted id tokens it issues
+          type: boolean
+        enforce_pkce:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for both
+
+            private and public clients.
+
+
+            PKCE is an OAuth security extension that prevents malicious applications or codes that
+
+            intercepted authorization code from exchanging it for an access token.'
+          example: false
+          type: boolean
+        enforce_pkce_for_public_clients:
+          default: false
+          description: 'Define whether you want to enforce using the Proof Key of Code Exchange (PKCE) for
+
+            public clients.
+
+
+            Public clients, like mobile applications or JavaScript-based applications, by their design,
+
+            cannot store client secrets securely. For such clients, even encrypting the client secret
+
+            inside the application’s code is not a reliable way of protecting secrets as the application
+
+            can be decompiled and the client secret can be extracted while it is decrypted in the memory
+
+            of the application.
+
+
+            For those reasons, ACP supports the use of PKCE as an addition to the authorization code
+
+            grant flow to provide a secure alternative to the implicit grant flow.'
+          example: false
+          type: boolean
+        fdx:
+          $ref: '#/components/schemas/FDXConfiguration'
+        grant_types:
+          default:
+          - authorization_code
+          - implicit
+          - client_credentials
+          - refresh_token
+          description: An array that defines which of the OAuth 2.0 grant types are enabled for the authorization server.
+          example:
+          - authorization_code
+          - implicit
+          - refresh_token
+          - client_credentials
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        id:
+          description: 'Unique identifier of an authorization server (workspace)
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          format: serverID
+          type: string
+        id_jag_ttl:
+          default: 5m0s
+          description: 'ID-JAG time to live
+
+
+            After an Identity Assertion JWT Authorization Grant reaches its time to live, it expires
+
+            and it cannot be redeemed at the resource authorization server. Kept short by default
+
+            because the grant is redeemed immediately, and its expiry bounds how long the resource
+
+            server must remember the grant identifier to reject replays.'
+          example: 5m0s
+          format: duration
+          type: string
+        id_token_ttl:
+          description: 'ID token time to live
+
+
+            After an ID token reaches its time to live, it expires and it cannot be used to provide
+
+            user profile information to a client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        identity_assurance:
+          $ref: '#/components/schemas/IdentityAssuranceConfiguration'
+        idp_discovery:
+          $ref: '#/components/schemas/IDPDiscovery'
+        issuer_id:
+          description: 'Issuer ID that will be used to set `iss` claim on signed messages
+
+
+            If issuer_id is not set then default issuer_url will be used'
+          example: 5647fe90-f6bc-11eb-9a03-0242ac130003
+          type: string
+        key_type:
+          default: ecdsa
+          description: 'Determines which type of asymmetric algorithms (RSA or ECDSA) is used to generate keys for signing access and
+
+            ID tokens.
+
+
+            It is used only as an input parameter for the Create Authorization Server API.'
+          enum:
+          - rsa
+          - ecdsa
+          - ps
+          example: rsa
+          type: string
+        legal_entity:
+          $ref: '#/components/schemas/LegalEntity'
+        logo_uri:
+          description: Logo URI
+          type: string
+        metadata:
+          $ref: '#/components/schemas/ServerMetadata'
+        name:
+          description: 'Display name of the workspace
+
+
+            If not provided, a random ID is generated.'
+          example: default
+          type: string
+        obbr:
+          $ref: '#/components/schemas/DeprecatedOBBRConfiguration'
+        organization:
+          $ref: '#/components/schemas/OrganizationConfiguration'
+        parent_id:
+          description: Optional ID of a parent server
+          format: serverID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/ServerPreferences'
+        profile:
+          default: default
+          description: 'The profile of a server
+
+
+            ACP is delivered with preconfigured workspace templates that enable quick and easy setup for
+
+            specific configuration patterns. For example, you can instantly create an Open Banking
+
+            compliant workspace that has all of the required mechanisms and settings already in place.'
+          enum:
+          - default
+          - demo
+          - workforce
+          - workforce_v2
+          - consumer
+          - partners
+          - third_party
+          - fapi_advanced
+          - fapi_rw
+          - fapi_ro
+          - openbanking_uk_fapi_advanced
+          - openbanking_uk
+          - openbanking_br
+          - openbanking_br_unico
+          - cdr_australia
+          - cdr_australia_fapi_rw
+          - fdx
+          - openbanking_ksa
+          - fapi_20_security
+          - fapi_20_message_signing
+          - connect_id
+          - agentic_ai
+          - saidp_legacy
+          example: default
+          type: string
+        pushed_authorization_request_ttl:
+          description: 'Custom pushed authentication request TTL
+
+            If not provided, TTL is set to 60 seconds.'
+          format: duration
+          type: string
+        refresh_token_ttl:
+          default: 720h0m0s
+          description: 'Refresh token time to live
+
+
+            After a refresh token reaches its time to live, it expires and it cannot be used to obtain
+
+            new access tokens for a client application.'
+          example: 720h0m0s
+          format: duration
+          type: string
+        require_pushed_authorization_requests:
+          description: Boolean parameter indicating whether the authorization server accepts authorization request data only via PAR.
+          type: boolean
+        response_types:
+          $ref: '#/components/schemas/ResponseTypes'
+        saml:
+          $ref: '#/components/schemas/SAMLConfiguration'
+        scope_claim_formats:
+          default:
+          - scp_array
+          description: formats of the scope claim that will be included in the access token
+          example:
+          - scp_array
+          - scope_space_separated
+          items:
+            $ref: '#/components/schemas/ScopeClaimFormat'
+          type: array
+        settings:
+          $ref: '#/components/schemas/ServerSettings'
+        sso:
+          $ref: '#/components/schemas/SSOConfiguration'
+        styling:
+          $ref: '#/components/schemas/Styling'
+        subject_custom_attribute:
+          description: The authentication context attribute name that will be used as subject when the custom subject format is used.
+          type: string
+        subject_format:
+          description: 'Define the format of a subject
+
+            When set to hash sub value is a one way hash of idp id and idp sub'
+          enum:
+          - hash
+          - legacy
+          - custom
+          type: string
+        subject_identifier_types:
+          default:
+          - public
+          - pairwise
+          description: 'An array that defines supported subject identifier types.
+
+
+            Subject identifiers identify an end-user. They are locally unique and never reassigned within the Issuer,
+
+            and are intended to be consumed by client applications. There are two types
+
+            of subject identifiers: `public` and `pairwise`.
+
+
+            `public` identifiers provide the same `sub` claim value to all client applications.
+
+            `pairwise` identifiers provide different `sub` claim values to each client application. With
+
+            this approach, it makes it impossible for client applications to correlate the end-user''s
+
+            activity without their permission.'
+          example:
+          - public
+          - pairwise
+          items:
+            enum:
+            - public
+            - pairwise
+            type: string
+          type: array
+        template:
+          description: If true this workspace can be used as a template when creating a new ones.
+          type: boolean
+        tenant_id:
+          description: ID of a tenant
+          example: default
+          format: tenantID
+          type: string
+        token_endpoint_auth_methods:
+          default:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          description: 'An array that lists all of the supported token endpoint authentication methods for the
+
+            authorization server.'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        token_endpoint_auth_signing_alg_values:
+          description: 'Token endpoint auth signing supported alg values
+
+
+            Supported algorithms: HS256, RS256, ES256, PS256
+
+
+            At least one algorithm must be set.
+
+
+            The default values depends on the server security profile.'
+          items:
+            type: string
+          type: array
+        token_endpoint_authn_methods:
+          description: 'Deprecated: Use TokenEndpointAuthMethods instead'
+          items:
+            enum:
+            - client_secret_basic
+            - client_secret_post
+            - client_secret_jwt
+            - private_key_jwt
+            - self_signed_tls_client_auth
+            - tls_client_auth
+            - none
+            - unspecified
+            type: string
+          type: array
+        trust_anchor_configuration:
+          $ref: '#/components/schemas/TrustAnchorConfiguration'
+        type:
+          default: regular
+          description: 'Server type
+
+
+            It is an internal property used to recognize if the server is created for an admin portal,
+
+            a developer portal, or if it is a system or a regular workspace.'
+          enum:
+          - admin
+          - developer
+          - system
+          - regular
+          - organization
+          example: regular
+          type: string
+        version:
+          default: 3
+          description: 'server version to track internal changes
+
+            version that is currently the latest: 3'
+          format: int64
+          type: integer
+        workforce:
+          $ref: '#/components/schemas/WorkforceConfiguration'
+      required:
+      - tenant_id
+      type: object
+    ScopesGrantedPayload:
+      properties:
+        new_scope_grants:
+          description: List of scopes to grant.
+          items:
+            $ref: '#/components/schemas/ScopeGrant'
+          type: array
+      type: object
+    Styling:
+      properties:
+        colors:
+          properties:
+            background:
+              type: string
+            header:
+              type: string
+            primary:
+              type: string
+          type: object
+        font_url:
+          type: string
+        logo_size:
+          type: string
+        logo_url:
+          type: string
+      type: object
+    PIICategory:
+      properties:
+        name:
+          description: name
+          example: HIPAA
+          type: string
+      type: object
+    ClaimType:
+      description: 'claim type, one of: id_token, access_token, saml_assertion
+
+        example: id_token'
+      type: string
+    IdentityAssuranceConfiguration:
+      properties:
+        attachments:
+          description: JSON array containing all attachment types supported by the OP.  REQUIRED when OP supports attachments. Possible values are external and embedded.
+          items:
+            type: string
+          type: array
+        block_verified_claims_via_userinfo:
+          description: If enabled, verified claims request via userinfo will be blocked
+          type: boolean
+        digest_algorithms:
+          description: 'REQUIRED when OP supports external attachments. JSON array containing all supported digest algorithms which can be used as alg property within
+
+            the digest object of external attachments. If the OP supports external attachments, at least the algorithm sha-256 MUST be supported by the OP as well.'
+          items:
+            type: string
+          type: array
+        documents:
+          description: JSON array containing all identity document types utilized by the OP for identity verification. REQUIRED when evidence_supported contains "document".
+          items:
+            type: string
+          type: array
+        documents_check_methods:
+          description: JSON array containing the check methods the OP supports for evidences of type "document".
+          items:
+            type: string
+          type: array
+        documents_methods:
+          description: JSON array containing the methods the OP supports for evidences of type "document".
+          items:
+            type: string
+          type: array
+        electronic_records:
+          description: JSON array containing all electronic record types the OP supports. REQUIRED when evidence_supported contains "electronic_record".
+          items:
+            type: string
+          type: array
+        enable_verified_claims:
+          description: Boolean value indicating support for verified_claims, i.e., the OpenID Connect for Identity Assurance extension.
+          type: boolean
+        evidence:
+          description: JSON array containing all types of identity evidence the OP uses.
+          items:
+            type: string
+          type: array
+        trust_frameworks:
+          description: JSON array containing all supported trust frameworks.
+          items:
+            type: string
+          type: array
+      type: object
+    AuthorizationDetailType:
+      type: string
+    JITUpdatedPayload:
+      properties:
+        authentication_flow_control:
+          $ref: '#/components/schemas/PreProvisioningAuthenticationFlowControl'
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        mode:
+          $ref: '#/components/schemas/ProvisioningMode'
+        new_account_linked:
+          type: boolean
+        pool_id:
+          format: poolID
+          type: string
+        user_id:
+          format: userID
+          type: string
+      type: object
+    IDPPayload:
+      properties:
+        id:
+          description: Unique identifierof IDP.
+          format: idpID
+          type: string
+        mappings:
+          $ref: '#/components/schemas/Mappings'
+        method:
+          description: Defines the type of an IDP, e.g. google, saml
+          format: idpMethod
+          type: string
+        name:
+          description: Display name of IDP.
+          type: string
+      type: object
+    ApplicationAssignmentAuditPayload:
+      properties:
+        app_workspace_id:
+          format: serverID
+          type: string
+        cascaded_org_ids:
+          description: 'Orgs whose delegated sub-assignments were removed by this unassign, as one summary rather
+
+            than an event per row.'
+          items:
+            format: serverID
+            type: string
+          type: array
+        client_id:
+          format: clientID
+          type: string
+        delegated_from_org_id:
+          format: serverID
+          type: string
+        mode:
+          type: string
+        organization_id:
+          format: serverID
+          type: string
+      type: object
+    CDRArrangement:
+      properties:
+        account_ids:
+          description: 'List of accounts.
+
+
+            It can refer to user''s bank accounts that can be accessed by your client application in order to provide consumer
+
+            services.'
+          items:
+            type: string
+          type: array
+        amending_arrangement_id:
+          $ref: '#/components/schemas/CDRArrangementID'
+        authorization_server_id:
+          description: Workspace identifier
+          example: server
+          format: serverID
+          type: string
+        cdr_arrangement_id:
+          $ref: '#/components/schemas/CDRArrangementID'
+        cdr_arrangement_metadata:
+          $ref: '#/components/schemas/CDRArrangementMetadata'
+        client_id:
+          description: Client application identifier
+          example: bugkgm23g9kregtu051g
+          format: clientID
+          type: string
+        created_at:
+          description: Arrangement creation date
+          example: '2022-07-01T08:52:27.127932Z'
+          format: date-time
+          type: string
+        customer_id:
+          $ref: '#/components/schemas/CDRCustomerID'
+        expiry:
+          description: Arrangement expiration date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        scope_grants:
+          description: The detailed list of scopes voluntarily granted by the user for the client application to access user data.
+          items:
+            $ref: '#/components/schemas/ScopeGrant'
+          type: array
+        sharing_type:
+          description: 'The rule on how a user shares their data: reuse with a token or without it, or the user allows one-time access.'
+          enum:
+          - one_time
+          - one_time_with_refresh_token
+          - reusable
+          example: one_time
+          type: string
+        spec_version:
+          default: v1
+          description: 'Arrangement version.
+
+            Currently, the version parameter is not used.'
+          enum:
+          - v1
+          example: v1
+          type: string
+        status:
+          $ref: '#/components/schemas/ConsentStatus'
+        subject:
+          description: 'Subject identifies an authenticated user.
+
+            Depending on the workspace configuration, the value can be hashed.'
+          example: 377eb000a87a471291b5a9869930a2422c670b7b6a06f74143eb74a01ed2fbe1
+          format: subject
+          type: string
+        tenant_id:
+          description: Tenant identifier
+          example: my-company
+          format: tenantID
+          type: string
+        updated_at:
+          description: Arrangement last update date
+          example: '2022-10-01T08:52:27.127932Z'
+          format: date-time
+          type: string
+      type: object
+    ClaimGrant:
+      properties:
+        claim_name:
+          description: The claim name as it's set initially.
+          example: email
+          format: claimName
+          type: string
+        claim_type:
+          $ref: '#/components/schemas/ClaimType'
+        client_id:
+          description: Identifier of a client application that is granted with the claim.
+          example: bugkgm23g9kregtu051g
+          format: clientID
+          type: string
+        given_at:
+          description: Time when the claim was granted
+          format: date-time
+          type: string
+        language:
+          description: Language
+          format: language
+          type: string
+        server_id:
+          description: Identifier of a server where the client app is hosted.
+          example: my-server
+          format: serverID
+          type: string
+        subject:
+          description: Identifier of a user who granted the claim.
+          format: subject
+          type: string
+        tenant_id:
+          description: Identifier of the tenant where the client app is hosted.
+          example: my-company
+          format: tenantID
+          type: string
+        verified:
+          description: mark claim as verified (required by identity assurance spec)
+          type: boolean
+      type: object
+    PolicyEvaluatedPayload:
+      properties:
+        output:
+          additionalProperties:
+            type: string
+          description: Policy output
+          type: object
+        policy:
+          $ref: '#/components/schemas/PolicyPayload'
+        recovery:
+          description: An array of recovery methods that take place when a policy validation fails.
+          items: {}
+          type: array
+        result:
+          description: The result of policy validation.
+          type: string
+      type: object
+    JITFailedPayload:
+      properties:
+        authentication_flow_control:
+          $ref: '#/components/schemas/PreProvisioningAuthenticationFlowControl'
+        error:
+          type: string
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        idp_sub:
+          format: subject
+          type: string
+        mode:
+          $ref: '#/components/schemas/ProvisioningMode'
+        pool_id:
+          format: poolID
+          type: string
+        user_mapping:
+          $ref: '#/components/schemas/JITUser'
+        user_to_provision:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    AuthenticationMechanisms:
+      description: AuthenticationMechanisms authentication mechanisms
+      items:
+        type: string
+      type: array
+    TrustAnchorConfiguration:
+      properties:
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: URI of the JWKs of the trusted party responsible for signing the Software Statement
+          type: string
+      type: object
+    AuditEvent:
+      properties:
+        action:
+          description: Name of an action that was performed for a given event subject.
+          enum:
+          - authenticated
+          - challenged
+          - authorized
+          - unauthorized
+          - created
+          - updated
+          - deleted
+          - generated
+          - requested
+          - confirmed
+          - accepted
+          - rejected
+          - revoked
+          - notified
+          - issued
+          - denied
+          - granted
+          - attempted
+          - failed
+          - succeeded
+          - sent
+          - not_sent
+          - received
+          - executed
+          - calculated
+          - reset_requested
+          - reset_completed
+          - add_requested
+          - add_completed
+          - added_to_group
+          - removed_from_group
+          example: created
+          type: string
+        context:
+          additionalProperties:
+            type: string
+          description: Additional audit event context.
+          type: object
+        event_id:
+          description: Event ID - unique audit event identifier.
+          format: eventID
+          type: string
+        event_subject:
+          description: Resource or entity that is a subject of a given audit event.
+          enum:
+          - request
+          - gateway_request
+          - gateway_policy
+          - policy
+          - client
+          - credential
+          - login
+          - risk
+          - post_authn
+          - recovery
+          - consent
+          - client_consents
+          - customer_consents
+          - authorization_code
+          - authorization_details
+          - access_token
+          - saml_assertion
+          - scopes
+          - claims
+          - otp
+          - user
+          - schema
+          - pool
+          - password
+          - bruteforce
+          - dcr
+          - script
+          - role
+          - task
+          - jit
+          - tokens
+          - service
+          - server
+          - import
+          - organization
+          - otp_inspect
+          - totp
+          - device
+          - webauthn
+          - group
+          - phone_delivery
+          - application_assignment
+          - application_membership
+          example: client
+          type: string
+        metadata:
+          $ref: '#/components/schemas/AuditEventMetadata'
+        payload:
+          $ref: '#/components/schemas/AuditEventPayloads'
+        server_id:
+          description: Server ID.
+          format: serverID
+          type: string
+        tenant_id:
+          description: Tenant ID.
+          format: tenantID
+          type: string
+        timestamp:
+          description: Time when the event took place.
+          format: date-time
+          type: string
+      type: object
+    IDPDiscovery:
+      properties:
+        discovery_mode:
+          enum:
+          - domain_matching
+          - script_execution
+          type: string
+        enabled:
+          description: 'If enabled, IDP discovery automatically redirects the user to their own IDP and does not
+
+            display IDPs of other users while the users accesses the server/application.'
+          example: false
+          type: boolean
+      type: object
+    WorkforceProvisioningStatus:
+      type: string
+    DCRCreatedEventPayload:
+      properties:
+        city:
+          description: The visitor's city
+          type: string
+        client_details:
+          $ref: '#/components/schemas/DCRDetails'
+        country_code:
+          description: The visitor's country
+          type: string
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    JwtClaims:
+      additionalProperties:
+        type: object
+      type: object
+    PersonalDetails:
+      properties:
+        user_id:
+          type: string
+      type: object
+    FDXGrantedResource:
+      properties:
+        dataClusters:
+          description: The names of clusters with data elements permitted.
+          example:
+          - ACCOUNT_DETAILED
+          - TRANSACTIONS
+          - STATEMENTS
+          items:
+            type: string
+          type: array
+        id:
+          description: resource ID
+          example: b14e1e714693bc00
+          type: string
+        resourceType:
+          description: A type of resource that holds the permitted data elements. This parameter can be extended to support additional resource types.
+          example: ACCOUNT
+          type: string
+      type: object
+    MappingDetails:
+      items:
+        $ref: '#/components/schemas/MappingDetail'
+      type: array
+    SupportedJSONSchema:
+      properties:
+        additionalProperties:
+          type: boolean
+        allOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        anyOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        const:
+          type: string
+        contains:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        dependentRequired:
+          additionalProperties:
+            items:
+              type: string
+            type: array
+          type: object
+        dependentSchemas:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        description:
+          type: string
+        else:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        enum:
+          items:
+            type: string
+          type: array
+        exclusiveMaximum:
+          format: int64
+          type: integer
+        exclusiveMinimum:
+          format: int64
+          type: integer
+        hidden:
+          type: boolean
+        if:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        items:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        maxContains:
+          format: int64
+          type: integer
+        maxItems:
+          description: arrays
+          format: int64
+          type: integer
+        maxLength:
+          description: strings
+          format: int64
+          type: integer
+        maxProperties:
+          description: objects
+          format: int64
+          type: integer
+        maximum:
+          format: int64
+          type: integer
+        minContains:
+          format: int64
+          type: integer
+        minItems:
+          format: int64
+          type: integer
+        minLength:
+          format: int64
+          type: integer
+        minProperties:
+          format: int64
+          type: integer
+        minimum:
+          format: int64
+          type: integer
+        multipleOf:
+          description: numeric
+          format: int64
+          type: integer
+        not:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        oneOf:
+          items:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: array
+        pattern:
+          type: string
+        patternProperties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        properties:
+          additionalProperties:
+            $ref: '#/components/schemas/SupportedJSONSchema'
+          type: object
+        propertyNames:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        required:
+          items:
+            type: string
+          type: array
+        then:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+        title:
+          type: string
+        type:
+          description: any
+          type: string
+        uniqueItems:
+          type: boolean
+      type: object
+    API:
+      properties:
+        api_type:
+          default: rest
+          description: api type
+          enum:
+          - rest
+          - graphql
+          example: rest
+          type: string
+        can_have_policy:
+          description: if false it is not possible to assign a policy
+          type: boolean
+        data_classifications:
+          description: Data classifications
+          items:
+            type: string
+          type: array
+        graphql_schema:
+          description: graphql schema
+          type: string
+        graphql_types:
+          $ref: '#/components/schemas/GraphQLTypes'
+        id:
+          description: API id
+          example: '1'
+          format: apiID
+          type: string
+        method:
+          description: HTTP request method
+          example: GET
+          type: string
+        path:
+          description: HTTP request path
+          example: /pets
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+        position:
+          description: position of the api in the apis list
+          example: 1
+          format: int64
+          type: integer
+        server_id:
+          description: server id
+          example: default
+          format: serverID
+          type: string
+        service_id:
+          description: service id
+          example: '1'
+          format: serviceID
+          type: string
+        tenant_id:
+          description: tenant id
+          example: default
+          format: tenantID
+          type: string
+      type: object
+    ServerMetadata:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          description: metadata payload
+          type: object
+        schema:
+          $ref: '#/components/schemas/SupportedJSONSchema'
+      type: object
+    TaskAuditPayload:
+      properties:
+        attributes:
+          type: object
+        error:
+          type: string
+        name:
+          type: string
+      type: object
+    PoolAuditPayload:
+      properties:
+        authentication_mechanisms:
+          $ref: '#/components/schemas/AuthenticationMechanisms'
+        description:
+          type: string
+        name:
+          type: string
+        pool_id:
+          type: string
+        public_registration_allowed:
+          type: boolean
+      type: object
+    MappingResult:
+      type: string
+    ApplicationMembershipAuditPayload:
+      properties:
+        app_workspace_id:
+          format: serverID
+          type: string
+        client_id:
+          format: clientID
+          type: string
+        grantee_type:
+          $ref: '#/components/schemas/GranteeType'
+        group_id:
+          format: groupID
+          type: string
+        home_workspace_id:
+          format: serverID
+          type: string
+        identity_pool_id:
+          format: poolID
+          type: string
+        organization_id:
+          format: serverID
+          type: string
+        user_id:
+          format: userID
+          type: string
+      type: object
+    GraphQLTypes:
+      items:
+        $ref: '#/components/schemas/GraphQLType'
+      type: array
+    EventIdentifier:
+      description: EventIdentifier event identifier
+      properties:
+        value:
+          description: value
+          type: string
+      type: object
+    ServerPreferences:
+      properties:
+        display_identity_pool_idp:
+          description: display identity pool IDP
+          type: boolean
+        display_organization_idp:
+          description: display organization IDP
+          type: boolean
+      type: object
+    AgentCapability:
+      type: string
+    FDXConsentGrantParty:
+      description: 'Consent Party entity
+
+        Details on the non-end user parties in the Consent Grant. Includes the legal entity operating branded products or services
+
+        in the data sharing chain. Descriptive information is collected during Data Recipient registration at Data Provider,
+
+        and populated during issuance by Data Provider from its registry'
+      properties:
+        homeUri:
+          description: URL for party, where an end user could learn more about the company or application involved in the data sharing chain
+          type: string
+        logoUri:
+          description: URL for a logo asset to be displayed to the end user
+          type: string
+        name:
+          description: Common name for party, as it should be displayed to the end user
+          type: string
+        registeredEntityIdentifier:
+          description: Registered id of party
+          type: string
+        registeredEntityName:
+          description: Registered name of party
+          type: string
+        registryName:
+          description: The registry with the party's registered name and id
+          type: string
+      type: object
+    AuditConsentKind:
+      type: string
+    JITDeniedPayload:
+      properties:
+        authentication_flow_control:
+          $ref: '#/components/schemas/PreProvisioningAuthenticationFlowControl'
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        mode:
+          $ref: '#/components/schemas/ProvisioningMode'
+        pool_id:
+          format: poolID
+          type: string
+      type: object
+    RiskPayload:
+      properties:
+        dbfp:
+          additionalProperties:
+            type: object
+          type: object
+        risk_engine_context:
+          $ref: '#/components/schemas/RiskContext'
+      type: object
+    GraphQLField:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        name:
+          description: name of graphQL field
+          example: id
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    SAMLAssertionIssuedPayload:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: Actor claims
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        authentication_mechanisms:
+          description: The authentication mechanisms a user used to login.
+          items:
+            enum:
+            - totp
+            - password
+            - otp
+            - email_otp
+            - sms_otp
+            - voice_otp
+            - webauthn
+            - usernameless_webauthn
+            - push
+            - symbol
+            - qr_code
+            type: string
+          type: array
+        city:
+          description: The visitor's city
+          type: string
+        client_id:
+          description: OAuth client application identifier.
+          format: clientID
+          type: string
+        client_name:
+          description: Human readable name of a client application
+          type: string
+        country_code:
+          description: The visitor's country
+          type: string
+        created_by_developer:
+          description: Stores information if the owner of the client application is a developer.
+          type: boolean
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        grant_type:
+          description: 'Stores the information which grant type was selected to perfom a given action.
+
+            Matches one of allowed OAuth client grant types for a given client.'
+          type: string
+        granted_scopes:
+          description: Granted scopes
+          items:
+            type: string
+          type: array
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_initiated:
+          type: boolean
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: Subject within the Identity Provider
+          format: subject
+          type: string
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: May act claims
+          type: object
+        name_id:
+          description: SAML subject identifier.
+          type: string
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        public:
+          description: Stores information if the client application is a public one.
+          type: boolean
+        recovery:
+          description: True if user had to do login recovery during authentication
+          type: boolean
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        risk_engine_context:
+          $ref: '#/components/schemas/RiskContext'
+        server_id:
+          description: ID of the authorization server (workspace) to which an access request is tied.
+          format: serverID
+          type: string
+        service_provider_id:
+          type: string
+        session_id:
+          description: 'Session id of a given subject. It''s uniform across the authentication processes.
+
+            It can be used as a correlation ID between a different audit events.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Identification of the principal that is the subject of authorization.
+
+            For the authorization grant, the subject typically identifies an authorized accessor for which the access token is being requested.
+
+            For client authentication, the subject is the client_id of the OAuth client.'
+          format: subject
+          type: string
+        system:
+          description: Stores information if the client application is a system tenant's application.
+          type: boolean
+        token_endpoint_authn_method:
+          description: Token endpoint authentication method configured for a client application.
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+        token_signature:
+          description: Token signature
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+        workspace_id:
+          description: ID of the authorization server (workspace) to which a resource is tied.
+          format: serverID
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    RequestValidatedPayload:
+      properties:
+        access_request_data:
+          $ref: '#/components/schemas/AccessRequestData'
+        request_validated_data:
+          $ref: '#/components/schemas/RequestValidatedData'
+      type: object
+    ConsentAuditEventPayload:
+      properties:
+        consent:
+          $ref: '#/components/schemas/ConsentPayload'
+      type: object
+    RevocationReason:
+      type: string
+    ScopePrivacyInformation:
+      properties:
+        pii_categories:
+          items:
+            $ref: '#/components/schemas/PIICategory'
+          type: array
+        purpose:
+          format: purposeName
+          type: string
+      type: object
+    SAMLResponseBindingMode:
+      type: string
+    CDRArrangementID:
+      type: string
+    UserInGroupPayload:
+      description: UserInGroupPayload user in group payload
+      properties:
+        group_id:
+          description: group id
+          type: string
+        user_id:
+          description: user id
+          type: string
+      type: object
+    UserAttributeMapping:
+      properties:
+        allow_weak_decoding:
+          description: 'If enabled, the decoder makes the following "weak" conversions:
+
+
+            Bools to string (true = "1", false = "0")
+
+
+            numbers to string (base 10)
+
+
+            bools to int/uint (true = 1, false = 0)
+
+
+            strings to int/uint (base implied by prefix)
+
+
+            int to bool (true if value != 0)
+
+
+            string to bool (accepts only the following: 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)
+
+
+            empty array = empty map and vice versa
+
+
+            negative numbers to overflowed uint values (base 10)
+
+
+            slice of maps to a merged map
+
+
+            single values are converted to slices if required. Each element is weakly decoded.'
+          example: false
+          type: boolean
+        default:
+          description: Default value used when source value is missing in dynamic mode.
+          type: object
+        mode:
+          $ref: '#/components/schemas/MappingMode'
+        source:
+          description: 'Source attribute.
+
+
+            Source path to the attribute(s) which should be copied to the authentication context.
+
+            Use ''.'' to copy everything.
+
+            Required for dynamic mode.'
+          example: access_token
+          type: string
+        static:
+          description: When static mode is used, this field contains a value that will be populated into a target attribute.
+          type: object
+        target:
+          description: 'Target attribute.
+
+
+            Target path in the authentication context where source attribute(s) should be pasted.
+
+            Use ''.'' to paste to the context top level object.'
+          example: .
+          type: string
+        type:
+          description: 'Type of the target attribute
+
+
+            The `type` parameter accepts the following values:
+
+            `number`, `string`, `bool`, `number_array`, `string_array`, `bool_array`, `any`.'
+          example: string
+          format: type
+          type: string
+        update_on_sign_in:
+          type: boolean
+      required:
+      - target
+      - type
+      type: object
+    ClientJWK:
+      properties:
+        alg:
+          description: 'The "alg" (algorithm) parameter identifies the algorithm intended for
+
+            use with the key.  The values used should either be registered in the
+
+            IANA "JSON Web Signature and Encryption Algorithms" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.'
+          example: RS256
+          type: string
+        crv:
+          example: P-256
+          type: string
+        d:
+          example: T_N8I-6He3M8a7X1vWt6TGIx4xB_GP3Mb4SsZSA4v-orvJzzRiQhLlRR81naWYxfQAYt5isDI6_C2L9bdWo4FFPjGQFvNoRX-_sBJyBI_rl-TBgsZYoUlAj3J92WmY2inbA-PwyJfsaIIDceYBC-eX-xiCu6qMqkZi3MwQAFL6bMdPEM0z4JBcwFT3VdiWAIRUuACWQwrXMq672x7fMuaIaHi7XDGgt1ith23CLfaREmJku9PQcchbt_uEY-hqrFY6ntTtS4paWWQj86xLL94S-Tf6v6xkL918PfLSOTq6XCzxvlFwzBJqApnAhbwqLjpPhgUG04EDRrqrSBc5Y1BLevn6Ip5h1AhessBp3wLkQgz_roeckt-ybvzKTjESMuagnpqLvOT7Y9veIug2MwPJZI2VjczRc1vzMs25XrFQ8DpUy-bNdp89TmvAXwctUMiJdgHloJw23Cv03gIUAkDnsTqZmkpbIf-crpgNKFmQP_EDKoe8p_PXZZgfbRri3NoEVGP7Mk6yEu8LjJhClhZaBNjuWw2-KlBfOA3g79mhfBnkInee5KO9mGR50qPk1V-MorUYNTFMZIm0kFE6eYVWFBwJHLKYhHU34DoiK1VP-svZpC2uAMFNA_UJEwM9CQ2b8qe4-5e9aywMvwcuArRkAB5mBIfOaOJao3mfukKAE
+          type: string
+        dp:
+          example: G4sPXkc6Ya9y8oJW9_ILj4xuppu0lzi_H7VTkS8xj5SdX3coE0oimYwxIi2emTAue0UOa5dpgFGyBJ4c8tQ2VF402XRugKDTP8akYhFo5tAA77Qe_NmtuYZc3C3m3I24G2GvR5sSDxUyAN2zq8Lfn9EUms6rY3Ob8YeiKkTiBj0
+          type: string
+        dq:
+          example: s9lAH9fggBsoFR8Oac2R_E2gw282rT2kGOAhvIllETE1efrA6huUUvMfBcMpn8lqeW6vzznYY5SSQF7pMdC_agI3nG8Ibp1BUb0JUiraRNqUfLhcQb_d9GF4Dh7e74WbRsobRonujTYN1xCaP6TO61jvWrX-L18txXw494Q_cgk
+          type: string
+        e:
+          example: AQAB
+          type: string
+        k:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        kid:
+          description: 'The "kid" (key ID) parameter is used to match a specific key.  This
+
+            is used, for instance, to choose among a set of keys within a JWK Set
+
+            during key rollover.  The structure of the "kid" value is
+
+            unspecified.  When "kid" values are used within a JWK Set, different
+
+            keys within the JWK Set SHOULD use distinct "kid" values.  (One
+
+            example in which different keys might use the same "kid" value is if
+
+            they have different "kty" (key type) values but are considered to be
+
+            equivalent alternatives by the application using them.)  The "kid"
+
+            value is a case-sensitive string.'
+          example: 1603dfe0af8f4596
+          type: string
+        kty:
+          description: 'The "kty" (key type) parameter identifies the cryptographic algorithm
+
+            family used with the key, such as "RSA" or "EC". "kty" values should
+
+            either be registered in the IANA "JSON Web Key Types" registry
+
+            established by [JWA] or be a value that contains a Collision-
+
+            Resistant Name.  The "kty" value is a case-sensitive string.'
+          example: RSA
+          type: string
+        n:
+          example: vTqrxUyQPl_20aqf5kXHwDZrel-KovIp8s7ewJod2EXHl8tWlRB3_Rem34KwBfqlKQGp1nqah-51H4Jzruqe0cFP58hPEIt6WqrvnmJCXxnNuIB53iX_uUUXXHDHBeaPCSRoNJzNysjoJ30TIUsKBiirhBa7f235PXbKiHducLevV6PcKxJ5cY8zO286qJLBWSPm-OIevwqsIsSIH44Qtm9sioFikhkbLwoqwWORGAY0nl6XvVOlhADdLjBSqSAeT1FPuCDCnXwzCDR8N9IFB_IjdStFkC-rVt2K5BYfPd0c3yFp_vHR15eRd0zJ8XQ7woBC8Vnsac6Et1pKS59pX6256DPWu8UDdEOolKAPgcd_g2NpA76cAaF_jcT80j9KrEzw8Tv0nJBGesuCjPNjGs_KzdkWTUXt23Hn9QJsdc1MZuaW0iqXBepHYfYoqNelzVte117t4BwVp0kUM6we0IqyXClaZgOI8S-WDBw2_Ovdm8e5NmhYAblEVoygcX8Y46oH6bKiaCQfKCFDMcRgChme7AoE1yZZYsPbaG_3IjPrC4LBMHQw8rM9dWjJ8ImjicvZ1pAm0dx-KHCP3y5PVKrxBDf1zSOsBRkOSjB8TPODnJMz6-jd5hTtZxpZPwPoIdCanTZ3ZD6uRBpTmDwtpRGm63UQs1m5FWPwb0T2IF0
+          type: string
+        p:
+          example: 6NbkXwDWUhi-eR55Cgbf27FkQDDWIamOaDr0rj1q0f1fFEz1W5A_09YvG09Fiv1AO2-D8Rl8gS1Vkz2i0zCSqnyy8A025XOcRviOMK7nIxE4OH_PEsko8dtIrb3TmE2hUXvCkmzw9EsTF1LQBOGC6iusLTXepIC1x9ukCKFZQvdgtEObQ5kzd9Nhq-cdqmSeMVLoxPLd1blviVT9Vm8-y12CtYpeJHOaIDtVPLlBhJiBoPKWg3vxSm4XxIliNOefqegIlsmTIa3MpS6WWlCK3yHhat0Q-rRxDxdyiVdG_wzJvp0Iw_2wms7pe-PgNPYvUWH9JphWP5K38YqEBiJFXQ
+          type: string
+        q:
+          example: 0A1FmpOWR91_RAWpqreWSavNaZb9nXeKiBo0DQGBz32DbqKqQ8S4aBJmbRhJcctjCLjain-ivut477tAUMmzJwVJDDq2MZFwC9Q-4VYZmFU4HJityQuSzHYe64RjN-E_NQ02TWhG3QGW6roq6c57c99rrUsETwJJiwS8M5p15Miuz53DaOjv-uqqFAFfywN5WkxHbraBcjHtMiQuyQbQqkCFh-oanHkwYNeytsNhTu2mQmwR5DR2roZ2nPiFjC6nsdk-A7E3S3wMzYYFw7jvbWWoYWo9vB40_MY2Y0FYQSqcDzcBIcq_0tnnasf3VW4Fdx6m80RzOb2Fsnln7vKXAQ
+          type: string
+        qi:
+          example: GyM_p6JrXySiz1toFgKbWV-JdI3jQ4ypu9rbMWx3rQJBfmt0FoYzgUIZEVFEcOqwemRN81zoDAaa-Bk0KWNGDjJHZDdDmFhW3AN7lI-puxk_mHZGJ11rxyR8O55XLSe3SPmRfKwZI6yU24ZxvQKFYItdldUKGzO6Ia6zTKhAVRU
+          type: string
+        use:
+          description: 'Use ("public key use") identifies the intended use of
+
+            the public key. The "use" parameter is employed to indicate whether
+
+            a public key is used for encrypting data or verifying the signature
+
+            on data. Values are commonly "sig" (signature) or "enc" (encryption).'
+          example: sig
+          type: string
+        x:
+          example: f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU
+          type: string
+        x5c:
+          description: 'The "x5c" (X.509 certificate chain) parameter contains a chain of one
+
+            or more PKIX certificates [RFC5280].  The certificate chain is
+
+            represented as a JSON array of certificate value strings.  Each
+
+            string in the array is a base64-encoded (Section 4 of [RFC4648] --
+
+            not base64url-encoded) DER [ITU.X690.1994] PKIX certificate value.
+
+            The PKIX certificate containing the key value MUST be the first
+
+            certificate.'
+          items:
+            type: string
+          type: array
+        x5t:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        x5t#S256:
+          example: GawgguFyGrWKav7AX4VKUg
+          type: string
+        y:
+          example: x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0
+          type: string
+      required:
+      - kty
+      type: object
+    UserAttributesMapping:
+      items:
+        $ref: '#/components/schemas/UserAttributeMapping'
+      type: array
+    JWSPayloadSettings:
+      properties:
+        jwks:
+          $ref: '#/components/schemas/ClientJWKs'
+        jwks_uri:
+          description: URI of the JWKs of the trusted party responsible for signing request body
+          type: string
+        source:
+          description: 'JWK source - defines where are the keys for validating dcr request signature
+
+            Keys can be defined at server level or can be taken from jwks_uri claim from the software statement sent by the client'
+          format: jwkSource
+          type: string
+      type: object
+    ServerSettings:
+      properties:
+        deactivated:
+          type: boolean
+        default_client_id:
+          format: clientID
+          type: string
+        default_post_authn_ctx_script_id:
+          format: scriptID
+          type: string
+      type: object
+    RecoveryPayload:
+      properties:
+        amr:
+          items:
+            format: amr
+            type: string
+          type: array
+        recovery_methods:
+          items: {}
+          type: array
+        recovery_steps:
+          items: {}
+          type: array
+      type: object
+    CDRConfiguration:
+      properties:
+        adr_validation_enabled:
+          description: 'Flag to enable / disable ADR validation
+
+            If enabled, register URL must be provided and point to a existing registry'
+          type: boolean
+        arrangements_auto_removal:
+          $ref: '#/components/schemas/CDRArrangementsAutoRemoval'
+        brand_id:
+          type: string
+        dont_cache_trust_anchor_data:
+          description: 'Do not cache trust anchor data, fetch it from registry every time
+
+            This is useful for testing purposes when the registry might not be fully up when the test is run'
+          type: boolean
+        industry:
+          $ref: '#/components/schemas/CDRIndustry'
+        register_api_version:
+          $ref: '#/components/schemas/CDRRegisterAPIVersion'
+        register_url:
+          $ref: '#/components/schemas/CDRRegisterURL'
+        skip_register_url_validation:
+          description: 'Flag to disable register URL validation
+
+            If enabled, there will be no error message
+
+            if data from provided register URL can not be fetched
+
+            It is highly not recommended to use this flag if it is not required'
+          type: boolean
+      type: object
+    RevocationChannel:
+      type: string
+    DCRDetails:
+      properties:
+        certificate_bound_access_token:
+          type: boolean
+        client_id:
+          format: clientID
+          type: string
+        client_name:
+          type: string
+        grant_types:
+          items:
+            enum:
+            - authorization_code
+            - implicit
+            - client_credentials
+            - refresh_token
+            - password
+            - urn:ietf:params:oauth:grant-type:jwt-bearer
+            - urn:openid:params:grant-type:ciba
+            - urn:ietf:params:oauth:grant-type:token-exchange
+            - urn:ietf:params:oauth:grant-type:device_code
+            type: string
+          type: array
+        scopes:
+          items:
+            type: string
+          type: array
+        software_statement_provided:
+          type: boolean
+        token_endpoint_auth_method:
+          enum:
+          - client_secret_basic
+          - client_secret_post
+          - client_secret_jwt
+          - private_key_jwt
+          - self_signed_tls_client_auth
+          - tls_client_auth
+          - none
+          - unspecified
+          type: string
+      type: object
+    IDPDebugInput:
+      properties:
+        access_token_payload:
+          additionalProperties:
+            type: object
+          type: object
+        groups:
+          items:
+            type: string
+          type: array
+        id_token_payload:
+          additionalProperties:
+            type: object
+          type: object
+        saml_response:
+          type: string
+        user_data:
+          additionalProperties:
+            type: object
+          type: object
+      type: object
+    DcrAccessRevokedPayload:
+      properties:
+        client_id:
+          type: string
+        revoke_claim_grants:
+          type: boolean
+        revoke_scope_grants:
+          type: boolean
+      type: object
+    PayloadSettings:
+      properties:
+        format:
+          default: json
+          description: payload format
+          enum:
+          - json
+          - jws
+          format: payloadFormat
+          type: string
+        jws_payload:
+          $ref: '#/components/schemas/JWSPayloadSettings'
+      type: object
+    ServiceAuditPayload:
+      properties:
+        audience_mode:
+          description: Controls which audience is injected into access tokens for scopes mapped to this service
+          enum:
+          - spiffe
+          - custom
+          - none
+          example: spiffe
+          type: string
+        capabilities:
+          description: Service capabilities
+          items:
+            $ref: '#/components/schemas/ServiceCapability'
+          type: array
+        custom_audience:
+          description: Custom service audience
+          example: https://api.example.com
+          type: string
+        description:
+          description: Service description
+          example: Service description
+          type: string
+        gateway_id:
+          description: Gateway identifier
+          example: gateway-1
+          format: gatewayID
+          type: string
+        id:
+          description: A unique identifier of a service
+          example: service-1
+          format: serviceID
+          type: string
+        name:
+          description: Service name
+          example: My service
+          type: string
+        system:
+          description: '`true` when the service is a system service'
+          example: false
+          type: boolean
+        type:
+          default: user
+          description: Service type
+          enum:
+          - oauth2
+          - oidc
+          - system
+          - user
+          - openbanking
+          type: string
+        updated_at:
+          description: The date of service update
+          format: date-time
+          type: string
+        with_specification:
+          description: '`true` when the service has the OpenAPI 3.0 specification'
+          type: boolean
+      type: object
+    AuditEventMetadata:
+      properties:
+        actor_claims:
+          additionalProperties:
+            type: object
+          description: 'Access request actor claims.
+
+
+            It''s only populated if the token has been issued in token exchange delegation flow.'
+          type: object
+        affected_user_id:
+          description: ID of the User in Identity Pool that is affected by an action
+          format: userID
+          type: string
+        affected_user_pool_id:
+          description: ID of the Identity Pool of the User that is affected by an action
+          format: poolID
+          type: string
+        application_id:
+          description: 'ID of the application (OAuth client) an action targets.
+
+
+            Distinct from ClientID, which identifies the client of the access request itself.'
+          format: clientID
+          type: string
+        authorization_correlation_id:
+          description: 'Authorization correlation ID
+
+
+            Represents the correlation ID used for the OAuth2 authorization code grant flow.'
+          format: authorizationCorrelationID
+          type: string
+        city:
+          description: City
+          type: string
+        client_id:
+          description: 'Access request client ID related to an audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: clientID
+          type: string
+        country_code:
+          description: Country code
+          type: string
+        dbfp_fingerprint:
+          description: DBFP jwt fingerprint
+          type: string
+        device_browser:
+          description: Device browser based on the user agent
+          type: string
+        device_os:
+          description: Device OS based on the user agent
+          type: string
+        device_type:
+          description: Device type based on the user agent (computer, tablet, phone, console, wearable, tv)
+          type: string
+        group_id:
+          description: ID of the Group in Identity Pool
+          format: groupID
+          type: string
+        high_risk:
+          description: High risk
+          type: boolean
+        identity_pool_id:
+          description: 'ID of the Identity Pool the action targets: the pool being administered, or the pool
+
+            owning the affected user or group. Not the acting principal''s pool -- that is user_pool_id.'
+          format: poolID
+          type: string
+        idp_id:
+          description: IDP identifier
+          format: idpID
+          type: string
+        idp_method:
+          description: IDP method
+          type: string
+        idp_subject:
+          description: 'Access request subject value from IDP related to a given audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: subject
+          type: string
+        ip:
+          description: 'IP address.
+
+
+            It''s first not empty value from: X-Forwaded-For, X-Real-IP or network socket IP address'
+          type: string
+        is_first_time_login:
+          description: True when the risk engine found no sign-in baseline for the user; absent when not evaluated
+          type: boolean
+        latitude:
+          description: Latitude
+          format: double
+          type: number
+        longitude:
+          description: Longitude
+          format: double
+          type: number
+        may_act_claims:
+          additionalProperties:
+            type: object
+          description: 'Access request may act claims.
+
+
+            It''s only populated if the token has been issued token with may_act claim.'
+          type: object
+        organization_id:
+          description: ID of the Organization
+          format: serverID
+          type: string
+        request_correlation_id:
+          description: 'Request correlation ID
+
+
+            Represents the correlation ID passed as X-Correlation-ID header to a HTTP request'
+          format: requestCorrelationID
+          type: string
+        result:
+          description: action result (success, failure)
+          type: string
+        risk_id:
+          $ref: '#/components/schemas/RiskID'
+        risk_loa:
+          $ref: '#/components/schemas/RiskLOA'
+        session_id:
+          description: 'Session id
+
+
+            Correlation ID in a login process. Returns events related to a particular login process.
+
+            It''s empty for audit events that have been created outside login process.'
+          format: loginID
+          type: string
+        subject:
+          description: 'Access request subject ID related to a given audit event.
+
+
+            May be empty when the access is incorrect or missing.'
+          format: subject
+          type: string
+        token_signature:
+          description: 'Token signature
+
+
+            Signature of a token that was used to perform an action that has published an audit event.'
+          type: string
+        top_level_parent_id:
+          description: ID of the top-level parent organization for organization workspaces
+          format: serverID
+          type: string
+        trace_id:
+          description: Trace ID
+          type: string
+        user_agent:
+          description: User-agent that describes a device name that generated the audit event.
+          type: string
+        user_id:
+          description: ID of the User in Identity Pool
+          format: userID
+          type: string
+        user_pool_id:
+          description: ID of the Identity Pool of the principal that performed the action.
+          format: poolID
+          type: string
+      type: object
+    JITCreatedPayload:
+      properties:
+        admin_role_type:
+          type: string
+        authentication_flow_control:
+          $ref: '#/components/schemas/PreProvisioningAuthenticationFlowControl'
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        mode:
+          $ref: '#/components/schemas/ProvisioningMode'
+        pool_id:
+          format: poolID
+          type: string
+        user_id:
+          format: userID
+          type: string
+      type: object
+    FDXConfiguration:
+      properties:
+        initial_client_status:
+          $ref: '#/components/schemas/FDXClientStatus'
+        legal_entity:
+          $ref: '#/components/schemas/LegalEntity'
+      type: object
+    BruteForceEventPayload:
+      description: BruteForceEventPayload brute force event payload
+      properties:
+        counter:
+          description: current brute force counter for identity authentication in case of authentication failure
+          format: int64
+          type: integer
+      type: object
+    SchemaAuditPayload:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        description:
+          type: string
+        name:
+          type: string
+        schema_id:
+          type: string
+        system:
+          type: boolean
+        updated_at:
+          format: date-time
+          type: string
+      type: object
+    DeprecatedOBBRIndustry:
+      type: string
+    ConsentNotifiedPayload:
+      properties:
+        notification_type:
+          description: 'Type of notification, specifies what the client was notified of , e.g.: revocation'
+          type: string
+        payload:
+          description: payload of the request sent to the notification endpoint
+          type: string
+        uri:
+          description: uri that was notified of the revocation
+          type: string
+      type: object
+    ConfigImportEventPayload:
+      properties:
+        error_message:
+          type: string
+        tenant_id:
+          type: string
+        workspace_id:
+          type: string
+      type: object
+    SameSite:
+      type: string
+    AuthenticationContextSettings:
+      properties:
+        attributes:
+          items:
+            $ref: '#/components/schemas/AuthenticationContextAttribute'
+          type: array
+      type: object
+    RiskLOA:
+      description: Risk engine level of assurance
+      format: double
+      type: number
+    IdentifierType:
+      type: string
+    OrganizationConfiguration:
+      properties:
+        domains:
+          description: An array of email domains configured for an organization for the purposes of IDP discovery
+          items:
+            type: string
+          type: array
+      type: object
+    ScopeClaimFormat:
+      type: string
+    ServiceCapability:
+      type: string
+    ProvisioningMode:
+      type: string
+    AdvancedConfiguration:
+      properties:
+        acr_values:
+          description: Deprecated ACR values to enforce during auth flow (use new ACR feature instead)
+          items:
+            type: string
+          type: array
+        advertise_only_mtls_aliases_in_well_known:
+          description: This option overrides all urls advertised by the well known endpoint with their mtls alias
+          type: boolean
+        allow_organization_selection:
+          description: 'Allow the user to select one of their organizations after authentication (application-membership
+
+            org-selector login step). Disabled by default.'
+          type: boolean
+        auto_request_recovery:
+          description: auto request recovery
+          type: boolean
+        block_response_modes:
+          description: Block response modes
+          type: boolean
+        cookies_configuration:
+          $ref: '#/components/schemas/CookiesConfiguration'
+        cross_organization_application_membership:
+          description: 'Allow cross-organization application membership across this workspace''s org tree — granting a
+
+            user whose identity pool lives in one org access to an application in another org of the same
+
+            tree, and honoring such grants at token time. Disabled by default. Set on the tree-root
+
+            workspace; governs the whole tree. Role assignment is unaffected (that stays flag-gated).'
+          type: boolean
+        disable_dcr_client_certificate_bound_access_tokens:
+          description: 'Disable certificate-bound access tokens for new DCR clients
+
+
+            If true, new DCR clients are created with CertificateBoundAccessToken disabled.'
+          type: boolean
+        disable_par:
+          description: Disable PAR
+          type: boolean
+        disable_rar:
+          description: Disable RAR
+          type: boolean
+        disable_refresh_token_cycling:
+          description: 'Disable refresh token cycling
+
+
+            Once disabled, original refresh token can be constantly used to issue new access token.'
+          type: boolean
+        disallow_access_token_in_query_for_protected_resources:
+          description: 'When enabled, the authorization server will not accept access tokens supplied in the request query parameter
+
+            for protected resources endpoints.'
+          type: boolean
+        disallow_code_response_type_without_jarm:
+          description: Disallow code response type without JARM
+          type: boolean
+        disallowed_response_modes:
+          $ref: '#/components/schemas/ResponseModes'
+        do_not_issue_acr_claim_in_id_token:
+          description: Do not issue acr claim in ID Token
+          type: boolean
+        enforce_acr_values:
+          description: Enforce acr values
+          type: boolean
+        enforce_application_membership_default:
+          description: 'Default value stamped onto the enforce_application_membership toggle of applications created in
+
+            this workspace. Applied at creation only — changing it later does not affect existing applications.
+
+            Disabled by default. Only meaningful while the applications_membership feature is enabled.'
+          type: boolean
+        ignore_unknown_scopes_for_dcr:
+          description: 'Ignore unknown scopes for DCR
+
+
+            If enabled, an attempt to register or update a client with a scope that does not exist in the server will succeed.'
+          type: boolean
+        require_request_or_request_uri_parameter:
+          description: Require request or request uri parameter for authorization flow
+          type: boolean
+        return_iss_parameter_in_authorization_response:
+          description: Return iss parameter in the authorization response
+          type: boolean
+        single_audience_equals_issuer_in_authentication_jwts:
+          description: Enforces a single-value audience in authentication JWTs sent to the authorization server, matching the server's issuer URL.
+          type: boolean
+        strict_post_logout_redirect_enforcement:
+          description: Disables SSO as a fallback mechanism for post-logout redirect URI validation
+          type: boolean
+      type: object
+    MessageDeliveryReceiptPayload:
+      properties:
+        message_type:
+          enum:
+          - sms
+          - email
+          - voice
+          type: string
+        originating_event_id:
+          format: eventID
+          type: string
+        provider:
+          type: string
+        provider_message_id:
+          type: string
+        raw_payload:
+          type: object
+        status:
+          type: string
+      type: object
+    FDXParty:
+      properties:
+        home_uri:
+          type: string
+        logo_uri:
+          type: string
+        name:
+          type: string
+        registered_entity_identifier:
+          type: string
+        registered_entity_name:
+          type: string
+        registry_name:
+          type: string
+      type: object
+    FDXConsentRevocation:
+      description: Revocation data
+      properties:
+        initiator:
+          description: Revocation initiator
+          enum:
+          - DATA_ACCESS_PLATFORM
+          - DATA_PROVIDER
+          - DATA_RECIPIENT
+          - INDIVIDUAL
+          - MERCHANT
+          - VENDOR
+          example: '"INDIVIDUAL"'
+          type: string
+        reason:
+          description: Revocation reason
+          enum:
+          - BUSINESS_RULE
+          - USER_ACTION
+          example: '"USER_ACTION"'
+          type: string
+      type: object
+    LoginFailedPayload:
+      properties:
+        cause:
+          type: string
+        details:
+          type: object
+        error:
+          type: string
+        error_description:
+          type: string
+        error_hint:
+          type: string
+        error_uri:
+          type: string
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    SoftwareStatementSettings:
+      properties:
+        optional:
+          default: false
+          description: 'Accepts registrations without a software statement
+
+
+            If enabled, the registration endpoint no longer requires a software statement, but still
+
+            validates and applies one whenever a client presents it. Clients that register with a
+
+            software statement are distinguished by a non-empty `software_statement_payload`.
+
+
+            Requires `enable_trust_anchor` to be on, as the trust anchor keys verify a presented
+
+            software statement.'
+          type: boolean
+      type: object
+    UserCodeCharacterSet:
+      type: string
+    PolicyValidationRecovery:
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+      type: object
+    ClaimsGrantedPayload:
+      properties:
+        new_claim_grants:
+          description: List of claims to grant.
+          items:
+            $ref: '#/components/schemas/ClaimGrant'
+          type: array
+      type: object
+    TokenTTLs:
+      properties:
+        access_token_ttl:
+          default: 1h0m0s
+          description: 'Access token time to live
+
+
+            After an access token reaches its time to live, it expires and it cannot be used to
+
+            authenticate the client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        authorization_code_ttl:
+          description: 'Authorization code time to live
+
+
+            After an authorization code reaches its time to live, it expires and it cannot be used to
+
+            authorize the request to the `/token` endpoint.'
+          example: 10m0s
+          format: duration
+          type: string
+        id_jag_ttl:
+          default: 5m0s
+          description: 'ID-JAG time to live
+
+
+            After an Identity Assertion JWT Authorization Grant reaches its time to live, it expires
+
+            and it cannot be redeemed at the resource authorization server. Kept short by default
+
+            because the grant is redeemed immediately, and its expiry bounds how long the resource
+
+            server must remember the grant identifier to reject replays.'
+          example: 5m0s
+          format: duration
+          type: string
+        id_token_ttl:
+          description: 'ID token time to live
+
+
+            After an ID token reaches its time to live, it expires and it cannot be used to provide
+
+            user profile information to a client application.'
+          example: 1h10m30s
+          format: duration
+          type: string
+        refresh_token_ttl:
+          default: 720h0m0s
+          description: 'Refresh token time to live
+
+
+            After a refresh token reaches its time to live, it expires and it cannot be used to obtain
+
+            new access tokens for a client application.'
+          example: 720h0m0s
+          format: duration
+          type: string
+      type: object
+    ScopeGrant:
+      properties:
+        client_id:
+          description: Identifier of a client application that is granted with the scope.
+          example: bugkgm23g9kregtu051g
+          format: clientID
+          type: string
+        given_at:
+          description: Time when the scope was granted
+          format: date-time
+          type: string
+        granted_scope_name:
+          description: The scope name with its actual value
+          example: accounts.read.own
+          format: scopeName
+          type: string
+        language:
+          description: Language
+          format: language
+          type: string
+        pool_id:
+          description: pool id of a user who granted the scope
+          format: poolID
+          type: string
+        scope_name:
+          description: 'The scope name as it''s set initially. This parameter supports dynamic scope syntax, thus can include a scope
+
+            root—a fixed core of the dynamic scope name supplemented with a wildcard—a symbol representing
+
+            an adjustable extension to the scope root allowing to retrieve a specific requested scope.
+
+
+            The basic dynamic scope template is as follows: `[scope-root.*]` where `*` is a wildcard.'
+          example: accounts.read.*
+          format: scopeName
+          type: string
+        server_id:
+          description: Identifier of a server where the client app is hosted.
+          example: my-server
+          format: serverID
+          type: string
+        subject:
+          description: Identifier of a user who granted the scope.
+          format: subject
+          type: string
+        tenant_id:
+          description: Identifier of the tenant where the client app is hosted.
+          example: my-company
+          format: tenantID
+          type: string
+        user_id:
+          description: user id of a user who granted the scope
+          format: userID
+          type: string
+      type: object
+    GranteeType:
+      type: string
+    WorkforceConfiguration:
+      properties:
+        client_id:
+          description: workforce authentication client id
+          type: string
+        client_secret:
+          description: workforce authentication client secret
+          type: string
+        status:
+          $ref: '#/components/schemas/WorkforceProvisioningStatus'
+        tenant_slug:
+          description: workforce tenant slug
+          type: string
+      type: object
+    PolicyValidationFailure:
+      description: Defines the failure that took place for a policy validation
+      properties:
+        details:
+          description: Details on the failed validation for a policy
+          type: string
+        message:
+          description: Message displayed for failed validation
+          type: string
+        validator:
+          description: String representation of the validator for which the policy failed validation
+          type: string
+      type: object
+    AuditEventPayloads:
+      properties:
+        access_token_denied:
+          $ref: '#/components/schemas/AccessRequestDataWithError'
+        access_token_issued:
+          $ref: '#/components/schemas/AccessRequestData'
+        application_assignment_created:
+          $ref: '#/components/schemas/ApplicationAssignmentAuditPayload'
+        application_assignment_deleted:
+          $ref: '#/components/schemas/ApplicationAssignmentAuditPayload'
+        application_membership_denied:
+          $ref: '#/components/schemas/ApplicationMembershipDeniedAuditPayload'
+        application_membership_granted:
+          $ref: '#/components/schemas/ApplicationMembershipAuditPayload'
+        application_membership_revoked:
+          $ref: '#/components/schemas/ApplicationMembershipAuditPayload'
+        application_membership_updated:
+          $ref: '#/components/schemas/ApplicationOpenAccessAuditPayload'
+        authorization_code_denied:
+          $ref: '#/components/schemas/AccessRequestDataWithError'
+        authorization_code_issued:
+          $ref: '#/components/schemas/AccessRequestData'
+        authorization_details_granted:
+          $ref: '#/components/schemas/AuthorizationDetailsGrantedPayload'
+        bruteforce_deleted:
+          $ref: '#/components/schemas/BruteForceLimit'
+        bruteforce_updated:
+          $ref: '#/components/schemas/BruteForceLimit'
+        claims_granted:
+          $ref: '#/components/schemas/ClaimsGrantedPayload'
+        client_consents_revoked:
+          $ref: '#/components/schemas/ClientConsentsAuditEventPayload'
+        client_created:
+          $ref: '#/components/schemas/ClientAuditPayload'
+        client_deleted:
+          $ref: '#/components/schemas/ClientAuditPayload'
+        client_updated:
+          $ref: '#/components/schemas/ClientAuditPayload'
+        consent_accepted:
+          $ref: '#/components/schemas/ConsentAuditEventPayload'
+        consent_created:
+          $ref: '#/components/schemas/ConsentAuditEventPayload'
+        consent_notified:
+          $ref: '#/components/schemas/ConsentNotifiedPayload'
+        consent_rejected:
+          $ref: '#/components/schemas/ConsentAuditEventPayload'
+        consent_revoked:
+          $ref: '#/components/schemas/ConsentAuditEventPayload'
+        consent_updated:
+          $ref: '#/components/schemas/ConsentAuditEventPayload'
+        credential_created:
+          $ref: '#/components/schemas/CredentialPayload'
+        credential_updated:
+          $ref: '#/components/schemas/CredentialPayload'
+        customer_consents_revoked:
+          $ref: '#/components/schemas/CustomerConsentsAuditEventPayload'
+        dcr_created:
+          $ref: '#/components/schemas/DCRCreatedEventPayload'
+        dcr_rejected:
+          $ref: '#/components/schemas/DCRRejectedEventPayload'
+        dcr_revoked:
+          $ref: '#/components/schemas/DcrAccessRevokedPayload'
+        device_add_completed:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        device_add_requested:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        gateway_policy_authorized:
+          $ref: '#/components/schemas/RequestValidatedPayload'
+        gateway_policy_unauthorized:
+          $ref: '#/components/schemas/RequestValidatedPayload'
+        gateway_request_authorized:
+          $ref: '#/components/schemas/RequestValidatedPayload'
+        gateway_request_unauthorized:
+          $ref: '#/components/schemas/RequestValidatedPayload'
+        group_created:
+          $ref: '#/components/schemas/Group'
+        group_deleted:
+          $ref: '#/components/schemas/Group'
+        group_updated:
+          $ref: '#/components/schemas/Group'
+        import_created:
+          $ref: '#/components/schemas/ConfigImportEventPayload'
+        import_failed:
+          $ref: '#/components/schemas/ConfigImportEventPayload'
+        jit_created:
+          $ref: '#/components/schemas/JITCreatedPayload'
+        jit_denied:
+          $ref: '#/components/schemas/JITDeniedPayload'
+        jit_failed:
+          $ref: '#/components/schemas/JITFailedPayload'
+        jit_updated:
+          $ref: '#/components/schemas/JITUpdatedPayload'
+        login_accepted:
+          $ref: '#/components/schemas/LoginPayload'
+        login_attempted:
+          $ref: '#/components/schemas/LoginPayload'
+        login_failed:
+          $ref: '#/components/schemas/LoginFailedPayload'
+        organization_created:
+          $ref: '#/components/schemas/Org'
+        organization_deleted:
+          $ref: '#/components/schemas/Org'
+        organization_updated:
+          $ref: '#/components/schemas/Org'
+        otp_accepted:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_generated:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_inspect_failed:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_inspect_succeeded:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_not_sent:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_rejected:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_requested:
+          $ref: '#/components/schemas/OTPPayload'
+        otp_sent:
+          $ref: '#/components/schemas/OTPPayload'
+        password_accepted:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        password_confirmed:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        password_rejected:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        password_requested:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        password_updated:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        phone_delivery_received:
+          $ref: '#/components/schemas/MessageDeliveryReceiptPayload'
+        policy_authorized:
+          $ref: '#/components/schemas/PolicyEvaluatedPayload'
+        policy_unauthorized:
+          $ref: '#/components/schemas/PolicyEvaluatedPayload'
+        pool_created:
+          $ref: '#/components/schemas/PoolAuditPayload'
+        pool_deleted:
+          $ref: '#/components/schemas/PoolAuditPayload'
+        pool_updated:
+          $ref: '#/components/schemas/PoolAuditPayload'
+        recovery_confirmed:
+          $ref: '#/components/schemas/RecoveryPayload'
+        risk_calculated:
+          $ref: '#/components/schemas/RiskPayload'
+        role_granted:
+          $ref: '#/components/schemas/RoleGrantAuditPayload'
+        role_revoked:
+          $ref: '#/components/schemas/RoleGrantAuditPayload'
+        saml_assertion_denied:
+          $ref: '#/components/schemas/SAMLAssertionDeniedPayload'
+        saml_assertion_issued:
+          $ref: '#/components/schemas/SAMLAssertionIssuedPayload'
+        schema_created:
+          $ref: '#/components/schemas/SchemaAuditPayload'
+        schema_deleted:
+          $ref: '#/components/schemas/SchemaAuditPayload'
+        schema_updated:
+          $ref: '#/components/schemas/SchemaAuditPayload'
+        scopes_granted:
+          $ref: '#/components/schemas/ScopesGrantedPayload'
+        script_executed:
+          $ref: '#/components/schemas/ScriptExecutionAuditPayload'
+        server_created:
+          $ref: '#/components/schemas/ServerAuditPayload'
+        server_deleted:
+          $ref: '#/components/schemas/ServerAuditPayload'
+        server_updated:
+          $ref: '#/components/schemas/ServerAuditPayload'
+        service_created:
+          $ref: '#/components/schemas/ServiceAuditPayload'
+        service_deleted:
+          $ref: '#/components/schemas/ServiceAuditPayload'
+        service_updated:
+          $ref: '#/components/schemas/ServiceAuditPayload'
+        task_failed:
+          $ref: '#/components/schemas/TaskAuditPayload'
+        task_succeeded:
+          $ref: '#/components/schemas/TaskAuditPayload'
+        tokens_revoked:
+          $ref: '#/components/schemas/TokensRevokedPayload'
+        totp_reset_completed:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        totp_reset_requested:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        user_added_to_group:
+          $ref: '#/components/schemas/UserInGroupPayload'
+        user_authenticated:
+          $ref: '#/components/schemas/UserAuthenticatedPayload'
+        user_challenged:
+          $ref: '#/components/schemas/UserAuthenticatedPayload'
+        user_created:
+          $ref: '#/components/schemas/UserPayload'
+        user_deleted:
+          $ref: '#/components/schemas/UserPayload'
+        user_removed_from_group:
+          $ref: '#/components/schemas/UserInGroupPayload'
+        user_updated:
+          $ref: '#/components/schemas/UserPayload'
+        webauthn_add_completed:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+        webauthn_add_requested:
+          $ref: '#/components/schemas/UserIDAndIdentifierPayload'
+      type: object
+    RedirectURIs:
+      description: 'SecureAuth uses redirect URIs to redirect users back to the application after they authorized the application. Along
+
+        with the redirection, an authorization code or access token is added to the URL.
+
+
+        For backward compatibility reasons, it''s also acceptable to pass `redirect_uris` as a string, for example:
+
+        https://example.com/callback.
+
+
+        example: ["https://example.com/callback"]'
+      items:
+        type: string
+      title: OAuth-allowed redirect URIs
+      type: array
+    JITUser:
+      properties:
+        addresses:
+          items:
+            $ref: '#/components/schemas/JITUserAddress'
+          type: array
+        attributes_mapping:
+          $ref: '#/components/schemas/UserAttributesMapping'
+        identifiers:
+          items:
+            $ref: '#/components/schemas/JITUserIdentifier'
+          type: array
+      type: object
+    SAMLConfiguration:
+      properties:
+        organization_display_name:
+          description: Organization display name
+          type: string
+        organization_name:
+          description: Organization name
+          type: string
+        organization_url:
+          description: Organization URL
+          type: string
+        response_binding_mode:
+          $ref: '#/components/schemas/SAMLResponseBindingMode'
+        service_provider_discovery_mode:
+          $ref: '#/components/schemas/ServiceProviderDiscoveryMode'
+        signing_hash_algorithms:
+          default:
+          - sha-256
+          description: Allowed SAML Assertion signing hash algorithms.
+          example:
+          - sha-256
+          items:
+            enum:
+            - sha-1
+            - sha-256
+            - sha-512
+            type: string
+          type: array
+        subject_name_id:
+          description: 'Allows to change default subject name id.
+
+
+            The default one will be idp''s subject, even if the value is empty.'
+          type: string
+        subject_name_id_format:
+          description: Allows to set the subject name id format
+          enum:
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:transient
+          - urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+          - urn:oasis:names:tc:SAML:2.0:nameid-format:persistent
+          type: string
+      type: object
+    TokensRevokedPayload:
+      properties:
+        consent_id:
+          description: consent ID for which the token has been revoked (populated only if type equals consent)
+          type: string
+        type:
+          description: entity type for which token has been revoked
+          example: consent
+          type: string
+      type: object
+    Mapping:
+      description: Source and target must be provided.
+      properties:
+        allow_weak_decoding:
+          description: 'If enabled, the decoder makes the following "weak" conversions:
+
+
+            Bools to string (true = "1", false = "0")
+
+
+            numbers to string (base 10)
+
+
+            bools to int/uint (true = 1, false = 0)
+
+
+            strings to int/uint (base implied by prefix)
+
+
+            int to bool (true if value != 0)
+
+
+            string to bool (accepts only the following: 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False)
+
+
+            empty array = empty map and vice versa
+
+
+            negative numbers to overflowed uint values (base 10)
+
+
+            slice of maps to a merged map
+
+
+            single values are converted to slices if required. Each element is weakly decoded.'
+          example: false
+          type: boolean
+        default:
+          description: Default value used when source value is missing in dynamic mode.
+          type: object
+        mode:
+          $ref: '#/components/schemas/MappingMode'
+        source:
+          description: 'Source attribute.
+
+
+            Source path to the attribute(s) which should be copied to the authentication context.
+
+            Use ''.'' to copy everything.
+
+            Required for dynamic mode.'
+          example: access_token
+          type: string
+        static:
+          description: When static mode is used, this field contains a value that will be populated into a target attribute.
+          type: object
+        target:
+          description: 'Target attribute.
+
+
+            Target path in the authentication context where source attribute(s) should be pasted.
+
+            Use ''.'' to paste to the context top level object.'
+          example: .
+          type: string
+        type:
+          description: 'Type of the target attribute
+
+
+            The `type` parameter accepts the following values:
+
+            `number`, `string`, `bool`, `number_array`, `string_array`, `bool_array`, `any`.'
+          example: string
+          format: type
+          type: string
+      required:
+      - target
+      - type
+      title: Attribute mapping.
+      type: object
+    CDRArrangementMetadata:
+      properties:
+        personal_details:
+          $ref: '#/components/schemas/PersonalDetails'
+        revocation_channel:
+          $ref: '#/components/schemas/RevocationChannel'
+        revocation_reason:
+          $ref: '#/components/schemas/RevocationReason'
+      type: object
+    ScriptExecutionAuditPayload:
+      properties:
+        caught_err:
+          type: string
+        duration:
+          format: duration
+          type: string
+        error:
+          type: string
+        executed_at:
+          format: date-time
+          type: string
+        execution_point:
+          enum:
+          - post_authn_ctx
+          - allowed_idp_ids
+          - identifier_idp_selection
+          - token_minting
+          - client_token_minting
+          type: string
+        input:
+          additionalProperties:
+            type: object
+          type: object
+        log_level:
+          type: string
+        output:
+          additionalProperties:
+            type: object
+          type: object
+        script_id:
+          format: scriptID
+          type: string
+        script_name:
+          type: string
+        stderr:
+          type: string
+        stdout:
+          type: string
+      type: object
+    FDXConsentID:
+      type: string
+    ConsentPayload:
+      properties:
+        details:
+          $ref: '#/components/schemas/ConsentDetails'
+        id:
+          description: consent id
+          type: string
+        kind:
+          $ref: '#/components/schemas/AuditConsentKind'
+        type:
+          description: 'Type of a consent, specifies the subject of consent, e.g.: domestic_payment'
+          type: string
+      type: object
+    LoginPayload:
+      properties:
+        amr:
+          items:
+            format: amr
+            type: string
+          type: array
+        idp:
+          $ref: '#/components/schemas/IDPPayload'
+        idp_input:
+          $ref: '#/components/schemas/IDPDebugInput'
+        idp_mapping_details:
+          $ref: '#/components/schemas/MappingDetails'
+      type: object
+    DurationType:
+      type: string
+    ResponseModes:
+      items:
+        enum:
+        - query
+        - fragment
+        - form_post
+        - query.jwt
+        - fragment.jwt
+        - form_post.jwt
+        - jwt
+        type: string
+      type: array
+    CDRRegisterAPIVersion:
+      type: string
+    DenialReason:
+      type: string
+    FDXRequestedResource:
+      properties:
+        dataClusters:
+          description: The names of clusters with data elements permitted.
+          example:
+          - ACCOUNT_DETAILED
+          - TRANSACTIONS
+          - STATEMENTS
+          items:
+            type: string
+          type: array
+        resourceType:
+          description: A type of resource that holds the permitted data elements. This parameter can be extended to support additional resource types.
+          example: ACCOUNT
+          type: string
+      type: object
+    ClientJWKs:
+      properties:
+        keys:
+          example: []
+          items:
+            $ref: '#/components/schemas/ClientJWK'
+          type: array
+      type: object
+    JITUserAddress:
+      properties:
+        source:
+          type: string
+        type:
+          $ref: '#/components/schemas/IdentifierType'
+        verification_mode:
+          $ref: '#/components/schemas/JITAdressVerificationMode'
+      type: object
+    MappingMode:
+      description: mapping mode
+      type: string
+    CredentialPayload:
+      description: CredentialPayload credential payload
+      properties:
+        credential_id:
+          description: credential id
+          type: string
+        credential_type:
+          description: credential type
+          enum:
+          - password
+          - webauthn
+          - totp
+          - device
+          type: string
+        operation_type:
+          description: operation type
+          type: string
+        user_id:
+          description: user id
+          type: string
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    AuthenticationContextAttribute:
+      description: Authentication context attribute
+      properties:
+        description:
+          description: String represented display name of an attribute
+          type: string
+        labels:
+          description: Array of Strings represents attribute labels
+          items:
+            format: label
+            type: string
+          type: array
+        name:
+          description: String represented variable name of an attribute
+          type: string
+        type:
+          description: 'The data type of an attribute
+
+
+            It stores information what kind of data is used as the value of the attribute.
+
+
+            Available types: `number`, `string`, `bool`, `object`, `number_array`, `string_array`, `bool_array`, `object_array` or `any`.'
+          format: type
+          type: string
+      type: object
+    ClientTokenExchangeConfiguration:
+      properties:
+        actor_claims:
+          description: 'Additional actor token claims
+
+
+            Claims from the actor token that will be injected into the exchanged token under the `act` claim.
+
+
+            Applies for the token exchange delegation flow only.'
+          items:
+            type: string
+          type: array
+        id_jag_targets:
+          description: ID-JAG targets with optional client ID and audience tenant overrides. Audiences must be unique.
+          items:
+            $ref: '#/components/schemas/ClientIDJAGTarget'
+          type: array
+      type: object
+    DCRRejectedEventPayload:
+      properties:
+        city:
+          description: The visitor's city
+          type: string
+        country_code:
+          description: The visitor's country
+          type: string
+        dbfp:
+          description: DBFP `jwt` cookie.
+          type: string
+        error:
+          description: High level error name (request_forbidden, access_denied, invalid_request).
+          type: string
+        error_cause:
+          description: Error root cause (invalid_pkce, invalid_state, user_policy_failed).
+          type: string
+        error_description:
+          description: Human readable error description
+          type: string
+        error_hint:
+          description: Error hint
+          type: string
+        external_error:
+          description: External error
+          type: boolean
+        latitude:
+          description: The visitor's latitude
+          type: string
+        longitude:
+          description: The visitor's longitude
+          type: string
+        remote_addr:
+          description: Requester IP address obtained from system network socket information.
+          type: string
+        true_client_ip:
+          description: Requester IP address obtained from True-Client-IP header.
+          type: string
+        user_agent:
+          description: A characteristic string that lets servers and network peers identify the application, operating system, vendor, and/or version of the requesting user agent.
+          type: string
+        x_forwarded_for:
+          description: Requester IP address obtained from X-Forwarded-For header.
+          type: string
+        x_real_ip:
+          description: Requester IP address obtained from X-Real-IP header.
+          type: string
+      type: object
+    MappingDetail:
+      properties:
+        input:
+          type: object
+        output:
+          type: object
+        result:
+          $ref: '#/components/schemas/MappingResult'
+        source:
+          type: string
+        target:
+          type: string
+      type: object
+    RoleSubject:
+      properties:
+        identity_pool_id:
+          description: identity pool user pool id
+          format: poolID
+          type: string
+        identity_pool_user_id:
+          description: identity pool user id
+          format: userID
+          type: string
+        idp_id:
+          description: idp user idp id
+          format: idpID
+          type: string
+        tenant_id:
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - identity_pool_user
+          - idp
+          type: string
+        workspace_id:
+          description: idp user workspace id
+          format: serverID
+          type: string
+      type: object
+    RiskContext:
+      properties:
+        analyzers:
+          additionalProperties:
+            format: double
+            type: number
+          type: object
+        dbfp_fingerprint:
+          type: string
+        high_risk:
+          type: boolean
+        id:
+          $ref: '#/components/schemas/RiskID'
+        is_first_time_login:
+          type: boolean
+        loa:
+          $ref: '#/components/schemas/RiskLOA'
+        risks:
+          items:
+            type: string
+          type: array
+      type: object
+    Mappings:
+      description: 'Mapping is used to unify attributes from external IDPs and propagate them to the authentication
+
+        context to be used later on. By mapping your authentication context attributes, you unify attributes from
+
+        all IDPs that your users authenticate with. It allows you to use a set of unified attributes
+
+        throughout ACP for multiple purposes.'
+      items:
+        $ref: '#/components/schemas/Mapping'
+      title: An array of mappings
+      type: array
+    CDRIndustry:
+      type: string
+    GraphQLType:
+      properties:
+        can_have_policy:
+          description: if false it is not possible to assign a policy, set to false if policy is declaratively assigned
+          type: boolean
+        fields:
+          description: optional fields of graphql type
+          items:
+            $ref: '#/components/schemas/GraphQLField'
+          type: array
+        name:
+          description: name of graphQL type, currently supported types are Interfaces and Objects
+          example: block
+          type: string
+        policy_id:
+          description: optional id of a policy
+          example: block
+          format: policyID
+          type: string
+      type: object
+    PreProvisioningAuthenticationFlowControl:
+      type: string
+    RoleGrantAuditPayload:
+      properties:
+        resource:
+          $ref: '#/components/schemas/RoleResource'
+        role:
+          enum:
+          - admin
+          - business_admin
+          - auditor
+          - manager
+          - user_manager
+          - member
+          type: string
+        subject:
+          $ref: '#/components/schemas/RoleSubject'
+      type: object
+    ClientConsentsAuditEventPayload:
+      properties:
+        client_id:
+          description: client id
+          format: clientID
+          type: string
+        number_revoked:
+          description: number of consents revoked
+          format: int64
+          type: integer
+      type: object
+    ConsentStatus:
+      type: string
+    InitialAccessTokenSettings:
+      properties:
+        required:
+          description: 'Enables initial access token for dynamic client registration
+
+
+            If enabled, the registration endpoint requires an access token with the dcr_register scope granted.
+
+            To issue the access token, you need a separate client with the client credentials grant type.
+
+            Upon successful registration, the access token is terminated.'
+          type: boolean
+      type: object
+    PolicyValidationResult:
+      description: Provides information on the results of a policy validation
+      properties:
+        failure:
+          description: An array of failures that took place during the policy validation process
+          items:
+            $ref: '#/components/schemas/PolicyValidationFailure'
+          type: array
+        recovery:
+          description: An array of recovery methods that take place when a policy validation fails
+          items:
+            $ref: '#/components/schemas/PolicyValidationRecovery'
+          type: array
+        result:
+          description: String representation of the policy validation result
+          type: string
+      type: object
+    AuthorizationDetailsGrant:
+      properties:
+        type:
+          type: string
+      type: object
+    FDXClientStatus:
+      type: string
+  responses:
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    AuditEventsResponse:
+      description: AuditEvents
+      headers:
+        etag:
+          description: 'The ETag HTTP header is an identifier for a specific version of a resource
+
+
+            in:header'
+          schema:
+            type: string
+            format: etag
+        x-external-error:
+          description: 'Indicates that a 5xx error was caused by tenant-provided code
+
+
+            in:header'
+          schema:
+            type: string
+        x-trace-id:
+          description: 'OpenTelemetry trace identifier
+
+
+            in:header'
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AuditEvents'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token
+    system:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            introspect_tokens: introspect_tokens
+            manage_clients: manage_clients
+            manage_configuration: manage_configuration
+            manage_consents: manage_consents
+            manage_idps: manage_idps
+            manage_logins: manage_logins
+            manage_post_authn: manage_post_authn
+            manage_scope_grants: manage_scope_grants
+            push_gateway_requests: push_gateway_requests
+            read_configuration: read_configuration
+            read_gateway_configuration: read_gateway_configuration
+            view_audit_events: view_audit_events
+            view_clients: view_clients
+            view_consents: view_consents
+            write_gateway_configuration: write_gateway_configuration
+          authorizationUrl: /default/system/oauth2/authorize
+          tokenUrl: /default/system/oauth2/token
+x-refined-from:
+- secureauth-admin-openapi.yml
+- secureauth-system-openapi.yml

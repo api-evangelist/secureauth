@@ -1,0 +1,1241 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Identity Admin API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth B2B Users API
+  version: latest
+servers:
+- url: https://localhost:8443/api/identity/default
+tags:
+- name: B2BUsers
+paths:
+  /admin/b2b/pools/{ipID}/users:
+    get:
+      description: 'Retrieve the list of business users from the specified identity pool.
+
+
+        Results are sorted by user ID. No other sorting is supported.'
+      operationId: listUsersB2B
+      parameters:
+      - description: A server will only return requested resources if the resource matches one of the listed ETag value
+        in: header
+        name: if-match
+        schema:
+          type: string
+          format: etag
+      - description: Unique identifier included in audit events for request tracking
+        in: header
+        name: x-correlation-id
+        schema:
+          type: string
+      - description: Key used to safely retry failed requests without duplicate processing
+        in: header
+        name: x-idempotency-key
+        schema:
+          type: string
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - description: 'optional list users after given id
+
+          AfterUserID'
+        in: query
+        name: after_user_id
+        schema:
+          type: string
+      - description: 'optional list users before given id
+
+          BeforeUserID'
+        in: query
+        name: before_user_id
+        schema:
+          type: string
+      - description: 'optional sort clients by given field
+
+          Sort'
+        in: query
+        name: sort
+        schema:
+          type: string
+      - description: 'optional order clients by given direction
+
+          Order'
+        in: query
+        name: order
+        schema:
+          type: string
+      - description: 'optional limit results
+
+          Limit'
+        in: query
+        name: limit
+        schema:
+          type: integer
+          format: int64
+          default: 20
+          maximum: 100
+          minimum: 1
+      - description: 'optional query filter
+
+          query is in json format like {"user_key":"john"} - parameter must be url-encoded
+
+          supported parameters
+
+          `user_key` - limits user set to users that has identifier starting or ending with provided user_key or has verified address starting or ending with provided user_key or their ID is equal to provided user_key
+
+          `payload` - limits user set to users with payload matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+
+          `metadata` - limits user set to users with metadata matches provided metadata - for simple values it does exact match, for arrays it does `contain`
+
+          if multiple parameters provided it does logical AND between the results so users must match ALL parameters'
+        in: query
+        name: query
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/B2BUsersResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: List B2B Users
+      tags:
+      - B2BUsers
+    post:
+      description: 'Create a business user with extended data.
+
+
+        Any status and set of identifiers, addresses, and credentials are allowed.
+
+        If credential of type password is provided it can be marked as must_be_changed which forces user to change its password upon first login.
+
+
+        When no `payload_schema_id` are provided, the default values are taken from the
+
+        specified Identity Pool.
+
+
+        Payload and metadata must match the specified schema.
+
+
+        The response contains an extended view on user entry.
+
+
+        To retrieve a user entry without user creation, call the **Get B2B User Details** endpoint.'
+      operationId: createB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/AdminB2BUserResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Create B2B User Account
+      tags:
+      - B2BUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseNewUserPayload'
+  /admin/b2b/pools/{ipID}/users/{userID}:
+    delete:
+      description: Remove a record about a business user account in the specified identity pool.
+      operationId: deleteB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ' User has been deleted'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Delete B2B User Account
+      tags:
+      - B2BUsers
+    get:
+      description: 'Retrieve extended information about a business user record.
+
+
+        The response contains business user''s basic details, payload as well as all their identifiers,
+
+        addresses, and blurred credentials.'
+      operationId: getB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminB2BUserResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Get B2B User Details
+      tags:
+      - B2BUsers
+    patch:
+      description: 'Patch operates on the same fields as the **Update B2B User Record** endpoint.
+
+
+        example for RFC6902:
+
+        [{"op": "replace", "path": "/payload/first_name", "value": "John"}]
+
+
+        example for RFC7396:
+
+        {"payload": {"first_name": "John"}}'
+      operationId: patchB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      - description: RFC version
+        in: query
+        name: rfc_version
+        schema:
+          type: string
+          enum:
+          - '6902'
+          - '7396'
+          default: '7396'
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminB2BUserResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Patches existing B2B User (supports both RFC6902 and RFC7396 JSON Patch)
+      tags:
+      - B2BUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        description: Patch spec in format matching RFC Version
+    put:
+      description: 'Update the basic set of business user data: payload, schemas, and status. Provide the required values for the fields
+
+        you need to update. Fields with no values are skipped for the update (not removed nor cleared).
+
+
+        The fields to be updated are overridden.
+
+
+        Any `payload` and `payload_schema_id` values passed must be mutually relevant.
+
+
+        To retrieve a business user entry without updating their record, call the **Get B2B User Details** endpoint.'
+      operationId: updateB2BUser
+      parameters:
+      - in: path
+        name: ipID
+        required: true
+        schema:
+          type: string
+      - in: path
+        name: userID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/AdminB2BUserResponse'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '409':
+          $ref: '#/components/responses/conflictHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - admin: []
+      summary: Update B2B User Record
+      tags:
+      - B2BUsers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BaseUpdateUser'
+components:
+  schemas:
+    CredentialFlags:
+      description: 'These flags indicate the state of user presence, user verification, and backup eligibility/state at the time
+
+        the credential was used.'
+      properties:
+        backupEligible:
+          description: Flag BE indicates the credential is able to be backed up and/or sync'd between devices. This should NEVER change.
+          type: boolean
+        backupState:
+          description: 'Flag BS indicates the credential has been backed up and/or sync''d. This value can change but it''s recommended
+
+            that RP''s keep track of this value.'
+          type: boolean
+        userPresent:
+          description: Flag UP indicates the users presence.
+          type: boolean
+        userVerified:
+          description: 'Flag UV indicates the user performed verification. On a credential record this is the uvInitialized value
+
+            of the specification, which is latched: once an assertion has verified the user it stays true, because
+
+            [CredentialFlags.Update] only advances it. Read the UV flag of a ceremony''s own authenticator data to
+
+            determine whether that ceremony verified the user.'
+          type: boolean
+      title: CredentialFlags contains the boolean flags derived from the authenticator data during registration or login.
+      type: object
+    WebAuthnCredential:
+      $ref: '#/components/schemas/Credential'
+    Authenticator:
+      properties:
+        AAGUID:
+          description: 'The AAGUID of the authenticator. An AAGUID is defined as an array containing the globally unique
+
+            identifier of the authenticator model being sought.'
+          type: string
+        attachment:
+          $ref: '#/components/schemas/AuthenticatorAttachment'
+        cloneWarning:
+          description: 'CloneWarning is a signal that the authenticator may be cloned, i.e. at least two copies of the
+
+            credential private key may exist and are being used in parallel. Relying Parties should incorporate
+
+            this information into their risk scoring. Whether the Relying Party updates the stored signature
+
+            counter value in this case, or not, or fails the authentication ceremony or not, is Relying Party-specific.'
+          type: boolean
+        signCount:
+          description: 'SignCount is a representation of the number of times the Authenticator or Credential have been used to login.
+
+            Upon a new login operation, the Relying Party compares the stored signature counter value with the new SignCount
+
+            value returned in the assertion’s authenticator data. If this new SignCount value is less than or equal to the
+
+            stored value, a cloned authenticator may exist, or the authenticator may be malfunctioning.'
+          format: uint32
+          type: integer
+      title: Authenticator represents a specific authenticator in the context of a [Credential].
+      type: object
+    Credential:
+      description: 'Provided this data structure is preserved properly, a Credential can be verified against the FIDO Metadata Service
+
+        at a later date using the [Credential.Verify] method with a [metadata.Provider].
+
+
+        It is strongly recommended for the best security that a [Credential] is encrypted at rest with the exception of the
+
+        ID and the value you use to lookup the user. This prevents a person with access to the database being able to
+
+        compromise privacy by being able to view this data, as well as prevents them being able to compromise security by
+
+        adding or modifying a Credential without them also having access to the encryption key.
+
+
+        For consolidated persistence guidance; recommended schema shape, required lookup columns, and which fields
+
+        must be written back on every successful FinishLogin / ValidateLogin; see the [Storage] section of the
+
+        [github.com/go-webauthn/webauthn/webauthn] package documentation.
+
+
+        See: §4. Terminology: Credential Record (https://www.w3.org/TR/webauthn-3/#credential-record)
+
+
+        [Storage]: https://pkg.go.dev/github.com/go-webauthn/webauthn/webauthn#hdr-Storage'
+      properties:
+        attestation:
+          $ref: '#/components/schemas/CredentialAttestation'
+        attestationFormat:
+          description: 'AttestationFormat is the attestation statement format identifier ("packed", "tpm", "android-key",
+
+            "android-safetynet", "fido-u2f", "apple", "compound", "none"); see §8 of the WebAuthn specification and
+
+            the AttestationFormat constants in the protocol package.'
+          type: string
+        attestationType:
+          description: 'AttestationType is the attestation type as conveyed by the authenticator during the registration ceremonyl
+
+            one of the values defined by [metadata.AuthenticatorAttestationType] ("basic_full", "basic_surrogate",
+
+            "attca", "anonca", "ecdaa", "none"). Prior releases incorrectly stored the attestation FORMAT here; see the
+
+            custom [Credential.UnmarshalJSON] for the backward-compatibility migration applied when decoding such
+
+            records.'
+          type: string
+        authenticator:
+          $ref: '#/components/schemas/Authenticator'
+        extensions:
+          $ref: '#/components/schemas/CredentialExtensions'
+        flags:
+          $ref: '#/components/schemas/CredentialFlags'
+        id:
+          description: The ID is the ID of the public key credential source. Described by the Credential Record 'id' field.
+          type: string
+        publicKey:
+          description: 'The credential public key of the public key credential source. Described by the Credential Record ''publicKey''
+
+            field.'
+          type: string
+        transport:
+          description: Transport types the authenticator supports. Described by the Credential Record 'transports' field.
+          items:
+            $ref: '#/components/schemas/AuthenticatorTransport'
+          type: array
+      title: 'Credential contains all needed information about a WebAuthn credential for storage. This struct is effectively the
+
+        Credential Record as described in the specification.'
+      type: object
+    BaseNewUserPayload:
+      properties:
+        credentials:
+          items:
+            $ref: '#/components/schemas/NewUserCredential'
+          type: array
+        id:
+          format: userID
+          type: string
+        identifiers:
+          items:
+            $ref: '#/components/schemas/NewUserIdentifier'
+          type: array
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        payload_schema_id:
+          format: schemaID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        status:
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          type: string
+        verifiable_addresses:
+          items:
+            $ref: '#/components/schemas/NewUserVerifiableAddress'
+          type: array
+      required:
+      - status
+      type: object
+    AuthenticatorTransport:
+      description: 'Authenticators may implement various transports for communicating with clients. This enumeration defines hints as to
+
+        how clients might communicate with a particular authenticator in order to obtain an assertion for a specific
+
+        credential. Note that these hints represent the WebAuthn Relying Party''s best belief as to how an authenticator may
+
+        be reached. A Relying Party will typically learn of the supported transports for a public key credential via
+
+        getTransports().
+
+
+        Specification: §5.8.4. Authenticator Transport Enumeration (https://www.w3.org/TR/webauthn/#enumdef-authenticatortransport)'
+      title: AuthenticatorTransport represents the IDL enum with the same name.
+      type: string
+    MFAPreferences:
+      properties:
+        preferred_2fa:
+          enum:
+          - totp
+          - password
+          - otp
+          - email_otp
+          - sms_otp
+          - voice_otp
+          - webauthn
+          - usernameless_webauthn
+          - push
+          - symbol
+          - qr_code
+          type: string
+      type: object
+    Address:
+      properties:
+        address:
+          type: string
+        verified:
+          type: boolean
+      type: object
+    UserPreferences:
+      properties:
+        locales:
+          description: Locale is the list of user's preferred languages/locales for UI and communications
+          example: en-US, es-ES
+          items:
+            format: locale
+            type: string
+          type: array
+        mfa:
+          $ref: '#/components/schemas/MFAPreferences'
+      type: object
+    BaseUserWithData:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        credentials:
+          items:
+            $ref: '#/components/schemas/UserCredential'
+          type: array
+        id:
+          format: userID
+          type: string
+        identifiers:
+          items:
+            $ref: '#/components/schemas/UserIdentifier'
+          type: array
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        payload_schema_id:
+          format: schemaID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        status:
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          type: string
+        status_updated_at:
+          format: date-time
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+        user_type:
+          enum:
+          - jit
+          - standard
+          - scim
+          type: string
+        verifiable_addresses:
+          items:
+            $ref: '#/components/schemas/UserVerifiableAddress'
+          type: array
+      required:
+      - tenant_id
+      - user_pool_id
+      - status
+      type: object
+    CredentialProtectionPolicy:
+      description: 'Registry: https://www.iana.org/assignments/webauthn/webauthn.xhtml'
+      title: CredentialProtectionPolicy represents the credential protection policy values of the CTAP credProtect extension.
+      type: string
+    UserVerifiableAddress:
+      properties:
+        address:
+          format: verifiableAddress
+          type: string
+        address_lc:
+          format: verifiableAddress
+          type: string
+        allowed_for_2fa:
+          description: is allowed for 2FA
+          type: boolean
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: verifiableAddressID
+          type: string
+        message_redaction:
+          $ref: '#/components/schemas/RedactionPolicy'
+        metadata:
+          additionalProperties:
+            type: object
+          description: general purpose metadata
+          type: object
+        preferred_contact_method:
+          enum:
+          - sms
+          - voice
+          example: sms
+          type: string
+        status:
+          enum:
+          - active
+          - inactive
+          example: active
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - email
+          - mobile
+          example: mobile
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: userID
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+        verified:
+          type: boolean
+        verified_at:
+          format: date-time
+          type: string
+      required:
+      - tenant_id
+      - user_pool_id
+      - user_id
+      - address
+      - address_lc
+      - type
+      - status
+      - verified
+      - created_at
+      - updated_at
+      type: object
+    CredentialAttestation:
+      description: 'It enables the [Credential] to be verified against the FIDO Metadata Service at a later date using
+
+        [Credential.Verify], even long after the registration ceremony has completed.
+
+        The WebAuthn specification evolves over time, introducing new validation procedures. Preserving the raw data
+
+        ensures that credentials created today can be re-validated against future rules without requiring re-registration.
+
+        Raw data serves as an auditable record of exactly what the authenticator and client provided during registration,
+
+        independent of how the library parsed it at that point in time.
+
+
+        Implementers MUST persist all fields of this struct.'
+      properties:
+        authenticatorData:
+          description: 'AuthenticatorData is the raw authenticator data from the registration response as provided in the
+
+            RegistrationResponseJSON. This is the unparsed byte representation that can be re-parsed for future validation.'
+          type: string
+        clientDataHash:
+          description: 'ClientDataHash is the SHA-256 hash of ClientDataJSON computed during registration verification. If empty,
+
+            [Credential.Verify] will recompute it from ClientDataJSON.'
+          type: string
+        clientDataJSON:
+          description: 'ClientDataJSON is the raw JSON-encoded client data from the registration response. This is the verbatim value
+
+            provided by the client and is used to recompute the client data hash during later verification.'
+          type: string
+        object:
+          description: 'Object is the raw CBOR-encoded attestation object from the registration response. This contains the attestation
+
+            statement, format, and authenticator data needed by [Credential.Verify] to re-perform attestation verification.'
+          type: string
+        publicKeyAlgorithm:
+          description: PublicKeyAlgorithm is the COSE algorithm identifier for the credential's public key.
+          format: int64
+          type: integer
+      title: 'CredentialAttestation holds the raw attestation data from a registration ceremony. These values are intentionally
+
+        stored in their original unparsed form rather than as parsed structures. This is critical because:'
+      type: object
+    NewUserVerifiableAddress:
+      properties:
+        address:
+          format: verifiableAddress
+          type: string
+        allowed_for_2fa:
+          description: is allowed for 2FA
+          type: boolean
+        message_redaction:
+          $ref: '#/components/schemas/RedactionPolicy'
+        metadata:
+          additionalProperties:
+            type: object
+          description: general purpose metadata
+          type: object
+        preferred_contact_method:
+          enum:
+          - sms
+          - voice
+          example: sms
+          type: string
+        status:
+          enum:
+          - active
+          - inactive
+          example: active
+          type: string
+        type:
+          enum:
+          - email
+          - mobile
+          example: mobile
+          type: string
+        verified:
+          type: boolean
+      required:
+      - address
+      - type
+      - status
+      - verified
+      type: object
+    BaseUpdateUser:
+      properties:
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        payload_schema_id:
+          format: schemaID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        status:
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          type: string
+      type: object
+    CredentialExtensions:
+      description: 'CredentialExtensions holds the extension results recorded at registration which remain meaningful for the life
+
+        of the credential.'
+      properties:
+        credBlobSet:
+          description: 'CredBlobSet reports whether the blob submitted with [WithExtensionCredBlob] at registration was stored by
+
+            the authenticator, which is what determines whether requesting [WithExtensionGetCredBlob] at authentication
+
+            can return anything.'
+          type: boolean
+        credProtect:
+          $ref: '#/components/schemas/CredentialProtectionPolicy'
+        hmacSecret:
+          description: 'HMACSecret reports whether the authenticator provisioned a CTAP hmac-secret for this credential, which is
+
+            what determines whether requesting [WithExtensionHMACGetSecret] at authentication can succeed.
+
+
+            The value is taken from the authenticator extension outputs where present, because those are covered by the
+
+            attestation signature, and from the client''s ''hmacCreateSecret'' output otherwise. The two are the signed and
+
+            client-reported views of one capability rather than two separate properties, so they share a field.
+
+
+            This is a sibling of PRFEnabled rather than a duplicate of it: the pseudo-random function extension is the
+
+            WebAuthn level abstraction over the same authenticator capability, and a client may report either, both, or
+
+            neither depending on which extension the Relying Party requested.'
+          type: boolean
+        largeBlobSupported:
+          description: LargeBlobSupported reports whether the credential supports large blob storage.
+          type: boolean
+        minPinLength:
+          description: MinPinLength is the authenticator's minimum PIN length at the time of registration.
+          format: uint64
+          type: integer
+        prfEnabled:
+          description: 'PRFEnabled reports whether the pseudo-random function is available for this credential. It is populated when
+
+            the registration requested the extension, typically with [WithExtensionPRFSupport].'
+          type: boolean
+        rk:
+          description: 'RK reports whether the credential is client-side discoverable, from the credProps extension. A false value
+
+            is meaningful and distinct from the client not reporting the property.'
+          type: boolean
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    NewUserIdentifier:
+      properties:
+        identifier:
+          format: userIdentifierValue
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: identifier metadata
+          type: object
+        type:
+          enum:
+          - email
+          - mobile
+          - uid
+          - external
+          - federated
+          example: email
+          type: string
+      required:
+      - identifier
+      - type
+      type: object
+    B2BUsers:
+      description: Identity B2BUsers
+      properties:
+        users:
+          items:
+            $ref: '#/components/schemas/BaseExtendedUser'
+          type: array
+      type: object
+    NewUserCredential:
+      properties:
+        must_be_changed:
+          default: false
+          description: Indicates if user is required to alter their credentials during their initial authentication. Currently, it is enforced only for password credentials, but it may change any time.
+          type: boolean
+        must_be_reset:
+          default: false
+          description: 'Indicates if user is required to reset their credentials before first authentication.
+
+            This flag takes precedence over MustBeChanged.'
+          type: boolean
+        password:
+          example: secret
+          type: string
+        totp_secret:
+          example: BLEXAM6OPBBZTCFUOPVHDQ2HVG7PTMK3
+          type: string
+        type:
+          enum:
+          - password
+          - webauthn
+          - totp
+          - device
+          example: password
+          type: string
+        webauthn_credentials:
+          example: public_key
+          items:
+            $ref: '#/components/schemas/WebAuthnCredential'
+          type: array
+        webauthn_type:
+          enum:
+          - regular
+          - discoverable
+          type: string
+      required:
+      - type
+      type: object
+    RedactionPolicy:
+      properties:
+        address:
+          description: Controls whether phone numbers are retained or obfuscated by the provider.
+          example: retain
+          type: string
+        content:
+          description: Controls whether message body content is retained by the provider.
+          example: retain
+          type: string
+      title: RedactionPolicy controls message redaction at the SMS provider level.
+      type: object
+    BaseExtendedUser:
+      properties:
+        addresses:
+          items:
+            $ref: '#/components/schemas/Address'
+          type: array
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: userID
+          type: string
+        identifiers:
+          items:
+            type: string
+          type: array
+        identifiers_with_details:
+          items:
+            $ref: '#/components/schemas/IdentifierDetails'
+          type: array
+        payload:
+          additionalProperties:
+            type: object
+          type: object
+        payload_schema_id:
+          format: schemaID
+          type: string
+        preferences:
+          $ref: '#/components/schemas/UserPreferences'
+        status:
+          enum:
+          - active
+          - inactive
+          - deleted
+          - new
+          example: active
+          type: string
+        status_updated_at:
+          format: date-time
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+        user_type:
+          enum:
+          - jit
+          - standard
+          - scim
+          type: string
+        verified addresses:
+          items:
+            type: string
+          type: array
+      required:
+      - tenant_id
+      - user_pool_id
+      - status
+      type: object
+    UserCredential:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        discoverable_id:
+          type: string
+        expires_at:
+          format: date-time
+          type: string
+        id:
+          format: userCredentialID
+          type: string
+        payload:
+          example:
+            hashed_password: '###'
+          type: object
+        state:
+          enum:
+          - valid
+          - must_be_reset
+          - must_be_changed
+          type: string
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - password
+          - webauthn
+          - totp
+          - device
+          example: password
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: userID
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+      required:
+      - tenant_id
+      - user_pool_id
+      - user_id
+      - type
+      - payload
+      - created_at
+      - updated_at
+      type: object
+    IdentifierDetails:
+      properties:
+        type:
+          enum:
+          - email
+          - mobile
+          - uid
+          - external
+          - federated
+          type: string
+        value:
+          format: userIdentifierValue
+          type: string
+      type: object
+    AuthenticatorAttachment:
+      description: 'This enumeration’s values describe authenticators'' attachment modalities. Relying Parties use this to express a
+
+        preferred authenticator attachment modality when calling navigator.credentials.create() to create a credential.
+
+
+        If this member is present, eligible authenticators are filtered to only authenticators attached with the specified
+
+        §5.4.5 Authenticator Attachment Enumeration (enum AuthenticatorAttachment). The value SHOULD be a member of
+
+        AuthenticatorAttachment but client platforms MUST ignore unknown values, treating an unknown value as if the member
+
+        does not exist.
+
+
+        Specification: §5.4.4. Authenticator Selection Criteria (https://www.w3.org/TR/webauthn/#dom-authenticatorselectioncriteria-authenticatorattachment)
+
+
+        Specification: §5.4.5. Authenticator Attachment Enumeration (https://www.w3.org/TR/webauthn/#enum-attachment)'
+      title: 'AuthenticatorAttachment represents the IDL enum of the same name, and is used as part of the Authenticator Selection
+
+        Criteria.'
+      type: string
+    UserIdentifier:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: userIdentifierID
+          type: string
+        identifier:
+          format: userIdentifierValue
+          type: string
+        identifier_lc:
+          format: userIdentifierValue
+          type: string
+        metadata:
+          additionalProperties:
+            type: object
+          description: general purpose metadata
+          type: object
+        tenant_id:
+          example: default
+          format: tenantID
+          type: string
+        type:
+          enum:
+          - email
+          - mobile
+          - uid
+          - external
+          - federated
+          example: email
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        user_id:
+          format: userID
+          type: string
+        user_pool_id:
+          example: default
+          format: poolID
+          type: string
+      required:
+      - tenant_id
+      - user_pool_id
+      - identifier
+      - identifier_lc
+      - user_id
+      - type
+      - created_at
+      - updated_at
+      type: object
+  responses:
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    conflictHTTPError:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    B2BUsersResponse:
+      description: Identity B2B Users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/B2BUsers'
+    AdminB2BUserResponse:
+      description: User
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BaseUserWithData'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    admin:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /default/admin/oauth2/authorize
+          tokenUrl: /default/admin/oauth2/token

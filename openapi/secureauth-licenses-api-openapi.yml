@@ -1,0 +1,331 @@
+openapi: 3.2.0
+info:
+  description: 'SecureAuth Root API
+
+
+    The POST APIs support idempotency for safely retrying requests without accidentally performing the same operation twice.
+
+
+    To use idempotent requests:
+
+
+    1. Generate a unique idempotency key (32-255 characters long).
+
+    2. Include the key in the X-Idempotency-Key header of your POST request.
+
+    3. Retry failed requests with the same key within 1 minute.
+
+
+    Responses for replayed requests will include the X-Idempotent-Replayed: true header.'
+  title: SecureAuth Licenses API
+  version: latest
+servers:
+- url: https://localhost:8443/api/licensing
+tags:
+- name: Licenses
+paths:
+  /admin/tenants/{tenantID}/license:
+    get:
+      description: Get tenant license.
+      operationId: adminGetTenantLicense
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/LicenseResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get tenant license
+      tags:
+      - Licenses
+    put:
+      operationId: adminSetTenantLicense
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' license set'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Set tenant license
+      tags:
+      - Licenses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/License'
+  /admin/tenants/{tenantID}/licenses:
+    get:
+      description: Get defined licenses.
+      operationId: getConfiguredLicenses
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/LicensesResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - adminSystem: []
+      summary: Get defined licenses
+      tags:
+      - Licenses
+  /system/tenants/{tenantID}/license:
+    get:
+      description: Get tenant license.
+      operationId: systemGetTenantLicense
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '200':
+          $ref: '#/components/responses/LicenseResponse'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup:
+        - manage_configuration
+      summary: Get tenant license
+      tags:
+      - Licenses
+    put:
+      operationId: systemSetTenantLicense
+      parameters:
+      - description: Tenant id
+        in: path
+        name: tenantID
+        required: true
+        schema:
+          type: string
+          default: default
+      responses:
+        '204':
+          description: ' license set'
+        '400':
+          $ref: '#/components/responses/badRequestHTTPError'
+        '401':
+          $ref: '#/components/responses/unauthorizedHTTPError'
+        '403':
+          $ref: '#/components/responses/forbiddenHTTPError'
+        '404':
+          $ref: '#/components/responses/notFoundHTTPError'
+        '422':
+          $ref: '#/components/responses/unprocessableEntityHTTPError'
+        '429':
+          $ref: '#/components/responses/tooManyRequestsHTTPError'
+      security:
+      - setup:
+        - manage_configuration
+      summary: Set tenant license
+      tags:
+      - Licenses
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/License'
+components:
+  schemas:
+    Capabilities:
+      additionalProperties:
+        $ref: '#/components/schemas/CapabilityData'
+      type: object
+    Licenses:
+      properties:
+        default_license_duration:
+          description: DefaultLicenseDuration is the default license duration for new tenants, 0 means unlimited
+          format: duration
+          type: string
+        default_license_type:
+          description: DefaultLicenseType is the default license type for new tenants
+          enum:
+          - trial
+          - enterprise
+          type: string
+        enabled:
+          description: Is licensing mechanism enabled
+          type: boolean
+        licenses:
+          description: All available licenses with default capabilities
+          items:
+            $ref: '#/components/schemas/LicenseTypeWithDefaultCapabilities'
+          type: array
+      type: object
+    Error:
+      description: HTTP error response
+      properties:
+        details:
+          type: object
+        error:
+          type: string
+        error_code:
+          type: string
+        status_code:
+          format: int64
+          type: integer
+      type: object
+    CapabilityData:
+      properties:
+        enabled:
+          type: boolean
+        monthly_limit:
+          format: int64
+          type: integer
+        total_limit:
+          format: int64
+          type: integer
+      type: object
+    LicenseTypeWithDefaultCapabilities:
+      properties:
+        capabilities:
+          $ref: '#/components/schemas/Capabilities'
+        id:
+          description: LicenseType
+          enum:
+          - trial
+          - enterprise
+          type: string
+      type: object
+    License:
+      properties:
+        capabilities:
+          $ref: '#/components/schemas/Capabilities'
+        end_date:
+          description: License end date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        start_date:
+          description: License start date
+          example: '2023-03-01T09:02:27.127932Z'
+          format: date-time
+          type: string
+        type:
+          description: Type of license
+          enum:
+          - trial
+          - enterprise
+          example: trial
+          type: string
+      type: object
+  responses:
+    unprocessableEntityHTTPError:
+      description: Unprocessable entity
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    forbiddenHTTPError:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    notFoundHTTPError:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    LicensesResponse:
+      description: Licenses
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Licenses'
+    LicenseResponse:
+      description: License
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/License'
+    unauthorizedHTTPError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    tooManyRequestsHTTPError:
+      description: Too many requests
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    badRequestHTTPError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  securitySchemes:
+    adminSystem:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes: {}
+          authorizationUrl: /system/admin/oauth2/authorize
+          tokenUrl: /system/admin/oauth2/token
+    setup:
+      type: oauth2
+      flows:
+        authorizationCode:
+          scopes:
+            manage_configuration: manage_configuration
+          authorizationUrl: /system/system/oauth2/authorize
+          tokenUrl: /system/system/oauth2/token
