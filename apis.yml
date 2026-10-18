@@ -30,6 +30,12 @@ tags:
 - Identity
 - Authentication
 - Authorization
+- Open Banking
+tags_raw:
+- Company
+- Identity
+- Authentication
+- Authorization
 - OAuth
 - Open Banking
 
@@ -111,7 +117,8 @@ apis:
   name: SecureAuth (incl. Cloudentity) APIs API
   description: The apis API from SecureAuth (incl. Cloudentity) — 5 operation(s) for apis.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - apis
   properties:
   - type: OpenAPI
@@ -124,6 +131,8 @@ apis:
     The applications API from SecureAuth (incl. Cloudentity) — 1 operation(s) for applications.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Application
+  tags_raw:
   - applications
   properties:
   - type: OpenAPI
@@ -136,6 +145,8 @@ apis:
     The audit-events API from SecureAuth (incl. Cloudentity) — 1 operation(s) for audit-events.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Audit Events
+  tags_raw:
   - audit-events
   properties:
   - type: OpenAPI
@@ -148,6 +159,8 @@ apis:
     The auditEvents API from SecureAuth (incl. Cloudentity) — 1 operation(s) for auditevents.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Audit Events
+  tags_raw:
   - auditEvents
   properties:
   - type: OpenAPI
@@ -159,7 +172,8 @@ apis:
   description: >-
     The authorizationDetails API from SecureAuth (incl. Cloudentity) — 3 operation(s) for authorizationdetails.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - authorizationDetails
   properties:
   - type: OpenAPI
@@ -182,7 +196,8 @@ apis:
   description: >-
     The bruteForceLimits API from SecureAuth (incl. Cloudentity) — 2 operation(s) for bruteforcelimits.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - bruteForceLimits
   properties:
   - type: OpenAPI
@@ -194,6 +209,8 @@ apis:
   description: The captcha API from SecureAuth (incl. Cloudentity) — 2 operation(s) for captcha.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - CAPTCHA
+  tags_raw:
   - captcha
   properties:
   - type: OpenAPI
@@ -216,6 +233,8 @@ apis:
   description: The claims API from SecureAuth (incl. Cloudentity) — 3 operation(s) for claims.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Claims
+  tags_raw:
   - claims
   properties:
   - type: OpenAPI
@@ -227,6 +246,8 @@ apis:
   description: The clients API from SecureAuth (incl. Cloudentity) — 16 operation(s) for clients.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Clients
+  tags_raw:
   - clients
   properties:
   - type: OpenAPI
@@ -239,6 +260,8 @@ apis:
     The configuration API from SecureAuth (incl. Cloudentity) — 3 operation(s) for configuration.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Configuration
+  tags_raw:
   - configuration
   properties:
   - type: OpenAPI
@@ -262,6 +285,8 @@ apis:
   description: The consents API from SecureAuth (incl. Cloudentity) — 11 operation(s) for consents.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Consents
+  tags_raw:
   - consents
   properties:
   - type: OpenAPI
@@ -273,6 +298,8 @@ apis:
   description: The customApps API from SecureAuth (incl. Cloudentity) — 2 operation(s) for customapps.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Custom Apps
+  tags_raw:
   - customApps
   properties:
   - type: OpenAPI
@@ -296,6 +323,8 @@ apis:
     The environment API from SecureAuth (incl. Cloudentity) — 2 operation(s) for environment.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Environment
+  tags_raw:
   - environment
   properties:
   - type: OpenAPI
@@ -318,6 +347,8 @@ apis:
   description: The features API from SecureAuth (incl. Cloudentity) — 4 operation(s) for features.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Features
+  tags_raw:
   - features
   properties:
   - type: OpenAPI
@@ -329,6 +360,8 @@ apis:
   description: The gateways API from SecureAuth (incl. Cloudentity) — 9 operation(s) for gateways.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Gateways
+  tags_raw:
   - gateways
   properties:
   - type: OpenAPI
@@ -340,6 +373,8 @@ apis:
   description: The Groups API from SecureAuth (incl. Cloudentity) — 12 operation(s) for groups.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Group
+  tags_raw:
   - Groups
   properties:
   - type: OpenAPI
@@ -351,6 +386,8 @@ apis:
   description: The idps API from SecureAuth (incl. Cloudentity) — 89 operation(s) for idps.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Idps
+  tags_raw:
   - idps
   properties:
   - type: OpenAPI
@@ -362,6 +399,8 @@ apis:
   description: The images API from SecureAuth (incl. Cloudentity) — 1 operation(s) for images.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Image
+  tags_raw:
   - images
   properties:
   - type: OpenAPI
@@ -373,6 +412,8 @@ apis:
   description: The keys API from SecureAuth (incl. Cloudentity) — 5 operation(s) for keys.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Keys
+  tags_raw:
   - keys
   properties:
   - type: OpenAPI
@@ -384,6 +425,8 @@ apis:
   description: The license API from SecureAuth (incl. Cloudentity) — 1 operation(s) for license.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - License
+  tags_raw:
   - license
   properties:
   - type: OpenAPI
@@ -395,6 +438,8 @@ apis:
   description: The licenses API from SecureAuth (incl. Cloudentity) — 3 operation(s) for licenses.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Licenses
+  tags_raw:
   - licenses
   properties:
   - type: OpenAPI
@@ -406,6 +451,8 @@ apis:
   description: The limits API from SecureAuth (incl. Cloudentity) — 2 operation(s) for limits.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Limits
+  tags_raw:
   - limits
   properties:
   - type: OpenAPI
@@ -417,6 +464,8 @@ apis:
   description: The logins API from SecureAuth (incl. Cloudentity) — 6 operation(s) for logins.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Logins
+  tags_raw:
   - logins
   properties:
   - type: OpenAPI
@@ -428,6 +477,8 @@ apis:
   description: The MANAGEMENT API from SecureAuth (incl. Cloudentity) — 12 operation(s) for management.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Management
+  tags_raw:
   - MANAGEMENT
   properties:
   - type: OpenAPI
@@ -439,6 +490,8 @@ apis:
   description: The mfa API from SecureAuth (incl. Cloudentity) — 2 operation(s) for mfa.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - MFA
+  tags_raw:
   - mfa
   properties:
   - type: OpenAPI
@@ -449,7 +502,8 @@ apis:
   name: SecureAuth (incl. Cloudentity) Mfa Methods API
   description: The mfaMethods API from SecureAuth (incl. Cloudentity) — 3 operation(s) for mfamethods.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - mfaMethods
   properties:
   - type: OpenAPI
@@ -461,6 +515,8 @@ apis:
   description: The oauth2 API from SecureAuth (incl. Cloudentity) — 13 operation(s) for oauth2.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Authentication
+  tags_raw:
   - oauth2
   properties:
   - type: OpenAPI
@@ -495,6 +551,8 @@ apis:
     The openbanking API from SecureAuth (incl. Cloudentity) — 1 operation(s) for openbanking.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Open Banking
+  tags_raw:
   - openbanking
   properties:
   - type: OpenAPI
@@ -518,6 +576,8 @@ apis:
     The organizations API from SecureAuth (incl. Cloudentity) — 4 operation(s) for organizations.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Organization
+  tags_raw:
   - organizations
   properties:
   - type: OpenAPI
@@ -541,6 +601,8 @@ apis:
     The permissions API from SecureAuth (incl. Cloudentity) — 6 operation(s) for permissions.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Permissions
+  tags_raw:
   - permissions
   properties:
   - type: OpenAPI
@@ -552,7 +614,8 @@ apis:
   description: >-
     The phoneProviderConfig API from SecureAuth (incl. Cloudentity) — 1 operation(s) for phoneproviderconfig.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - phoneProviderConfig
   properties:
   - type: OpenAPI
@@ -564,6 +627,8 @@ apis:
   description: The policies API from SecureAuth (incl. Cloudentity) — 5 operation(s) for policies.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Policies
+  tags_raw:
   - policies
   properties:
   - type: OpenAPI
@@ -609,7 +674,8 @@ apis:
   description: >-
     The recentActivities API from SecureAuth (incl. Cloudentity) — 1 operation(s) for recentactivities.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - recentActivities
   properties:
   - type: OpenAPI
@@ -621,6 +687,8 @@ apis:
   description: The recovery API from SecureAuth (incl. Cloudentity) — 3 operation(s) for recovery.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Recovery
+  tags_raw:
   - recovery
   properties:
   - type: OpenAPI
@@ -644,6 +712,8 @@ apis:
   description: The roles API from SecureAuth (incl. Cloudentity) — 10 operation(s) for roles.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Roles
+  tags_raw:
   - roles
   properties:
   - type: OpenAPI
@@ -667,6 +737,8 @@ apis:
   description: The saml API from SecureAuth (incl. Cloudentity) — 5 operation(s) for saml.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - SAML
+  tags_raw:
   - saml
   properties:
   - type: OpenAPI
@@ -678,6 +750,8 @@ apis:
   description: The Schemas API from SecureAuth (incl. Cloudentity) — 6 operation(s) for schemas.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Schema
+  tags_raw:
   - Schemas
   properties:
   - type: OpenAPI
@@ -725,6 +799,8 @@ apis:
   description: The scopes API from SecureAuth (incl. Cloudentity) — 4 operation(s) for scopes.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Scopes
+  tags_raw:
   - scopes
   properties:
   - type: OpenAPI
@@ -736,6 +812,8 @@ apis:
   description: The scripts API from SecureAuth (incl. Cloudentity) — 6 operation(s) for scripts.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Scripts
+  tags_raw:
   - scripts
   properties:
   - type: OpenAPI
@@ -747,6 +825,8 @@ apis:
   description: The secrets API from SecureAuth (incl. Cloudentity) — 2 operation(s) for secrets.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Secrets
+  tags_raw:
   - secrets
   properties:
   - type: OpenAPI
@@ -758,6 +838,8 @@ apis:
   description: The security API from SecureAuth (incl. Cloudentity) — 2 operation(s) for security.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Security
+  tags_raw:
   - security
   properties:
   - type: OpenAPI
@@ -769,6 +851,8 @@ apis:
   description: The servers API from SecureAuth (incl. Cloudentity) — 13 operation(s) for servers.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Servers
+  tags_raw:
   - servers
   properties:
   - type: OpenAPI
@@ -780,6 +864,8 @@ apis:
   description: The services API from SecureAuth (incl. Cloudentity) — 7 operation(s) for services.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Services
+  tags_raw:
   - services
   properties:
   - type: OpenAPI
@@ -791,6 +877,8 @@ apis:
   description: The sessions API from SecureAuth (incl. Cloudentity) — 2 operation(s) for sessions.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Sessions
+  tags_raw:
   - sessions
   properties:
   - type: OpenAPI
@@ -802,6 +890,8 @@ apis:
   description: The system API from SecureAuth (incl. Cloudentity) — 9 operation(s) for system.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - System
+  tags_raw:
   - system
   properties:
   - type: OpenAPI
@@ -848,6 +938,8 @@ apis:
   description: The templates API from SecureAuth (incl. Cloudentity) — 5 operation(s) for templates.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Templates
+  tags_raw:
   - templates
   properties:
   - type: OpenAPI
@@ -860,6 +952,8 @@ apis:
     The TenantConfiguration API from SecureAuth (incl. Cloudentity) — 3 operation(s) for tenantconfiguration.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Tenant Configuration
+  tags_raw:
   - TenantConfiguration
   properties:
   - type: OpenAPI
@@ -883,6 +977,8 @@ apis:
   description: The tenants API from SecureAuth (incl. Cloudentity) — 9 operation(s) for tenants.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Tenants
+  tags_raw:
   - tenants
   properties:
   - type: OpenAPI
@@ -894,6 +990,8 @@ apis:
   description: The themes API from SecureAuth (incl. Cloudentity) — 3 operation(s) for themes.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Themes
+  tags_raw:
   - themes
   properties:
   - type: OpenAPI
@@ -905,6 +1003,8 @@ apis:
   description: The tokens API from SecureAuth (incl. Cloudentity) — 5 operation(s) for tokens.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Tokens
+  tags_raw:
   - tokens
   properties:
   - type: OpenAPI
@@ -916,7 +1016,8 @@ apis:
   description: >-
     The transientOtp API from SecureAuth (incl. Cloudentity) — 2 operation(s) for transientotp.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - transientOtp
   properties:
   - type: OpenAPI
@@ -929,6 +1030,8 @@ apis:
     The translations API from SecureAuth (incl. Cloudentity) — 2 operation(s) for translations.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Translation
+  tags_raw:
   - translations
   properties:
   - type: OpenAPI
@@ -940,6 +1043,8 @@ apis:
   description: The usage API from SecureAuth (incl. Cloudentity) — 2 operation(s) for usage.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Usage
+  tags_raw:
   - usage
   properties:
   - type: OpenAPI
@@ -963,6 +1068,8 @@ apis:
   description: The Users API from SecureAuth (incl. Cloudentity) — 68 operation(s) for users.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - User
+  tags_raw:
   - Users
   properties:
   - type: OpenAPI
@@ -974,7 +1081,8 @@ apis:
   description: >-
     The vanityDomains API from SecureAuth (incl. Cloudentity) — 1 operation(s) for vanitydomains.
   humanURL: https://docs.secureauth.com/iam/docs/api
-  tags:
+  tags: []
+  tags_raw:
   - vanityDomains
   properties:
   - type: OpenAPI
@@ -986,6 +1094,8 @@ apis:
   description: The web API from SecureAuth (incl. Cloudentity) — 2 operation(s) for web.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Web
+  tags_raw:
   - web
   properties:
   - type: OpenAPI
@@ -997,6 +1107,8 @@ apis:
   description: The webhooks API from SecureAuth (incl. Cloudentity) — 3 operation(s) for webhooks.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Webhook
+  tags_raw:
   - webhooks
   properties:
   - type: OpenAPI
@@ -1008,6 +1120,8 @@ apis:
   description: The workforce API from SecureAuth (incl. Cloudentity) — 1 operation(s) for workforce.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Workforce
+  tags_raw:
   - workforce
   properties:
   - type: OpenAPI
@@ -1032,6 +1146,8 @@ apis:
     The WorkspaceMetrics API from SecureAuth (incl. Cloudentity) — 20 operation(s) for workspacemetrics.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Workspace Metrics
+  tags_raw:
   - WorkspaceMetrics
   properties:
   - type: OpenAPI
@@ -1043,6 +1159,8 @@ apis:
   description: The workspaces API from SecureAuth (incl. Cloudentity) — 5 operation(s) for workspaces.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - Workspace
+  tags_raw:
   - workspaces
   properties:
   - type: OpenAPI
@@ -1054,6 +1172,8 @@ apis:
   description: The API Keys API from SecureAuth (incl. Cloudentity) — 2 operation(s) for api keys.
   humanURL: https://docs.secureauth.com/iam/docs/api
   tags:
+  - APIKeys
+  tags_raw:
   - API Keys
   properties:
   - type: OpenAPI
